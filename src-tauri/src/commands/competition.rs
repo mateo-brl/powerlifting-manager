@@ -1,0 +1,71 @@
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Competition {
+    pub id: String,
+    pub name: String,
+    pub date: String,
+    pub location: Option<String>,
+    pub federation: String,
+    pub status: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct CreateCompetitionInput {
+    pub name: String,
+    pub date: String,
+    pub location: Option<String>,
+    pub federation: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct UpdateCompetitionInput {
+    pub name: Option<String>,
+    pub date: Option<String>,
+    pub location: Option<String>,
+    pub federation: Option<String>,
+    pub status: Option<String>,
+}
+
+#[tauri::command]
+pub async fn create_competition(input: CreateCompetitionInput) -> Result<Competition, String> {
+    let now = chrono::Utc::now().to_rfc3339();
+    let competition = Competition {
+        id: Uuid::new_v4().to_string(),
+        name: input.name,
+        date: input.date,
+        location: input.location,
+        federation: input.federation,
+        status: "upcoming".to_string(),
+        created_at: now.clone(),
+        updated_at: now,
+    };
+
+    // TODO: Sauvegarder en DB SQLite via tauri-plugin-sql
+
+    Ok(competition)
+}
+
+#[tauri::command]
+pub async fn get_competitions() -> Result<Vec<Competition>, String> {
+    // TODO: Récupérer depuis SQLite
+    Ok(vec![])
+}
+
+#[tauri::command]
+pub async fn update_competition(
+    id: String,
+    input: UpdateCompetitionInput,
+) -> Result<Competition, String> {
+    // TODO: Mettre à jour en DB
+    Err("Not implemented yet".to_string())
+}
+
+#[tauri::command]
+pub async fn delete_competition(id: String) -> Result<(), String> {
+    // TODO: Supprimer de la DB
+    Ok(())
+}
