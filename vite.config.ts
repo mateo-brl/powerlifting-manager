@@ -10,7 +10,7 @@ export default defineConfig({
   server: {
     port: 1420,
     strictPort: true,
-    host: host || false,
+    host: '0.0.0.0', // Écouter sur toutes les interfaces pour accès réseau
     hmr: host
       ? {
           protocol: 'ws',
