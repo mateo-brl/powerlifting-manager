@@ -96,8 +96,8 @@ export const CompetitionList = () => {
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
-        <Tag color={getStatusColor(status)}>
-          {status.toUpperCase()}
+        <Tag color={getStatusColor(status || 'upcoming')}>
+          {(status || 'upcoming').toUpperCase()}
         </Tag>
       ),
       filters: [

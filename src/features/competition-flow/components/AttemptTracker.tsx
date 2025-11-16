@@ -161,7 +161,7 @@ export const AttemptTracker = ({
                 background: '#f5f5f5',
                 border: '2px solid #d9d9d9',
               }}
-              bodyStyle={{ padding: '24px 16px' }}
+              styles={{ body: { padding: '24px 16px' } }}
             >
               <div style={{ marginBottom: 16 }}>
                 <Badge
