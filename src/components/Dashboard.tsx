@@ -3,6 +3,7 @@ import { Card, Row, Col, Statistic, Button } from 'antd';
 import { TrophyOutlined, CalendarOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useCompetitionStore } from '../features/competition/stores/competitionStore';
+import { DemoDataInitializer } from './DemoDataInitializer';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
@@ -81,32 +82,37 @@ export const Dashboard = () => {
         </Col>
       </Row>
 
-      <Card
-        title="Quick Actions"
-        style={{ marginBottom: 24 }}
-      >
-        <Row gutter={16}>
-          <Col>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              size="large"
-              onClick={() => navigate('/competitions/new')}
-            >
-              New Competition
-            </Button>
-          </Col>
-          <Col>
-            <Button
-              icon={<TrophyOutlined />}
-              size="large"
-              onClick={() => navigate('/competitions')}
-            >
-              View All Competitions
-            </Button>
-          </Col>
-        </Row>
-      </Card>
+      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+        <Col xs={24} lg={16}>
+          <Card title="Quick Actions">
+            <Row gutter={16}>
+              <Col>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  size="large"
+                  onClick={() => navigate('/competitions/new')}
+                >
+                  New Competition
+                </Button>
+              </Col>
+              <Col>
+                <Button
+                  icon={<TrophyOutlined />}
+                  size="large"
+                  onClick={() => navigate('/competitions')}
+                >
+                  View All Competitions
+                </Button>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col xs={24} lg={8}>
+          <DemoDataInitializer />
+        </Col>
+      </Row>
 
       {activeCompetitions.length > 0 && (
         <Card title="Active Competitions" loading={loading}>
