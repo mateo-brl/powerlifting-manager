@@ -1,4 +1,6 @@
 use serde::{Deserialize, Serialize};
+use std::sync::Mutex;
+use tauri::State;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -30,8 +32,15 @@ pub struct UpdateCompetitionInput {
     pub status: Option<String>,
 }
 
+pub struct CompetitionState {
+    pub competitions: Mutex<Vec<Competition>>,
+}
+
 #[tauri::command]
-pub async fn create_competition(input: CreateCompetitionInput) -> Result<Competition, String> {
+pub async fn create_competition(
+    input: CreateCompetitionInput,
+    state: State<'_, CompetitionState>,
+) -> Result<Competition, String> {
     let now = chrono::Utc::now().to_rfc3339();
     let competition = Competition {
         id: Uuid::new_v4().to_string(),
@@ -44,28 +53,56 @@ pub async fn create_competition(input: CreateCompetitionInput) -> Result<Competi
         updated_at: now,
     };
 
-    // TODO: Sauvegarder en DB SQLite via tauri-plugin-sql
+    let mut competitions = state.competitions.lock().unwrap();
+    competitions.push(competition.clone());
 
     Ok(competition)
 }
 
 #[tauri::command]
-pub async fn get_competitions() -> Result<Vec<Competition>, String> {
-    // TODO: Récupérer depuis SQLite
-    Ok(vec![])
+pub async fn get_competitions(state: State<'_, CompetitionState>) -> Result<Vec<Competition>, String> {
+    let competitions = state.competitions.lock().unwrap();
+    Ok(competitions.clone())
 }
 
 #[tauri::command]
 pub async fn update_competition(
     id: String,
     input: UpdateCompetitionInput,
+    state: State<'_, CompetitionState>,
 ) -> Result<Competition, String> {
-    // TODO: Mettre à jour en DB
-    Err("Not implemented yet".to_string())
+    let now = chrono::Utc::now().to_rfc3339();
+    let mut competitions = state.competitions.lock().unwrap();
+
+    let comp = competitions.iter_mut().find(|c| c.id == id);
+
+    match comp {
+        Some(c) => {
+            if let Some(name) = input.name {
+                c.name = name;
+            }
+            if let Some(date) = input.date {
+                c.date = date;
+            }
+            if let Some(location) = input.location {
+                c.location = Some(location);
+            }
+            if let Some(federation) = input.federation {
+                c.federation = federation;
+            }
+            if let Some(status) = input.status {
+                c.status = status;
+            }
+            c.updated_at = now;
+            Ok(c.clone())
+        }
+        None => Err("Competition not found".to_string()),
+    }
 }
 
 #[tauri::command]
-pub async fn delete_competition(id: String) -> Result<(), String> {
-    // TODO: Supprimer de la DB
+pub async fn delete_competition(id: String, state: State<'_, CompetitionState>) -> Result<(), String> {
+    let mut competitions = state.competitions.lock().unwrap();
+    competitions.retain(|c| c.id != id);
     Ok(())
 }

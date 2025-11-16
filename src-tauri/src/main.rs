@@ -4,12 +4,18 @@
 mod commands;
 mod database;
 
-use commands::competition::{create_competition, get_competitions, update_competition, delete_competition};
-use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_athlete};
+use commands::competition::{create_competition, get_competitions, update_competition, delete_competition, CompetitionState};
+use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_athlete, AthleteState};
+use std::sync::Mutex;
 
 fn main() {
     tauri::Builder::default()
-        .plugin(tauri_plugin_sql::Builder::new().build())
+        .manage(CompetitionState {
+            competitions: Mutex::new(Vec::new()),
+        })
+        .manage(AthleteState {
+            athletes: Mutex::new(Vec::new()),
+        })
         .invoke_handler(tauri::generate_handler![
             create_competition,
             get_competitions,

@@ -1,2 +1,3 @@
-// Module pour la gestion de la base de données SQLite
-// À implémenter avec tauri-plugin-sql
+// Database module - placeholder for future SQLite integration
+// Currently using in-memory storage with Mutex
+// TODO: Implement SQLite persistence using tauri-plugin-sql or rusqlite
