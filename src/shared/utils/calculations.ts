@@ -58,9 +58,9 @@ export function calculateIPFGLPoints(
  * @returns Points DOTS
  */
 export function calculateDOTS(
-  total: number,
-  bodyweight: number,
-  gender: 'M' | 'F'
+  _total: number,
+  _bodyweight: number,
+  _gender: 'M' | 'F'
 ): number {
   // Coefficients DOTS (à implémenter selon la formule officielle)
   // TODO: Implémenter la formule DOTS complète
@@ -75,9 +75,9 @@ export function calculateDOTS(
  * @returns Points Wilks
  */
 export function calculateWilks(
-  total: number,
-  bodyweight: number,
-  gender: 'M' | 'F'
+  _total: number,
+  _bodyweight: number,
+  _gender: 'M' | 'F'
 ): number {
   // Coefficients Wilks (formule 2020 deprecated mais encore utilisée)
   // TODO: Implémenter la formule Wilks
@@ -104,6 +104,16 @@ export function getAgeCategory(
   if (age >= 50 && age <= 59) return 'Master 2';
   if (age >= 60 && age <= 69) return 'Master 3';
   return 'Master 4';
+}
+
+/**
+ * Calcule la catégorie d'âge automatiquement à partir de la date de naissance
+ * @param dateOfBirth - Date de naissance
+ * @returns Catégorie d'âge
+ */
+export function calculateAgeCategory(dateOfBirth: Date): string {
+  const today = new Date();
+  return getAgeCategory(dateOfBirth, today);
 }
 
 /**

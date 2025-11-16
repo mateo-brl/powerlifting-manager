@@ -31,21 +31,24 @@ export const WEIGHT_CLASSES_WOMEN = [
   { value: '+84', label: 'plus de 84 kg' },
 ] as const;
 
-export const DIVISIONS = [
-  { value: 'raw', label: 'Raw (sans équipement)' },
-  { value: 'equipped', label: 'Equipped (avec équipement)' },
-] as const;
 
 export const AGE_CATEGORIES = [
-  { value: 'Sub-Junior', label: 'Sub-Junior (< 14 ans)' },
-  { value: 'Junior', label: 'Junior (14-18 ans)' },
-  { value: 'Sub-Master', label: 'Sub-Master (19-23 ans)' },
-  { value: 'Open', label: 'Open (24-39 ans)' },
-  { value: 'Master 1', label: 'Master 1 (40-49 ans)' },
-  { value: 'Master 2', label: 'Master 2 (50-59 ans)' },
-  { value: 'Master 3', label: 'Master 3 (60-69 ans)' },
-  { value: 'Master 4', label: 'Master 4 (70+ ans)' },
+  'Sub-Junior',
+  'Junior',
+  'Sub-Master',
+  'Open',
+  'Master 1',
+  'Master 2',
+  'Master 3',
+  'Master 4',
 ] as const;
+
+export const WEIGHT_CLASSES = {
+  men: ['59kg', '66kg', '74kg', '83kg', '93kg', '105kg', '120kg', '+120kg'],
+  women: ['47kg', '52kg', '57kg', '63kg', '69kg', '76kg', '84kg', '+84kg'],
+} as const;
+
+export const DIVISIONS = ['raw', 'equipped'] as const;
 
 export const LIFT_TYPES = [
   { value: 'squat', label: 'Squat', color: '#1890ff' },

@@ -2,8 +2,8 @@ export interface Competition {
   id: string;
   name: string;
   date: string;
-  location?: string;
-  federation: 'IPF' | 'USAPL' | 'USPA' | 'FFForce';
+  location?: string | null;
+  federation: string;
   status: 'upcoming' | 'active' | 'completed';
   created_at: string;
   updated_at: string;

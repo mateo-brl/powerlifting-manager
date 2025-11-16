@@ -1,13 +1,20 @@
 import { create } from 'zustand';
-import { Competition } from '@/shared/types';
+import { invoke } from '@tauri-apps/api/core';
+import { Competition } from '../types';
 
 interface CompetitionStore {
   competitions: Competition[];
   activeCompetition: Competition | null;
   setActiveCompetition: (competition: Competition | null) => void;
-  addCompetition: (competition: Competition) => void;
-  updateCompetition: (id: string, data: Partial<Competition>) => void;
-  deleteCompetition: (id: string) => void;
+  loadCompetitions: () => Promise<void>;
+  createCompetition: (data: {
+    name: string;
+    date: string;
+    location?: string;
+    federation: string;
+  }) => Promise<Competition>;
+  updateCompetition: (id: string, data: Partial<Competition>) => Promise<Competition>;
+  deleteCompetition: (id: string) => Promise<void>;
 }
 
 export const useCompetitionStore = create<CompetitionStore>((set) => ({
@@ -16,24 +23,34 @@ export const useCompetitionStore = create<CompetitionStore>((set) => ({
 
   setActiveCompetition: (competition) => set({ activeCompetition: competition }),
 
-  addCompetition: (competition) =>
+  loadCompetitions: async () => {
+    const competitions = await invoke<Competition[]>('get_competitions');
+    set({ competitions });
+  },
+
+  createCompetition: async (data) => {
+    const input = { ...data, location: data.location || null };
+    const competition = await invoke<Competition>('create_competition', { input });
     set((state) => ({
       competitions: [...state.competitions, competition]
-    })),
+    }));
+    return competition;
+  },
 
-  updateCompetition: (id, data) =>
+  updateCompetition: async (id, data) => {
+    const competition = await invoke<Competition>('update_competition', { id, input: data });
     set((state) => ({
-      competitions: state.competitions.map(c =>
-        c.id === id ? { ...c, ...data, updated_at: new Date().toISOString() } : c
-      ),
-      activeCompetition: state.activeCompetition?.id === id
-        ? { ...state.activeCompetition, ...data, updated_at: new Date().toISOString() }
-        : state.activeCompetition
-    })),
+      competitions: state.competitions.map(c => c.id === id ? competition : c),
+      activeCompetition: state.activeCompetition?.id === id ? competition : state.activeCompetition
+    }));
+    return competition;
+  },
 
-  deleteCompetition: (id) =>
+  deleteCompetition: async (id) => {
+    await invoke('delete_competition', { id });
     set((state) => ({
       competitions: state.competitions.filter(c => c.id !== id),
       activeCompetition: state.activeCompetition?.id === id ? null : state.activeCompetition
-    }))
+    }));
+  }
 }));

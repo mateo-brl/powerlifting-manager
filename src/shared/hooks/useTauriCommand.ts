@@ -17,7 +17,7 @@ export function useTauriCommand<TResult = unknown, TArgs = unknown>(
       setError(null);
 
       try {
-        const result = await invoke<TResult>(commandName, args);
+        const result = await invoke<TResult>(commandName, args as any);
         setData(result);
         return result;
       } catch (err) {
