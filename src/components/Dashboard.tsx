@@ -25,7 +25,7 @@ export const Dashboard = () => {
   };
 
   const upcomingCompetitions = competitions.filter((c) => c.status === 'upcoming');
-  const activeCompetitions = competitions.filter((c) => c.status === 'active');
+  const activeCompetitions = competitions.filter((c) => c.status === 'in_progress');
   const completedCompetitions = competitions.filter((c) => c.status === 'completed');
 
   return (

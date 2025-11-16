@@ -52,36 +52,93 @@ export function calculateIPFGLPoints(
 
 /**
  * Calcule les points DOTS
+ * Formula: DOTS = Total * (500 / (A + B*BW + C*BW^2 + D*BW^3 + E*BW^4))
  * @param total - Total soulevé en kg
  * @param bodyweight - Poids corporel en kg
  * @param gender - Sexe ('M' ou 'F')
  * @returns Points DOTS
  */
 export function calculateDOTS(
-  _total: number,
-  _bodyweight: number,
-  _gender: 'M' | 'F'
+  total: number,
+  bodyweight: number,
+  gender: 'M' | 'F'
 ): number {
-  // Coefficients DOTS (à implémenter selon la formule officielle)
-  // TODO: Implémenter la formule DOTS complète
-  return 0;
+  if (total <= 0 || bodyweight <= 0) return 0;
+
+  // DOTS Coefficients
+  const coefficients = gender === 'M'
+    ? {
+        A: -0.0000010930,
+        B: 0.0007391293,
+        C: -0.1918759221,
+        D: 24.0900756,
+        E: -307.75076,
+      }
+    : {
+        A: -0.0000010706,
+        B: 0.0005158568,
+        C: -0.1126655495,
+        D: 13.6175032,
+        E: -57.96288,
+      };
+
+  const denominator =
+    coefficients.E +
+    coefficients.D * bodyweight +
+    coefficients.C * Math.pow(bodyweight, 2) +
+    coefficients.B * Math.pow(bodyweight, 3) +
+    coefficients.A * Math.pow(bodyweight, 4);
+
+  const dots = (500 / denominator) * total;
+  return Number(dots.toFixed(2));
 }
 
 /**
  * Calcule les points Wilks (formule classique)
+ * Formula: Wilks = Total * Coefficient
+ * Coefficient = 500 / (a + b*BW + c*BW^2 + d*BW^3 + e*BW^4 + f*BW^5)
  * @param total - Total soulevé en kg
  * @param bodyweight - Poids corporel en kg
  * @param gender - Sexe ('M' ou 'F')
  * @returns Points Wilks
  */
 export function calculateWilks(
-  _total: number,
-  _bodyweight: number,
-  _gender: 'M' | 'F'
+  total: number,
+  bodyweight: number,
+  gender: 'M' | 'F'
 ): number {
-  // Coefficients Wilks (formule 2020 deprecated mais encore utilisée)
-  // TODO: Implémenter la formule Wilks
-  return 0;
+  if (total <= 0 || bodyweight <= 0) return 0;
+
+  // Wilks Coefficients (2020 formula)
+  const coefficients = gender === 'M'
+    ? {
+        a: 47.4617885411949,
+        b: 8.47206137941125,
+        c: 0.073694103462609,
+        d: -0.00139583381094385,
+        e: 7.07665973070743e-6,
+        f: -1.20804336482315e-8,
+      }
+    : {
+        a: -125.425539779509,
+        b: 13.7121941940668,
+        c: -0.0330725063103405,
+        d: -0.0010504000506583,
+        e: 9.38773881462799e-6,
+        f: -2.3334613884954e-8,
+      };
+
+  const denominator =
+    coefficients.a +
+    coefficients.b * bodyweight +
+    coefficients.c * Math.pow(bodyweight, 2) +
+    coefficients.d * Math.pow(bodyweight, 3) +
+    coefficients.e * Math.pow(bodyweight, 4) +
+    coefficients.f * Math.pow(bodyweight, 5);
+
+  const coefficient = 500 / denominator;
+  const wilks = total * coefficient;
+  return Number(wilks.toFixed(2));
 }
 
 /**

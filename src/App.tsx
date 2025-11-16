@@ -10,6 +10,8 @@ import { AthleteForm } from './features/athlete/components/AthleteForm';
 import { AthleteImport } from './features/athlete/components/AthleteImport';
 import { WeighInForm } from './features/weigh-in/components/WeighInForm';
 import { FlightManagement } from './features/competition-flow/components/FlightManagement';
+import { LiveCompetition } from './features/competition-flow/components/LiveCompetition';
+import { Rankings } from './features/competition-flow/components/Rankings';
 
 function App() {
   return (
@@ -36,6 +38,10 @@ function App() {
               {/* Phase 2: Competition Flow Routes */}
               <Route path=":competitionId/weigh-in" element={<WeighInForm />} />
               <Route path=":competitionId/flights" element={<FlightManagement />} />
+
+              {/* Phase 3: Live Competition Routes */}
+              <Route path=":competitionId/live" element={<LiveCompetition />} />
+              <Route path=":competitionId/rankings" element={<Rankings />} />
             </Route>
 
             {/* Catch-all redirect */}
