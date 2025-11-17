@@ -113,8 +113,8 @@ export const SpottersDisplay = () => {
     );
   }
 
-  // Determine bar weight based on gender (we'll default to men's bar for now)
-  const barWeight = BAR_WEIGHTS.men;
+  // IPF uses 20kg bars for both men and women
+  const barWeight = BAR_WEIGHTS.men; // 20kg standard
   const barLoading = calculateBarLoading(currentAthlete.weight_kg, barWeight);
   const loadingOrder = getLoadingOrder(barLoading);
 

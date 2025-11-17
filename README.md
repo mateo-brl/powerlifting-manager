@@ -358,7 +358,7 @@ Cette application respecte les standards officiels de l'IPF :
 - ⚖️ **Chargement de barre IPF**:
   - Prise en compte des colliers obligatoires (2.5kg × 2 = 5kg)
   - Plaques standards IPF avec codes couleur officiels
-  - Barre hommes 20kg / Barre femmes 15kg
+  - Barre standard 20kg (hommes et femmes)
 
 ## 🤝 Contribution
 

@@ -39,10 +39,11 @@ export const IPF_PLATES = [
 
 /**
  * Standard bar weights
+ * Note: In IPF powerlifting, both men and women use 20kg bars
  */
 export const BAR_WEIGHTS = {
   men: 20,
-  women: 15,
+  women: 20,
 };
 
 /**
@@ -55,7 +56,7 @@ export const TOTAL_COLLAR_WEIGHT = COLLAR_WEIGHT * 2; // 5kg total
  * Calculate the optimal plate combination for a target weight
  *
  * @param targetWeight - The total weight to lift (kg)
- * @param barWeight - Weight of the bar (20kg men's, 15kg women's)
+ * @param barWeight - Weight of the bar (20kg standard in IPF)
  * @param availablePlates - Optional array of available plate weights
  * @returns BarLoadingResult with plate combination
  */
