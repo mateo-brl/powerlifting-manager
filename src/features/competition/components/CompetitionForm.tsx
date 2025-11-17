@@ -154,8 +154,8 @@ export const CompetitionForm = () => {
         >
           <Select
             options={[
-              { value: 'full_power', label: '🏋️ Full Power (SBD - Squat + Bench + Deadlift)' },
-              { value: 'bench_only', label: '💪 Bench Only' },
+              { value: 'full_power', label: 'SBD' },
+              { value: 'bench_only', label: 'Bench' },
             ]}
           />
         </Form.Item>

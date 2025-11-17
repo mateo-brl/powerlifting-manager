@@ -298,7 +298,7 @@ export const LiveCompetition = () => {
               <Title level={3} style={{ margin: 0 }}>Live Competition Management</Title>
               {competition && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {competition.name} • Format: {competitionFormat === 'bench_only' ? '💪 Bench Only' : '🏋️ Full Power (SBD)'}
+                  {competition.name} • Format: {competitionFormat === 'bench_only' ? 'Bench' : 'SBD'}
                 </Text>
               )}
             </div>
