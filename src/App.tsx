@@ -12,12 +12,17 @@ import { WeighInForm } from './features/weigh-in/components/WeighInForm';
 import { FlightManagement } from './features/competition-flow/components/FlightManagement';
 import { LiveCompetition } from './features/competition-flow/components/LiveCompetition';
 import { Rankings } from './features/competition-flow/components/Rankings';
+import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
 
 function App() {
   return (
     <ConfigProvider locale={frFR}>
       <BrowserRouter>
         <Routes>
+          {/* External Display Route (fullscreen, no layout) */}
+          <Route path="/display" element={<ExternalDisplay />} />
+
+          {/* Main App Routes */}
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
 

@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined } from '@ant-design/icons';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
+import { useBroadcastStore } from '../stores/broadcastStore';
 import { calculateAttemptOrder } from '../utils/attemptOrdering';
 import { AttemptOrderList } from './AttemptOrderList';
 import { AttemptTracker } from './AttemptTracker';
 import { Timer } from './Timer';
 import { LiftType } from '../types';
 import { AttemptOrder } from '../../weigh-in/types';
+import { useCompetitionStore } from '../../competition/stores/competitionStore';
 
 const { Title } = Typography;
 
@@ -20,6 +22,8 @@ export const LiveCompetition = () => {
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
   const { attempts, loadAttempts } = useAttemptStore();
+  const { broadcast } = useBroadcastStore();
+  const { competitions } = useCompetitionStore();
 
   const [currentLift, setCurrentLift] = useState<LiftType>('squat');
   const [currentIndex, setCurrentIndex] = useState<number>(0);
@@ -101,19 +105,83 @@ export const LiveCompetition = () => {
     }
     setIsCompetitionActive(true);
     message.success(`Competition started - ${currentLift.toUpperCase()}`);
+
+    // Broadcast competition started event
+    const competition = competitions.find(c => c.id === competitionId);
+    if (competition) {
+      broadcast({
+        type: 'competition_started',
+        data: {
+          competition_id: competitionId || '',
+          competition_name: competition.name,
+          lift_type: currentLift,
+        },
+      });
+    }
+
+    // Broadcast current athlete up
+    if (attemptOrder[currentIndex]) {
+      const currentAttempt = attemptOrder[currentIndex];
+      broadcast({
+        type: 'athlete_up',
+        data: {
+          athlete_id: currentAttempt.athlete_id,
+          athlete_name: currentAttempt.athlete_name,
+          weight_kg: currentAttempt.weight_kg,
+          attempt_number: currentAttempt.attempt_number,
+          lift_type: currentLift,
+          lot_number: currentAttempt.lot_number,
+          rack_height: currentAttempt.rack_height,
+        },
+      });
+    }
   };
 
   const handlePauseCompetition = () => {
     setIsCompetitionActive(false);
     message.info('Competition paused');
+
+    // Broadcast pause event
+    broadcast({
+      type: 'competition_paused',
+      data: {
+        competition_id: competitionId || '',
+      },
+    });
   };
 
   const handleNextAttempt = () => {
     if (currentIndex < attemptOrder.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+      const nextIndex = currentIndex + 1;
+      setCurrentIndex(nextIndex);
+
+      // Broadcast next athlete up
+      const nextAttempt = attemptOrder[nextIndex];
+      if (nextAttempt) {
+        broadcast({
+          type: 'athlete_up',
+          data: {
+            athlete_id: nextAttempt.athlete_id,
+            athlete_name: nextAttempt.athlete_name,
+            weight_kg: nextAttempt.weight_kg,
+            attempt_number: nextAttempt.attempt_number,
+            lift_type: currentLift,
+            lot_number: nextAttempt.lot_number,
+            rack_height: nextAttempt.rack_height,
+          },
+        });
+      }
     } else {
       message.info('All attempts completed for this lift');
       setIsCompetitionActive(false);
+
+      // Broadcast competition ended
+      broadcast({
+        type: 'competition_ended',
+        data: {
+          competition_id: competitionId || '',
+        },
+      });
     }
   };
 
@@ -122,10 +190,24 @@ export const LiveCompetition = () => {
     setCurrentIndex(0);
     setIsCompetitionActive(false);
     message.info(`Switched to ${newLift.toUpperCase()}`);
+
+    // Broadcast lift changed
+    broadcast({
+      type: 'lift_changed',
+      data: {
+        lift_type: newLift,
+      },
+    });
   };
 
   const currentAttempt = attemptOrder[currentIndex];
   const hasAttempts = attemptOrder.length > 0;
+
+  const handleOpenExternalDisplay = () => {
+    const displayUrl = `${window.location.origin}/display`;
+    window.open(displayUrl, 'ExternalDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
+    message.success('External display opened in new window');
+  };
 
   return (
     <div>
@@ -258,6 +340,15 @@ export const LiveCompetition = () => {
                 {/* Quick Actions */}
                 <Card title="Quick Actions" size="small">
                   <Space direction="vertical" style={{ width: '100%' }}>
+                    <Button
+                      type="primary"
+                      icon={<DesktopOutlined />}
+                      onClick={handleOpenExternalDisplay}
+                      block
+                      style={{ background: '#722ed1', borderColor: '#722ed1' }}
+                    >
+                      Open External Display
+                    </Button>
                     <Button
                       icon={<ReloadOutlined />}
                       onClick={() => {

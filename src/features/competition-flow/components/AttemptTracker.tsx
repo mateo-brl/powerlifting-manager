@@ -4,6 +4,7 @@ import { CheckCircleFilled, CloseCircleFilled, TrophyOutlined, HistoryOutlined }
 import { AttemptOrder } from '../../weigh-in/types';
 import { LiftType } from '../types';
 import { useAttemptStore } from '../stores/attemptStore';
+import { useBroadcastStore } from '../stores/broadcastStore';
 
 const { Title, Text } = Typography;
 
@@ -21,6 +22,7 @@ export const AttemptTracker = ({
   onComplete,
 }: AttemptTrackerProps) => {
   const { attempts, createAttempt, updateAttempt } = useAttemptStore();
+  const { broadcast } = useBroadcastStore();
   const [weight, setWeight] = useState<number>(currentAttempt.weight_kg);
   const [refereeVotes, setRefereeVotes] = useState<[boolean | null, boolean | null, boolean | null]>([
     null,
@@ -86,6 +88,20 @@ export const AttemptTracker = ({
 
       const greenCount = refereeVotes.filter(v => v === true).length;
       const success = greenCount >= 2;
+
+      // Broadcast attempt result
+      broadcast({
+        type: 'attempt_result',
+        data: {
+          athlete_id: currentAttempt.athlete_id,
+          athlete_name: currentAttempt.athlete_name,
+          weight_kg: weight,
+          attempt_number: currentAttempt.attempt_number,
+          lift_type: liftType,
+          result: success ? 'success' : 'failure',
+          referee_votes: refereeVotes as [boolean, boolean, boolean],
+        },
+      });
 
       message.success(success ? 'Good lift! ✓' : 'No lift ✗');
 
