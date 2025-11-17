@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button, Card, Table, Tag, message, Alert, Space } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useFlightStore } from '../stores/flightStore';
@@ -10,6 +11,7 @@ import { Flight } from '../../weigh-in/types';
 import type { ColumnsType } from 'antd/es/table';
 
 export const FlightManagement = () => {
+  const { t } = useTranslation();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
@@ -34,24 +36,21 @@ export const FlightManagement = () => {
 
   const handleCalculateFlights = async () => {
     if (competitionWeighIns.length === 0) {
-      message.warning('No weigh-ins recorded yet');
+      message.warning(t('flight.messages.tooFewAthletes'));
       return;
     }
 
     if (!competitionId) {
-      message.error('No competition ID');
+      message.error(t('competition.messages.error'));
       return;
     }
 
     try {
-      // Delete existing flights for this competition
       await deleteFlightsByCompetition(competitionId);
 
-      // Calculate new flights
       const calculatedFlights = calculateFlights(competitionAthletes, competitionWeighIns);
       const validation = validateFlightBalance(calculatedFlights);
 
-      // Save flights to database
       for (const flight of calculatedFlights) {
         await createFlight({
           competition_id: competitionId,
@@ -65,12 +64,12 @@ export const FlightManagement = () => {
       setValidation(validation);
 
       if (validation.valid) {
-        message.success(`${calculatedFlights.length} flights created successfully`);
+        message.success(t('flight.messages.calculated'));
       } else {
-        message.warning('Flights created with warnings');
+        message.warning(t('flight.messages.unbalanced'));
       }
     } catch (error) {
-      message.error('Failed to create flights');
+      message.error(t('flight.messages.error'));
       console.error(error);
     }
   };
@@ -80,43 +79,43 @@ export const FlightManagement = () => {
 
     try {
       await deleteFlightsByCompetition(competitionId);
-      message.info('Flights cleared. Click "Calculate Flights" to regenerate.');
+      message.info(t('flight.messages.calculated'));
       setValidation({ valid: true, warnings: [] });
     } catch (error) {
-      message.error('Failed to clear flights');
+      message.error(t('flight.messages.error'));
       console.error(error);
     }
   };
 
   const flightColumns: ColumnsType<Flight> = [
     {
-      title: 'Flight',
+      title: t('flight.flight'),
       dataIndex: 'name',
       key: 'name',
     },
     {
-      title: 'Lift Type',
+      title: t('flight.fields.liftType'),
       dataIndex: 'lift_type',
       key: 'lift_type',
       render: (type: string) => (
         <Tag color={type === 'squat' ? 'blue' : type === 'bench' ? 'green' : 'red'}>
-          {type.toUpperCase()}
+          {t(`live.lifts.${type}`).toUpperCase()}
         </Tag>
       ),
     },
     {
-      title: 'Athletes',
+      title: t('athlete.title'),
       dataIndex: 'athlete_ids',
       key: 'athlete_ids',
       render: (ids: string[]) => ids.length,
     },
     {
-      title: 'Status',
+      title: t('flight.fields.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
         <Tag color={status === 'pending' ? 'default' : status === 'active' ? 'green' : 'blue'}>
-          {status.toUpperCase()}
+          {t(`flight.status.${status}`).toUpperCase()}
         </Tag>
       ),
     },
@@ -125,7 +124,7 @@ export const FlightManagement = () => {
   return (
     <div>
       <Card
-        title="Flight Management"
+        title={t('flight.title')}
         extra={
           <Space>
             {competitionFlights.length > 0 && (
@@ -134,7 +133,7 @@ export const FlightManagement = () => {
                 onClick={handleRecalculate}
                 danger
               >
-                Clear Flights
+                {t('flight.recalculate')}
               </Button>
             )}
             <Button
@@ -142,21 +141,21 @@ export const FlightManagement = () => {
               onClick={handleCalculateFlights}
               disabled={competitionWeighIns.length === 0}
             >
-              {competitionFlights.length > 0 ? 'Recalculate Flights' : 'Calculate Flights'}
+              {competitionFlights.length > 0 ? t('flight.recalculate') : t('flight.calculate')}
             </Button>
             <Button
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate(`/competitions/${competitionId}`)}
             >
-              Back
+              {t('common.back')}
             </Button>
           </Space>
         }
       >
         <div style={{ marginBottom: 16 }}>
           <Alert
-            message="Flight Calculation"
-            description={`${competitionWeighIns.length} athletes weighed in out of ${competitionAthletes.length} total. Max ${14} athletes per flight.`}
+            message={t('flight.title')}
+            description={`${competitionWeighIns.length} / ${competitionAthletes.length} ${t('athlete.title')}`}
             type="info"
             showIcon
           />
@@ -164,7 +163,7 @@ export const FlightManagement = () => {
 
         {validation.warnings.length > 0 && (
           <Alert
-            message="Warnings"
+            message={t('common.warning')}
             description={
               <ul style={{ margin: 0, paddingLeft: 20 }}>
                 {validation.warnings.map((warning, idx) => (
@@ -189,7 +188,7 @@ export const FlightManagement = () => {
 
         {competitionFlights.length === 0 && (
           <div style={{ textAlign: 'center', padding: 40, color: '#8c8c8c' }}>
-            No flights calculated yet. Click "Calculate Flights" to generate flights automatically.
+            {t('flight.noFlights')}
           </div>
         )}
       </Card>

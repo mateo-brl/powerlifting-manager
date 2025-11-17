@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Card, Button, InputNumber, message, Space, Typography, Tag } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { AttemptOrder } from '../../weigh-in/types';
 import { LiftType } from '../types';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -20,6 +21,7 @@ export const AttemptTracker = ({
   competitionId,
   onComplete,
 }: AttemptTrackerProps) => {
+  const { t } = useTranslation();
   const { attempts, createAttempt, updateAttempt } = useAttemptStore();
   const { broadcast } = useBroadcastStore();
   const [weight, setWeight] = useState<number>(currentAttempt.weight_kg);
@@ -67,7 +69,7 @@ export const AttemptTracker = ({
   const handleSubmit = async () => {
     console.log('[AttemptTracker] handleSubmit called - canSubmit:', canSubmit);
     if (!canSubmit) {
-      message.warning('All 3 referees must vote');
+      message.warning(t('live.referee.vote'));
       return;
     }
 
@@ -115,13 +117,13 @@ export const AttemptTracker = ({
         },
       });
 
-      message.success(success ? 'Good lift! ✓' : 'No lift ✗');
+      message.success(success ? t('live.attempt.success') + ' ✓' : t('live.attempt.failure') + ' ✗');
 
       // Mark attempt as completed but don't move to next automatically
       setIsAttemptCompleted(true);
       setAttemptResult(success ? 'success' : 'failure');
     } catch (error) {
-      message.error('Failed to record attempt');
+      message.error(t('live.messages.attemptSaved'));
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -152,7 +154,7 @@ export const AttemptTracker = ({
                   border: attempt.result === 'success' ? '1px solid #1890ff' : 'none'
                 }}
               >
-                #{attempt.attempt_number}: {attempt.weight_kg}kg {attempt.result === 'success' ? '✓' : '✗'}
+                {t('live.attempt.number', { number: attempt.attempt_number })}: {attempt.weight_kg}kg {attempt.result === 'success' ? '✓' : '✗'}
               </Tag>
             ))}
           </Space>
@@ -167,10 +169,10 @@ export const AttemptTracker = ({
               {currentAttempt.athlete_name}
             </Title>
             <Space size="small">
-              <Tag style={{ margin: 0, fontSize: 11 }}>Lot {currentAttempt.lot_number}</Tag>
-              <Tag style={{ margin: 0, fontSize: 11 }}>Att. {currentAttempt.attempt_number}</Tag>
+              <Tag style={{ margin: 0, fontSize: 11 }}>{t('spottersDisplay.lotNumber', { number: currentAttempt.lot_number })}</Tag>
+              <Tag style={{ margin: 0, fontSize: 11 }}>{t('live.attempt.number', { number: currentAttempt.attempt_number })}</Tag>
               {currentAttempt.rack_height && (
-                <Tag style={{ margin: 0, fontSize: 11 }}>Rack {currentAttempt.rack_height}</Tag>
+                <Tag style={{ margin: 0, fontSize: 11 }}>{t('spottersDisplay.rackHeights.rack')} {currentAttempt.rack_height}</Tag>
               )}
             </Space>
           </div>
@@ -185,7 +187,7 @@ export const AttemptTracker = ({
 
       {/* Weight Adjustment - Inline */}
       <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
-        <Text strong style={{ fontSize: 13 }}>Weight:</Text>
+        <Text strong style={{ fontSize: 13 }}>{t('live.attempt.weight')}:</Text>
         <InputNumber
           value={weight}
           onChange={(val) => val && setWeight(val)}
@@ -197,13 +199,13 @@ export const AttemptTracker = ({
           addonAfter="kg"
         />
         <Text type="secondary" style={{ fontSize: 12 }}>
-          (Original: {currentAttempt.weight_kg} kg)
+          ({currentAttempt.weight_kg} kg)
         </Text>
       </div>
 
       {/* Referee Lights - Compact */}
       <div style={{ marginBottom: 12 }}>
-        <Text strong style={{ fontSize: 13, marginBottom: 8, display: 'block' }}>Referee Decisions</Text>
+        <Text strong style={{ fontSize: 13, marginBottom: 8, display: 'block' }}>{t('live.referee.title')}</Text>
         <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
           {[0, 1, 2].map((index) => (
             <Card
@@ -218,7 +220,7 @@ export const AttemptTracker = ({
               bodyStyle={{ padding: '8px' }}
             >
               <div style={{ marginBottom: 6, fontSize: 12, fontWeight: 'bold' }}>
-                Ref {index + 1}
+                {t('live.referee.center')} {index + 1}
                 {refereeVotes[index] !== null && (
                   <span style={{ marginLeft: 4 }}>
                     {refereeVotes[index] ? '⚪' : '🔴'}
@@ -241,7 +243,7 @@ export const AttemptTracker = ({
                     fontWeight: refereeVotes[index] === true ? 'bold' : undefined,
                   }}
                 >
-                  ⚪ White
+                  ⚪ {t('live.attempt.success')}
                 </Button>
                 <Button
                   type={refereeVotes[index] === false ? 'primary' : 'default'}
@@ -256,7 +258,7 @@ export const AttemptTracker = ({
                     borderColor: refereeVotes[index] === false ? '#ff4d4f' : undefined,
                   }}
                 >
-                  🔴 Red
+                  🔴 {t('live.attempt.failure')}
                 </Button>
               </Space>
             </Card>
@@ -280,7 +282,7 @@ export const AttemptTracker = ({
                   fontWeight: 'bold'
                 }}
               >
-                {greenCount >= 2 ? '✓ GOOD' : '✗ NO LIFT'}
+                {greenCount >= 2 ? '✓ ' + t('live.attempt.success') : '✗ ' + t('live.attempt.failure')}
               </Tag>
             </Space>
           </div>
@@ -298,7 +300,7 @@ export const AttemptTracker = ({
           loading={isSubmitting}
           style={{ height: 44, fontSize: 14, fontWeight: 'bold', marginTop: 8 }}
         >
-          {canSubmit ? 'Confirm Attempt' : 'Waiting for decisions...'}
+          {canSubmit ? t('common.confirm') : t('live.attempt.pending') + '...'}
         </Button>
       ) : (
         <div style={{ marginTop: 8 }}>
@@ -312,7 +314,7 @@ export const AttemptTracker = ({
             color: attemptResult === 'success' ? '#000000' : '#ffffff'
           }}>
             <Title level={5} style={{ margin: 0, color: attemptResult === 'success' ? '#000000' : '#ffffff' }}>
-              {attemptResult === 'success' ? '✓ GOOD LIFT (WHITE)' : '✗ NO LIFT (RED)'}
+              {attemptResult === 'success' ? '✓ ' + t('externalDisplay.goodLift') : '✗ ' + t('externalDisplay.noLift')}
             </Title>
           </div>
           <Button
@@ -322,7 +324,7 @@ export const AttemptTracker = ({
             onClick={handleNextAthlete}
             style={{ height: 44, fontSize: 14, fontWeight: 'bold', background: '#52c41a', borderColor: '#52c41a' }}
           >
-            Next Athlete →
+            {t('live.nextAthlete')} →
           </Button>
         </div>
       )}

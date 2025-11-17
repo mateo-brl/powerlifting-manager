@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col, Alert } from 'antd';
 import { SaveOutlined, CheckCircleOutlined, WarningOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../stores/weighInStore';
 import { isWeightClassValid } from '../../../shared/utils/calculations';
@@ -18,6 +19,7 @@ interface WeighInFormData {
 }
 
 export const WeighInForm = () => {
+  const { t } = useTranslation();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
@@ -73,12 +75,12 @@ export const WeighInForm = () => {
 
   const handleSubmit = async (values: WeighInFormData) => {
     if (!competitionId) {
-      message.error('Competition ID is required');
+      message.error(t('competition.messages.error'));
       return;
     }
 
     if (weightClassValid === false) {
-      message.error('Bodyweight does not match weight class!');
+      message.error(t('weighIn.validation.bodyweightAboveClass'));
       return;
     }
 
@@ -96,12 +98,12 @@ export const WeighInForm = () => {
         bench_safety_height: values.bench_safety_height,
       });
 
-      message.success('Weigh-in completed successfully');
+      message.success(t('weighIn.messages.saved'));
       form.resetFields();
       setSelectedAthlete(null);
       setWeightClassValid(null);
     } catch (error) {
-      message.error('Failed to complete weigh-in');
+      message.error(t('weighIn.messages.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -110,30 +112,30 @@ export const WeighInForm = () => {
 
   return (
     <Card
-      title="Weigh-In / Pesée"
+      title={t('weighIn.title')}
       style={{ maxWidth: 900, margin: '0 auto' }}
       extra={
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/competitions/${competitionId}`)}
         >
-          Back to Competition
+          {t('common.back')}
         </Button>
       }
     >
       {competitionAthletes.length > 0 && (
         <div style={{ marginBottom: 16 }}>
           <Tag color={notWeighedIn.length === 0 ? 'success' : 'processing'} style={{ fontSize: 14, padding: '4px 12px' }}>
-            {competitionWeighIns.length} / {competitionAthletes.length} athletes weighed in
-            {notWeighedIn.length === 0 && ' - All done! ✓'}
+            {competitionWeighIns.length} / {competitionAthletes.length} {t('athlete.title')}
+            {notWeighedIn.length === 0 && ' - ✓'}
           </Tag>
         </div>
       )}
 
       {notWeighedIn.length === 0 && competitionAthletes.length > 0 && (
         <Alert
-          message="All Athletes Weighed In"
-          description="All athletes have been weighed in successfully! You can now proceed to flight management or start the competition."
+          message={t('weighIn.messages.saved')}
+          description={t('weighIn.messages.saved')}
           type="success"
           showIcon
           style={{ marginBottom: 16 }}
@@ -143,27 +145,27 @@ export const WeighInForm = () => {
       {selectedAthlete && (
         <Card type="inner" style={{ marginBottom: 24 }}>
           <Descriptions column={2} size="small">
-            <Descriptions.Item label="Athlete">
+            <Descriptions.Item label={t('athlete.title')}>
               {selectedAthlete.first_name} {selectedAthlete.last_name}
             </Descriptions.Item>
-            <Descriptions.Item label="Gender">
+            <Descriptions.Item label={t('athlete.fields.gender')}>
               <Tag color={selectedAthlete.gender === 'M' ? 'blue' : 'pink'}>
-                {selectedAthlete.gender}
+                {t(`athlete.gender.${selectedAthlete.gender}`)}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Weight Class">
+            <Descriptions.Item label={t('athlete.fields.weightClass')}>
               {selectedAthlete.weight_class}
             </Descriptions.Item>
-            <Descriptions.Item label="Division">
+            <Descriptions.Item label={t('athlete.fields.division')}>
               <Tag color={selectedAthlete.division === 'raw' ? 'green' : 'purple'}>
-                {selectedAthlete.division.toUpperCase()}
+                {t(`athlete.division.${selectedAthlete.division}`).toUpperCase()}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Age Category">
+            <Descriptions.Item label={t('athlete.fields.ageCategory')}>
               {selectedAthlete.age_category}
             </Descriptions.Item>
-            <Descriptions.Item label="Lot Number">
-              {selectedAthlete.lot_number || 'Not assigned'}
+            <Descriptions.Item label={t('athlete.fields.lotNumber')}>
+              {selectedAthlete.lot_number || '-'}
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -176,11 +178,11 @@ export const WeighInForm = () => {
       >
         <Form.Item
           name="athlete_id"
-          label="Select Athlete"
-          rules={[{ required: true, message: 'Please select an athlete' }]}
+          label={t('weighIn.selectAthlete')}
+          rules={[{ required: true, message: t('weighIn.messages.selectAthleteFirst') }]}
         >
           <Select
-            placeholder="Select athlete to weigh in"
+            placeholder={t('weighIn.selectAthlete')}
             onChange={handleAthleteSelect}
             showSearch
             filterOption={(input, option) =>
@@ -197,16 +199,16 @@ export const WeighInForm = () => {
           <>
             <Form.Item
               name="bodyweight"
-              label="Bodyweight (kg)"
-              rules={[{ required: true, message: 'Please enter bodyweight' }]}
+              label={t('weighIn.fields.bodyweight')}
+              rules={[{ required: true, message: t('weighIn.form.bodyweightRequired') }]}
               extra={
                 weightClassValid === true ? (
                   <span style={{ color: 'green' }}>
-                    <CheckCircleOutlined /> Weight class valid
+                    <CheckCircleOutlined /> {t('weighIn.validation.bodyweightAboveClass')}
                   </span>
                 ) : weightClassValid === false ? (
                   <span style={{ color: 'red' }}>
-                    <WarningOutlined /> Weight does NOT match class {selectedAthlete.weight_class}
+                    <WarningOutlined /> {t('weighIn.validation.bodyweightAboveClass')} {selectedAthlete.weight_class}
                   </span>
                 ) : null
               }
@@ -218,18 +220,18 @@ export const WeighInForm = () => {
                 precision={2}
                 style={{ width: '100%' }}
                 onChange={handleBodyweightChange}
-                placeholder="Weighed bodyweight"
+                placeholder={t('weighIn.fields.bodyweight')}
               />
             </Form.Item>
 
-            <Card type="inner" title="Opening Attempts" style={{ marginBottom: 16 }}>
+            <Card type="inner" title={t('weighIn.openingAttempts')} style={{ marginBottom: 16 }}>
               <Row gutter={16}>
                 <Col span={8}>
                   <Form.Item
                     name="opening_squat"
-                    label="Squat (kg)"
+                    label={t('weighIn.fields.openingSquat')}
                     rules={[
-                      { required: true, message: 'Required' },
+                      { required: true, message: t('weighIn.form.squatRequired') },
                       { validator: (_, value) => validateOpeningAttempt(value, 20) },
                     ]}
                   >
@@ -237,16 +239,16 @@ export const WeighInForm = () => {
                       min={20}
                       step={2.5}
                       style={{ width: '100%' }}
-                      placeholder="Opening squat"
+                      placeholder={t('weighIn.fields.openingSquat')}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item
                     name="opening_bench"
-                    label="Bench Press (kg)"
+                    label={t('weighIn.fields.openingBench')}
                     rules={[
-                      { required: true, message: 'Required' },
+                      { required: true, message: t('weighIn.form.benchRequired') },
                       { validator: (_, value) => validateOpeningAttempt(value, 20) },
                     ]}
                   >
@@ -254,16 +256,16 @@ export const WeighInForm = () => {
                       min={20}
                       step={2.5}
                       style={{ width: '100%' }}
-                      placeholder="Opening bench"
+                      placeholder={t('weighIn.fields.openingBench')}
                     />
                   </Form.Item>
                 </Col>
                 <Col span={8}>
                   <Form.Item
                     name="opening_deadlift"
-                    label="Deadlift (kg)"
+                    label={t('weighIn.fields.openingDeadlift')}
                     rules={[
-                      { required: true, message: 'Required' },
+                      { required: true, message: t('weighIn.form.deadliftRequired') },
                       { validator: (_, value) => validateOpeningAttempt(value, 20) },
                     ]}
                   >
@@ -271,19 +273,19 @@ export const WeighInForm = () => {
                       min={20}
                       step={2.5}
                       style={{ width: '100%' }}
-                      placeholder="Opening deadlift"
+                      placeholder={t('weighIn.fields.openingDeadlift')}
                     />
                   </Form.Item>
                 </Col>
               </Row>
             </Card>
 
-            <Card type="inner" title="Rack Heights (Optional)">
+            <Card type="inner" title={t('weighIn.rackHeights')}>
               <Row gutter={16}>
                 <Col span={8}>
                   <Form.Item
                     name="squat_rack_height"
-                    label="Squat Rack Height"
+                    label={t('weighIn.fields.squatRackHeight')}
                   >
                     <InputNumber
                       min={1}
@@ -296,7 +298,7 @@ export const WeighInForm = () => {
                 <Col span={8}>
                   <Form.Item
                     name="bench_rack_height"
-                    label="Bench Rack Height"
+                    label={t('weighIn.fields.benchRackHeight')}
                   >
                     <InputNumber
                       min={1}
@@ -309,7 +311,7 @@ export const WeighInForm = () => {
                 <Col span={8}>
                   <Form.Item
                     name="bench_safety_height"
-                    label="Bench Safety Height"
+                    label={t('weighIn.fields.benchSafetyHeight')}
                   >
                     <InputNumber
                       min={1}
@@ -331,7 +333,7 @@ export const WeighInForm = () => {
                 size="large"
                 block
               >
-                Complete Weigh-In
+                {t('weighIn.messages.saved')}
               </Button>
             </Form.Item>
           </>

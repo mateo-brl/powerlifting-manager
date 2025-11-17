@@ -21,6 +21,7 @@ export interface AthleteUpEvent {
     lift_type: 'squat' | 'bench' | 'deadlift';
     lot_number?: number;
     rack_height?: number;
+    safety_height?: number;
   };
 }
 

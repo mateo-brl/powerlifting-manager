@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Button, Space, message, Progress, Typography, Divider, InputNumber, Alert } from 'antd';
 import { ThunderboltOutlined, TrophyOutlined, UserAddOutlined, CheckSquareOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCompetitionStore } from '../features/competition/stores/competitionStore';
 import { useAthleteStore } from '../features/athlete/stores/athleteStore';
 import { useWeighInStore } from '../features/weigh-in/stores/weighInStore';
@@ -11,6 +12,7 @@ import { initializeMockCompetition } from '../shared/utils/mockData';
 const { Title, Text } = Typography;
 
 export const DemoDataInitializer = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { createCompetition } = useCompetitionStore();
   const { createAthlete } = useAthleteStore();
@@ -71,7 +73,7 @@ export const DemoDataInitializer = () => {
     setProgress(0);
 
     try {
-      message.info('Génération de la compétition de démo...');
+      message.info(t('dashboard.demoData.description'));
       setProgress(10);
 
       // Create competition with athletes and weigh-ins
@@ -83,22 +85,22 @@ export const DemoDataInitializer = () => {
       );
 
       setProgress(50);
-      message.success(`Compétition "${competition.name}" créée avec ${athletes.length} athlètes !`);
+      message.success(t('competition.messages.created') + ` - ${athletes.length} ${t('athlete.title').toLowerCase()}`);
 
       // Generate some mock attempts
-      message.info('Génération de tentatives factices...');
+      message.info(t('dashboard.demoData.description'));
       await generateMockAttempts(competition.id, athletes, weighIns);
 
       setProgress(100);
       setDemoCompetitionId(competition.id);
 
       message.success({
-        content: 'Démo complète générée avec succès ! 🎉',
+        content: t('dashboard.demoData.success'),
         duration: 5,
       });
 
     } catch (error) {
-      message.error('Erreur lors de la génération de la démo');
+      message.error(t('dashboard.demoData.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -111,14 +113,14 @@ export const DemoDataInitializer = () => {
       title={
         <Space>
           <ThunderboltOutlined style={{ color: '#faad14' }} />
-          <Title level={4} style={{ margin: 0 }}>Démo Rapide</Title>
+          <Title level={4} style={{ margin: 0 }}>{t('dashboard.demoData.title')}</Title>
         </Space>
       }
       style={{ marginBottom: 24 }}
     >
       <Alert
-        message="Mode Démo"
-        description="Générez instantanément une compétition complète avec athlètes, pesées et tentatives pour tester toutes les fonctionnalités."
+        message={t('dashboard.demoData.title')}
+        description={t('dashboard.demoData.description')}
         type="info"
         showIcon
         style={{ marginBottom: 16 }}
@@ -126,7 +128,7 @@ export const DemoDataInitializer = () => {
 
       <Space direction="vertical" style={{ width: '100%' }} size="middle">
         <div>
-          <Text strong>Nombre d'athlètes :</Text>
+          <Text strong>{t('athlete.total')}:</Text>
           <InputNumber
             value={athleteCount}
             onChange={(val) => val && setAthleteCount(val)}
@@ -148,7 +150,7 @@ export const DemoDataInitializer = () => {
           block
           style={{ height: 50, fontSize: 16, fontWeight: 'bold' }}
         >
-          {loading ? 'Génération en cours...' : 'Générer Compétition de Démo'}
+          {loading ? t('common.loading') : t('dashboard.demoData.button')}
         </Button>
 
         {loading && (
@@ -158,7 +160,7 @@ export const DemoDataInitializer = () => {
         {demoCompetitionId && !loading && (
           <div>
             <Alert
-              message="Compétition de démo créée !"
+              message={t('dashboard.demoData.success')}
               type="success"
               showIcon
               style={{ marginBottom: 12 }}
@@ -170,7 +172,7 @@ export const DemoDataInitializer = () => {
                 onClick={() => navigate(`/competitions/${demoCompetitionId}`)}
                 block
               >
-                Voir la Compétition
+                {t('competition.view')}
               </Button>
 
               <Button
@@ -178,7 +180,7 @@ export const DemoDataInitializer = () => {
                 onClick={() => navigate(`/competitions/${demoCompetitionId}/weigh-in`)}
                 block
               >
-                Pesée
+                {t('weighIn.title')}
               </Button>
 
               <Button
@@ -188,7 +190,7 @@ export const DemoDataInitializer = () => {
                 block
                 style={{ background: '#52c41a', borderColor: '#52c41a' }}
               >
-                Gestion en Direct
+                {t('live.title')}
               </Button>
 
               <Button
@@ -196,7 +198,7 @@ export const DemoDataInitializer = () => {
                 onClick={() => navigate(`/competitions/${demoCompetitionId}/rankings`)}
                 block
               >
-                Classements
+                {t('rankings.title')}
               </Button>
             </Space>
           </div>
@@ -206,14 +208,14 @@ export const DemoDataInitializer = () => {
 
         <div style={{ fontSize: 12, color: '#8c8c8c' }}>
           <Text type="secondary">
-            La démo génère automatiquement :
+            {t('dashboard.demoData.description')}
           </Text>
           <ul style={{ marginTop: 8, paddingLeft: 20 }}>
-            <li>Une compétition avec nom, date et lieu</li>
-            <li>{athleteCount} athlètes avec stats réalistes</li>
-            <li>Pesées complètes pour tous les athlètes</li>
-            <li>Tentatives factices pour démonstration</li>
-            <li>Données prêtes pour gestion en direct</li>
+            <li>{t('competition.new')}</li>
+            <li>{athleteCount} {t('athlete.title').toLowerCase()}</li>
+            <li>{t('weighIn.title')}</li>
+            <li>{t('live.attemptTracker')}</li>
+            <li>{t('live.title')}</li>
           </ul>
         </div>
       </Space>

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Table, Tabs, Tag, Select, Space, Typography, Button, message } from 'antd';
 import { TrophyOutlined, FireOutlined, ArrowLeftOutlined, DownloadOutlined, FileExcelOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -12,6 +13,7 @@ import { AthleteScore } from '../types';
 const { Title } = Typography;
 
 export const Rankings = () => {
+  const { t } = useTranslation();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
@@ -63,7 +65,7 @@ export const Rankings = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `rankings_${competitionId}_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-    message.success('Rankings exported successfully');
+    message.success(t('rankings.exportSuccess'));
   };
 
   const handleExportOpenPowerlifting = () => {
@@ -144,7 +146,7 @@ export const Rankings = () => {
     link.href = URL.createObjectURL(blob);
     link.download = `openpowerlifting_${competitionId}_${new Date().toISOString().split('T')[0]}.csv`;
     link.click();
-    message.success('OpenPowerlifting format exported successfully');
+    message.success(t('rankings.exportSuccess'));
   };
 
   useEffect(() => {
@@ -184,7 +186,7 @@ export const Rankings = () => {
 
   const columns: ColumnsType<AthleteScore> = [
     {
-      title: 'Rank',
+      title: t('rankings.rank'),
       dataIndex: 'category_rank',
       key: 'rank',
       width: 80,
@@ -207,7 +209,7 @@ export const Rankings = () => {
       },
     },
     {
-      title: 'Athlete',
+      title: t('rankings.athlete'),
       dataIndex: 'athlete_name',
       key: 'name',
       render: (name: string, record) => (
@@ -215,7 +217,7 @@ export const Rankings = () => {
           <div style={{ fontWeight: 'bold' }}>{name}</div>
           <Space size="small">
             <Tag color={record.gender === 'M' ? 'blue' : 'pink'} style={{ fontSize: 11 }}>
-              {record.gender}
+              {t(`athlete.gender.${record.gender}`)}
             </Tag>
             <Tag color="purple" style={{ fontSize: 11 }}>
               {record.weight_class}
@@ -225,35 +227,35 @@ export const Rankings = () => {
       ),
     },
     {
-      title: 'BW',
+      title: t('rankings.bodyweight'),
       dataIndex: 'bodyweight',
       key: 'bodyweight',
       width: 80,
       render: (bw: number) => `${bw.toFixed(1)}`,
     },
     {
-      title: 'Squat',
+      title: t('rankings.squatBest'),
       dataIndex: 'best_squat',
       key: 'squat',
       width: 90,
       render: (weight: number) => (weight > 0 ? `${weight} kg` : '-'),
     },
     {
-      title: 'Bench',
+      title: t('rankings.benchBest'),
       dataIndex: 'best_bench',
       key: 'bench',
       width: 90,
       render: (weight: number) => (weight > 0 ? `${weight} kg` : '-'),
     },
     {
-      title: 'Deadlift',
+      title: t('rankings.deadliftBest'),
       dataIndex: 'best_deadlift',
       key: 'deadlift',
       width: 100,
       render: (weight: number) => (weight > 0 ? `${weight} kg` : '-'),
     },
     {
-      title: 'Total',
+      title: t('rankings.total'),
       dataIndex: 'total',
       key: 'total',
       width: 100,
@@ -264,21 +266,21 @@ export const Rankings = () => {
       ),
     },
     {
-      title: 'IPF GL',
+      title: t('rankings.ipfPoints'),
       dataIndex: 'ipf_gl_points',
       key: 'ipf_gl',
       width: 90,
       render: (points?: number) => points ? points.toFixed(2) : '-',
     },
     {
-      title: 'DOTS',
+      title: t('rankings.dots'),
       dataIndex: 'dots_score',
       key: 'dots',
       width: 90,
       render: (points?: number) => points ? points.toFixed(2) : '-',
     },
     {
-      title: 'Wilks',
+      title: t('rankings.wilks'),
       dataIndex: 'wilks_score',
       key: 'wilks',
       width: 90,
@@ -288,7 +290,7 @@ export const Rankings = () => {
 
   const absoluteColumns: ColumnsType<AthleteScore> = [
     {
-      title: 'Rank',
+      title: t('rankings.rank'),
       dataIndex: 'absolute_rank',
       key: 'rank',
       width: 80,
@@ -313,7 +315,6 @@ export const Rankings = () => {
     ...columns.slice(1),
   ];
 
-  // Get unique weight classes for filter
   const weightClasses = Array.from(new Set(allScores.map(s => s.weight_class))).sort();
 
   return (
@@ -322,7 +323,7 @@ export const Rankings = () => {
         title={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <Title level={3} style={{ margin: 0 }}>
-              <TrophyOutlined /> Competition Rankings
+              <TrophyOutlined /> {t('rankings.title')}
             </Title>
             <Space wrap>
               <Select
@@ -330,9 +331,9 @@ export const Rankings = () => {
                 onChange={setSelectedGender}
                 style={{ width: 120 }}
                 options={[
-                  { value: 'all', label: 'All Genders' },
-                  { value: 'M', label: 'Men' },
-                  { value: 'F', label: 'Women' },
+                  { value: 'all', label: t('rankings.filterByGender') },
+                  { value: 'M', label: t('athlete.gender.M') },
+                  { value: 'F', label: t('athlete.gender.F') },
                 ]}
               />
               <Select
@@ -340,7 +341,7 @@ export const Rankings = () => {
                 onChange={setSelectedWeightClass}
                 style={{ width: 150 }}
                 options={[
-                  { value: 'all', label: 'All Classes' },
+                  { value: 'all', label: t('rankings.allCategories') },
                   ...weightClasses.map(wc => ({ value: wc, label: `${wc} kg` })),
                 ]}
               />
@@ -349,7 +350,7 @@ export const Rankings = () => {
                 onClick={handleExportExcel}
                 disabled={categoryScores.length === 0}
               >
-                Export Excel
+                {t('rankings.export')}
               </Button>
               <Button
                 icon={<DownloadOutlined />}
@@ -366,7 +367,7 @@ export const Rankings = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(`/competitions/${competitionId}`)}
           >
-            Back to Competition
+            {t('common.back')}
           </Button>
         }
       >
@@ -375,7 +376,7 @@ export const Rankings = () => {
           items={[
             {
               key: 'category',
-              label: `By Category (${categoryScores.length})`,
+              label: `${t('rankings.byCategory')} (${categoryScores.length})`,
               children: (
                 <Table
                   columns={columns}
@@ -388,7 +389,7 @@ export const Rankings = () => {
             },
             {
               key: 'absolute',
-              label: `Absolute Rankings (${absoluteScores.length})`,
+              label: `${t('rankings.absolute')} (${absoluteScores.length})`,
               children: (
                 <Table
                   columns={absoluteColumns}

@@ -3,11 +3,13 @@ import { Table, Button, Space, Tag, Input, Popconfirm, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EyeOutlined, SearchOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Competition } from '../types';
 import { useCompetitionStore } from '../stores/competitionStore';
 import { formatDate } from '../../../shared/utils/formatters';
 
 export const CompetitionList = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { competitions, loadCompetitions, deleteCompetition } = useCompetitionStore();
   const [loading, setLoading] = useState(false);
@@ -22,7 +24,7 @@ export const CompetitionList = () => {
     try {
       await loadCompetitions();
     } catch (error) {
-      message.error('Failed to load competitions');
+      message.error(t('competition.messages.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -32,9 +34,9 @@ export const CompetitionList = () => {
   const handleDelete = async (id: string) => {
     try {
       await deleteCompetition(id);
-      message.success('Competition deleted successfully');
+      message.success(t('competition.messages.deleted'));
     } catch (error) {
-      message.error('Failed to delete competition');
+      message.error(t('competition.messages.error'));
       console.error(error);
     }
   };
@@ -60,13 +62,13 @@ export const CompetitionList = () => {
 
   const columns: ColumnsType<Competition> = [
     {
-      title: 'Name',
+      title: t('competition.fields.name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: 'Date',
+      title: t('competition.fields.date'),
       dataIndex: 'date',
       key: 'date',
       render: (date: string) => formatDate(date),
@@ -74,13 +76,13 @@ export const CompetitionList = () => {
       defaultSortOrder: 'descend',
     },
     {
-      title: 'Location',
+      title: t('competition.fields.location'),
       dataIndex: 'location',
       key: 'location',
       render: (location: string | null) => location || '-',
     },
     {
-      title: 'Federation',
+      title: t('competition.fields.federation'),
       dataIndex: 'federation',
       key: 'federation',
       filters: [
@@ -92,23 +94,23 @@ export const CompetitionList = () => {
       onFilter: (value, record) => record.federation === value,
     },
     {
-      title: 'Status',
+      title: t('competition.fields.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
         <Tag color={getStatusColor(status || 'upcoming')}>
-          {(status || 'upcoming').toUpperCase()}
+          {t(`competition.status.${status || 'upcoming'}`).toUpperCase()}
         </Tag>
       ),
       filters: [
-        { text: 'Upcoming', value: 'upcoming' },
-        { text: 'Active', value: 'active' },
-        { text: 'Completed', value: 'completed' },
+        { text: t('competition.status.upcoming'), value: 'upcoming' },
+        { text: t('competition.status.in_progress'), value: 'active' },
+        { text: t('competition.status.completed'), value: 'completed' },
       ],
       onFilter: (value, record) => record.status === value,
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space size="small">
@@ -117,24 +119,24 @@ export const CompetitionList = () => {
             icon={<EyeOutlined />}
             onClick={() => navigate(`/competitions/${record.id}`)}
           >
-            View
+            {t('competition.view')}
           </Button>
           <Button
             type="link"
             icon={<EditOutlined />}
             onClick={() => navigate(`/competitions/${record.id}/edit`)}
           >
-            Edit
+            {t('common.edit')}
           </Button>
           <Popconfirm
-            title="Delete competition"
-            description="Are you sure you want to delete this competition? This will also delete all athletes and attempts."
+            title={t('common.delete')}
+            description={t('competition.messages.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.yes')}
+            cancelText={t('common.no')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
+              {t('common.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -146,7 +148,7 @@ export const CompetitionList = () => {
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
         <Input
-          placeholder="Search competitions..."
+          placeholder={t('common.search')}
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -157,7 +159,7 @@ export const CompetitionList = () => {
           icon={<PlusOutlined />}
           onClick={() => navigate('/competitions/new')}
         >
-          New Competition
+          {t('competition.new')}
         </Button>
       </div>
 
@@ -169,7 +171,7 @@ export const CompetitionList = () => {
         pagination={{
           pageSize: 10,
           showSizeChanger: true,
-          showTotal: (total) => `Total ${total} competitions`,
+          showTotal: (total) => `${t('competition.title')} ${total}`,
         }}
       />
     </div>

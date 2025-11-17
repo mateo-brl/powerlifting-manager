@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Card, Upload, Button, message, Table, Alert, Space } from 'antd';
 import { UploadOutlined, ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import type { UploadProps } from 'antd';
 import { useAthleteStore } from '../stores/athleteStore';
 
@@ -16,6 +17,7 @@ interface CsvRow {
 }
 
 export const AthleteImport = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { competitionId } = useParams<{ competitionId: string }>();
   const { createAthlete } = useAthleteStore();
@@ -62,21 +64,21 @@ export const AthleteImport = () => {
         const text = e.target?.result as string;
         const data = parseCSV(text);
         if (data.length === 0) {
-          message.error('No valid data found in CSV file');
+          message.error(t('athlete.messages.error'));
         } else {
           setParsedData(data);
-          message.success(`${data.length} athletes parsed successfully`);
+          message.success(t('athlete.messages.imported', { count: data.length }));
         }
       };
       reader.readAsText(file);
-      return false; // Prevent upload
+      return false;
     },
     showUploadList: false,
   };
 
   const handleImport = async () => {
     if (!competitionId) {
-      message.error('Competition ID is required');
+      message.error(t('competition.messages.error'));
       return;
     }
 
@@ -100,10 +102,10 @@ export const AthleteImport = () => {
     setLoading(false);
 
     if (successCount > 0) {
-      message.success(`${successCount} athletes imported successfully`);
+      message.success(t('athlete.messages.imported', { count: successCount }));
     }
     if (errorCount > 0) {
-      message.warning(`${errorCount} athletes failed to import`);
+      message.warning(t('athlete.messages.error'));
     }
 
     if (errorCount === 0) {
@@ -112,33 +114,33 @@ export const AthleteImport = () => {
   };
 
   const columns = [
-    { title: 'First Name', dataIndex: 'first_name', key: 'first_name' },
-    { title: 'Last Name', dataIndex: 'last_name', key: 'last_name' },
-    { title: 'Date of Birth', dataIndex: 'date_of_birth', key: 'date_of_birth' },
-    { title: 'Gender', dataIndex: 'gender', key: 'gender' },
-    { title: 'Weight Class', dataIndex: 'weight_class', key: 'weight_class' },
-    { title: 'Division', dataIndex: 'division', key: 'division' },
-    { title: 'Age Category', dataIndex: 'age_category', key: 'age_category' },
+    { title: t('athlete.fields.firstName'), dataIndex: 'first_name', key: 'first_name' },
+    { title: t('athlete.fields.lastName'), dataIndex: 'last_name', key: 'last_name' },
+    { title: t('athlete.fields.dateOfBirth'), dataIndex: 'date_of_birth', key: 'date_of_birth' },
+    { title: t('athlete.fields.gender'), dataIndex: 'gender', key: 'gender' },
+    { title: t('athlete.fields.weightClass'), dataIndex: 'weight_class', key: 'weight_class' },
+    { title: t('athlete.fields.division'), dataIndex: 'division', key: 'division' },
+    { title: t('athlete.fields.ageCategory'), dataIndex: 'age_category', key: 'age_category' },
   ];
 
   return (
     <Card
-      title="Import Athletes from CSV"
+      title={t('athlete.import')}
       extra={
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/competitions/${competitionId}`)}
         >
-          Back
+          {t('common.back')}
         </Button>
       }
     >
       <Space direction="vertical" style={{ width: '100%' }} size="large">
         <Alert
-          message="CSV Format"
+          message={t('athlete.import')}
           description={
             <div>
-              <p>Your CSV file should have the following headers (first row):</p>
+              <p>CSV format:</p>
               <code>first_name, last_name, date_of_birth, gender, weight_class, division, age_category</code>
               <p style={{ marginTop: 8 }}>Example:</p>
               <code>John,Doe,1990-05-15,M,83kg,raw,Open</code>
@@ -149,13 +151,13 @@ export const AthleteImport = () => {
         />
 
         <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />}>Select CSV File</Button>
+          <Button icon={<UploadOutlined />}>{t('common.import')}</Button>
         </Upload>
 
         {parsedData.length > 0 && (
           <>
             <Alert
-              message={`${parsedData.length} athletes ready to import`}
+              message={t('athlete.messages.imported', { count: parsedData.length })}
               type="success"
               showIcon
             />
@@ -174,7 +176,7 @@ export const AthleteImport = () => {
               loading={loading}
               size="large"
             >
-              Import {parsedData.length} Athletes
+              {t('athlete.import')} {parsedData.length}
             </Button>
           </>
         )}

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Form, Input, DatePicker, Select, Button, Card, message } from 'antd';
 import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useCompetitionStore } from '../stores/competitionStore';
 import { FEDERATIONS } from '../../../shared/constants';
@@ -17,6 +18,7 @@ interface CompetitionFormData {
 
 export const CompetitionForm = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const { competitions, createCompetition, updateCompetition } = useCompetitionStore();
   const [form] = Form.useForm<CompetitionFormData>();
@@ -51,15 +53,15 @@ export const CompetitionForm = () => {
 
       if (isEditMode && id) {
         await updateCompetition(id, data);
-        message.success('Competition updated successfully');
+        message.success(t('competition.messages.updated'));
       } else {
         await createCompetition(data);
-        message.success('Competition created successfully');
+        message.success(t('competition.messages.created'));
       }
 
       navigate('/competitions');
     } catch (error) {
-      message.error(`Failed to ${isEditMode ? 'update' : 'create'} competition`);
+      message.error(t('competition.messages.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -68,13 +70,13 @@ export const CompetitionForm = () => {
 
   return (
     <Card
-      title={isEditMode ? 'Edit Competition' : 'New Competition'}
+      title={isEditMode ? t('competition.edit') : t('competition.new')}
       extra={
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate('/competitions')}
         >
-          Back to List
+          {t('common.back')}
         </Button>
       }
     >
@@ -89,20 +91,20 @@ export const CompetitionForm = () => {
       >
         <Form.Item
           name="name"
-          label="Competition Name"
+          label={t('competition.fields.name')}
           rules={[
-            { required: true, message: 'Please enter competition name' },
+            { required: true, message: t('competition.form.nameRequired') },
             { min: 3, message: 'Name must be at least 3 characters' },
           ]}
         >
-          <Input placeholder="e.g., National Powerlifting Championship 2024" />
+          <Input placeholder={t('competition.form.namePlaceholder')} />
         </Form.Item>
 
         <Form.Item
           name="date"
-          label="Date"
+          label={t('competition.fields.date')}
           rules={[
-            { required: true, message: 'Please select competition date' },
+            { required: true, message: t('competition.form.dateRequired') },
             {
               validator: (_, value) => {
                 if (!value) return Promise.resolve();
@@ -128,18 +130,19 @@ export const CompetitionForm = () => {
 
         <Form.Item
           name="location"
-          label="Location"
+          label={t('competition.fields.location')}
           rules={[{ min: 2, message: 'Location must be at least 2 characters' }]}
         >
-          <Input placeholder="e.g., Paris, France" />
+          <Input placeholder={t('competition.form.locationPlaceholder')} />
         </Form.Item>
 
         <Form.Item
           name="federation"
-          label="Federation"
-          rules={[{ required: true, message: 'Please select a federation' }]}
+          label={t('competition.fields.federation')}
+          rules={[{ required: true, message: t('competition.form.federationRequired') }]}
         >
           <Select
+            placeholder={t('competition.form.selectFederation')}
             options={FEDERATIONS.map((fed) => ({
               label: fed.label,
               value: fed.value,
@@ -149,20 +152,21 @@ export const CompetitionForm = () => {
 
         <Form.Item
           name="format"
-          label="Competition Format"
-          rules={[{ required: true, message: 'Please select a format' }]}
+          label={t('competition.format.label')}
+          rules={[{ required: true, message: t('competition.form.formatRequired') }]}
         >
           <Select
+            placeholder={t('competition.form.selectFormat')}
             options={[
-              { value: 'full_power', label: 'SBD' },
-              { value: 'bench_only', label: 'Bench' },
+              { value: 'full_power', label: t('competition.format.sbd') },
+              { value: 'bench_only', label: t('competition.format.bench') },
             ]}
           />
         </Form.Item>
 
         <Form.Item>
           <Button type="primary" htmlType="submit" icon={<SaveOutlined />} loading={loading}>
-            {isEditMode ? 'Update Competition' : 'Create Competition'}
+            {t('common.save')}
           </Button>
         </Form.Item>
       </Form>

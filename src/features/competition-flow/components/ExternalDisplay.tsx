@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { WebSocketEvent } from '../../../shared/types/websocket';
 import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { Card, Tag, Space, Typography } from 'antd';
@@ -17,6 +18,7 @@ const isBrowserMode = () => {
 };
 
 export const ExternalDisplay = () => {
+  const { t } = useTranslation();
   const [currentAthlete, setCurrentAthlete] = useState<string>('');
   const [currentWeight, setCurrentWeight] = useState<number>(0);
   const [currentAttempt, setCurrentAttempt] = useState<1 | 2 | 3>(1);
@@ -172,7 +174,7 @@ export const ExternalDisplay = () => {
           }}
         >
           <Text style={{ color: 'white', fontWeight: 'bold' }}>
-            ✓ Connected (Browser Mode - BroadcastChannel)
+            ✓ {t('common.loading')} (Browser Mode - BroadcastChannel)
           </Text>
         </Card>
       )}
@@ -186,7 +188,7 @@ export const ExternalDisplay = () => {
           }}
         >
           <Text style={{ color: 'white', fontWeight: 'bold' }}>
-            ✓ Connected (Tauri Mode - WebSocket)
+            ✓ {t('common.loading')} (Tauri Mode - WebSocket)
           </Text>
         </Card>
       )}
@@ -200,7 +202,7 @@ export const ExternalDisplay = () => {
           }}
         >
           <Text style={{ color: 'white' }}>
-            <ClockCircleOutlined /> Connecting to server... ({status})
+            <ClockCircleOutlined /> {t('common.loading')}... ({status})
           </Text>
         </Card>
       )}
@@ -217,7 +219,7 @@ export const ExternalDisplay = () => {
           }}
         >
           <div style={{ fontSize: 18, color: 'white', marginBottom: 8, opacity: 0.9 }}>
-            TIME REMAINING
+            {t('externalDisplay.timer').toUpperCase()}
           </div>
           <div style={{ fontSize: 72, fontWeight: 'bold', color: 'white', fontFamily: 'monospace' }}>
             {timerSeconds}s
@@ -236,7 +238,7 @@ export const ExternalDisplay = () => {
           }}
         >
           <Title level={3} style={{ margin: 0, color: 'white' }}>
-            <ClockCircleOutlined /> PAUSED
+            <ClockCircleOutlined /> {t('live.status.paused')}
           </Title>
         </Card>
       )}
@@ -270,7 +272,7 @@ export const ExternalDisplay = () => {
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             {/* Athlete Name */}
             <div>
-              <Text type="secondary">ATHLETE</Text>
+              <Text type="secondary">{t('externalDisplay.currentAthlete')}</Text>
               <Title level={1} style={{ margin: 0, marginTop: 8 }}>
                 {currentAthlete}
               </Title>
@@ -278,7 +280,7 @@ export const ExternalDisplay = () => {
 
             {/* Weight */}
             <div>
-              <Text type="secondary">WEIGHT</Text>
+              <Text type="secondary">{t('externalDisplay.weight')}</Text>
               <Title
                 level={1}
                 style={{
@@ -295,7 +297,7 @@ export const ExternalDisplay = () => {
 
             {/* Attempt Number */}
             <Tag color="blue" style={{ fontSize: 20, padding: '8px 24px' }}>
-              ATTEMPT #{currentAttempt}
+              {t('externalDisplay.attempt').toUpperCase()} #{currentAttempt}
             </Tag>
 
             {/* Last Result */}
@@ -315,7 +317,7 @@ export const ExternalDisplay = () => {
                       />
                     </div>
                     <Title level={2} style={{ color: '#ffffff', marginTop: 16 }}>
-                      GOOD LIFT ✓ (WHITE)
+                      {t('externalDisplay.goodLift').toUpperCase()} ✓
                     </Title>
                   </div>
                 ) : (
@@ -331,7 +333,7 @@ export const ExternalDisplay = () => {
                       />
                     </div>
                     <Title level={2} style={{ color: '#ff4d4f', marginTop: 16 }}>
-                      NO LIFT ✗ (RED)
+                      {t('externalDisplay.noLift').toUpperCase()} ✗
                     </Title>
                   </div>
                 )}
@@ -351,9 +353,9 @@ export const ExternalDisplay = () => {
             textAlign: 'center',
           }}
         >
-          <Title level={3}>Waiting for competition to start...</Title>
+          <Title level={3}>{t('externalDisplay.waitingForCompetition')}</Title>
           <Text>
-            Navigate to Live Competition and click Start to begin broadcasting.
+            {t('externalDisplay.waitingForCompetition')}
           </Text>
         </Card>
       )}

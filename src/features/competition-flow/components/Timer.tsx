@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, Card, Progress } from 'antd';
 import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useBroadcastStore } from '../stores/broadcastStore';
 
 const TOTAL_TIME = 60; // 60 seconds
@@ -11,6 +12,7 @@ interface TimerProps {
 }
 
 export const Timer = ({ onComplete }: TimerProps) => {
+  const { t } = useTranslation();
   const { broadcast } = useBroadcastStore();
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [isRunning, setIsRunning] = useState(false);
@@ -183,7 +185,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
             onClick={handleStart}
             disabled={timeLeft === 0}
           >
-            {hasStarted ? 'Resume' : 'Start'}
+            {hasStarted ? t('live.resume') : t('live.timer.start')}
           </Button>
         ) : (
           <Button
@@ -191,7 +193,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
             icon={<PauseCircleOutlined />}
             onClick={handlePause}
           >
-            Pause
+            {t('live.pause')}
           </Button>
         )}
 
@@ -200,12 +202,12 @@ export const Timer = ({ onComplete }: TimerProps) => {
           icon={<ReloadOutlined />}
           onClick={handleReset}
         >
-          Reset
+          {t('live.timer.reset')}
         </Button>
       </div>
 
       <div style={{ marginTop: 16, fontSize: 12, color: '#8c8c8c' }}>
-        Alerts at: 30s, 15s, 10s
+        {t('live.timer.timeUp')}: 30s, 15s, 10s
       </div>
     </Card>
   );

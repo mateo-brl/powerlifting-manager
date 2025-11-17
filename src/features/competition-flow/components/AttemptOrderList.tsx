@@ -1,5 +1,6 @@
 import { Table, Card, Tag, Badge } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
+import { useTranslation } from 'react-i18next';
 import { AttemptOrder } from '../../weigh-in/types';
 import { TrophyOutlined } from '@ant-design/icons';
 
@@ -10,9 +11,10 @@ interface AttemptOrderListProps {
 }
 
 export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOrderListProps) => {
+  const { t } = useTranslation();
   const columns: ColumnsType<AttemptOrder & { index: number }> = [
     {
-      title: 'Order',
+      title: t('rankings.rank'),
       dataIndex: 'index',
       key: 'index',
       width: 80,
@@ -27,7 +29,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
       },
     },
     {
-      title: 'Athlete',
+      title: t('rankings.athlete'),
       dataIndex: 'athlete_name',
       key: 'athlete_name',
       render: (name: string, record) => {
@@ -41,7 +43,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
       },
     },
     {
-      title: 'Attempt',
+      title: t('externalDisplay.attempt'),
       dataIndex: 'attempt_number',
       key: 'attempt_number',
       width: 100,
@@ -52,7 +54,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
       ),
     },
     {
-      title: 'Weight (kg)',
+      title: t('externalDisplay.weight') + ' (kg)',
       dataIndex: 'weight_kg',
       key: 'weight_kg',
       width: 120,
@@ -63,13 +65,13 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
       ),
     },
     {
-      title: 'Lot #',
+      title: t('athlete.fields.lotNumber'),
       dataIndex: 'lot_number',
       key: 'lot_number',
       width: 80,
     },
     {
-      title: 'Rack',
+      title: t('spottersDisplay.rackHeights.rack'),
       dataIndex: 'rack_height',
       key: 'rack_height',
       width: 80,
@@ -97,7 +99,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
-                CURRENT ATTEMPT
+                {t('live.currentAthlete').toUpperCase()}
               </div>
               <div style={{ fontSize: 24, fontWeight: 'bold' }}>
                 {currentAttempt.athlete_name}
@@ -105,7 +107,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
             </div>
             <div style={{ textAlign: 'right' }}>
               <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
-                {liftType.toUpperCase()} - Attempt #{currentAttempt.attempt_number}
+                {liftType.toUpperCase()} - {t('live.attempt.number', { number: currentAttempt.attempt_number })}
               </div>
               <div style={{ fontSize: 32, fontWeight: 'bold', color: '#faad14' }}>
                 {currentAttempt.weight_kg} kg
@@ -117,7 +119,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
 
       {upcomingAttempts.length > 0 && (
         <Card
-          title="Next Athletes"
+          title={t('live.nextAthlete')}
           size="small"
           style={{ marginBottom: 16 }}
         >
@@ -144,7 +146,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
         </Card>
       )}
 
-      <Card title="Complete Order">
+      <Card title={t('live.attemptOrder')}>
         <Table
           columns={columns}
           dataSource={dataWithIndex}

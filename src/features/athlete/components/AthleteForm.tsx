@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Form, Input, DatePicker, Select, Button, Card, message, Row, Col, InputNumber } from 'antd';
 import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 import { useAthleteStore } from '../stores/athleteStore';
 import { WEIGHT_CLASSES, AGE_CATEGORIES } from '../../../shared/constants';
@@ -22,6 +23,7 @@ interface AthleteFormData {
 }
 
 export const AthleteForm = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { competitionId, athleteId } = useParams<{ competitionId: string; athleteId?: string }>();
   const { athletes, createAthlete, updateAthlete } = useAthleteStore();
@@ -67,7 +69,7 @@ export const AthleteForm = () => {
 
   const handleSubmit = async (values: AthleteFormData) => {
     if (!competitionId) {
-      message.error('Competition ID is required');
+      message.error(t('competition.messages.error'));
       return;
     }
 
@@ -90,15 +92,15 @@ export const AthleteForm = () => {
 
       if (isEditMode && athleteId) {
         await updateAthlete(athleteId, data);
-        message.success('Athlete updated successfully');
+        message.success(t('athlete.messages.updated'));
       } else {
         await createAthlete(data);
-        message.success('Athlete created successfully');
+        message.success(t('athlete.messages.created'));
       }
 
       navigate(`/competitions/${competitionId}`);
     } catch (error) {
-      message.error(`Failed to ${isEditMode ? 'update' : 'create'} athlete`);
+      message.error(t('athlete.messages.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -111,13 +113,13 @@ export const AthleteForm = () => {
 
   return (
     <Card
-      title={isEditMode ? 'Edit Athlete' : 'New Athlete'}
+      title={isEditMode ? t('athlete.edit') : t('athlete.new')}
       extra={
         <Button
           icon={<ArrowLeftOutlined />}
           onClick={() => navigate(`/competitions/${competitionId}`)}
         >
-          Back to Competition
+          {t('common.back')}
         </Button>
       }
     >
@@ -134,26 +136,26 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="first_name"
-              label="First Name"
+              label={t('athlete.fields.firstName')}
               rules={[
-                { required: true, message: 'Please enter first name' },
-                { min: 2, message: 'Name must be at least 2 characters' },
+                { required: true, message: t('athlete.form.firstNameRequired') },
+                { min: 2, message: t('athlete.form.firstNameRequired') },
               ]}
             >
-              <Input placeholder="John" />
+              <Input placeholder={t('athlete.form.firstNamePlaceholder')} />
             </Form.Item>
           </Col>
 
           <Col span={12}>
             <Form.Item
               name="last_name"
-              label="Last Name"
+              label={t('athlete.fields.lastName')}
               rules={[
-                { required: true, message: 'Please enter last name' },
-                { min: 2, message: 'Name must be at least 2 characters' },
+                { required: true, message: t('athlete.form.lastNameRequired') },
+                { min: 2, message: t('athlete.form.lastNameRequired') },
               ]}
             >
-              <Input placeholder="Doe" />
+              <Input placeholder={t('athlete.form.lastNamePlaceholder')} />
             </Form.Item>
           </Col>
         </Row>
@@ -162,9 +164,9 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="date_of_birth"
-              label="Date of Birth"
+              label={t('athlete.fields.dateOfBirth')}
               rules={[
-                { required: true, message: 'Please select date of birth' },
+                { required: true, message: t('athlete.form.dateRequired') },
                 {
                   validator: (_, value) => {
                     if (!value) return Promise.resolve();
@@ -178,10 +180,10 @@ export const AthleteForm = () => {
                     }
 
                     if (age < 13) {
-                      return Promise.reject(new Error('Athlete must be at least 13 years old'));
+                      return Promise.reject(new Error(t('athlete.form.dateRequired')));
                     }
                     if (age > 100) {
-                      return Promise.reject(new Error('Please enter a valid date of birth'));
+                      return Promise.reject(new Error(t('athlete.form.dateRequired')));
                     }
                     return Promise.resolve();
                   },
@@ -193,7 +195,6 @@ export const AthleteForm = () => {
                 format="YYYY-MM-DD"
                 onChange={handleDateChange}
                 disabledDate={(current) => {
-                  // Disable future dates
                   return current && current > dayjs().endOf('day');
                 }}
               />
@@ -203,14 +204,14 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="gender"
-              label="Gender"
-              rules={[{ required: true, message: 'Please select gender' }]}
+              label={t('athlete.fields.gender')}
+              rules={[{ required: true, message: t('athlete.form.genderRequired') }]}
             >
               <Select
                 onChange={handleGenderChange}
                 options={[
-                  { label: 'Male', value: 'M' },
-                  { label: 'Female', value: 'F' },
+                  { label: t('athlete.gender.M'), value: 'M' },
+                  { label: t('athlete.gender.F'), value: 'F' },
                 ]}
               />
             </Form.Item>
@@ -221,15 +222,15 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="weight_class"
-              label="Weight Class"
-              rules={[{ required: true, message: 'Please select weight class' }]}
+              label={t('athlete.fields.weightClass')}
+              rules={[{ required: true, message: t('athlete.form.weightClassRequired') }]}
             >
               <Select
                 options={weightClassOptions.map((wc) => ({
                   label: wc,
                   value: wc,
                 }))}
-                placeholder="Select weight class"
+                placeholder={t('athlete.form.weightClassRequired')}
               />
             </Form.Item>
           </Col>
@@ -237,13 +238,13 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="division"
-              label="Division"
-              rules={[{ required: true, message: 'Please select division' }]}
+              label={t('athlete.fields.division')}
+              rules={[{ required: true, message: t('athlete.form.divisionRequired') }]}
             >
               <Select
                 options={[
-                  { label: 'Raw', value: 'raw' },
-                  { label: 'Equipped', value: 'equipped' },
+                  { label: t('athlete.division.raw'), value: 'raw' },
+                  { label: t('athlete.division.equipped'), value: 'equipped' },
                 ]}
               />
             </Form.Item>
@@ -254,8 +255,8 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="age_category"
-              label="Age Category"
-              rules={[{ required: true, message: 'Please select age category' }]}
+              label={t('athlete.fields.ageCategory')}
+              rules={[{ required: true, message: t('athlete.form.weightClassRequired') }]}
             >
               <Select>
                 {AGE_CATEGORIES.map((cat) => (
@@ -268,12 +269,12 @@ export const AthleteForm = () => {
           <Col span={12}>
             <Form.Item
               name="lot_number"
-              label="Lot Number"
+              label={t('athlete.fields.lotNumber')}
             >
               <InputNumber
                 min={1}
                 style={{ width: '100%' }}
-                placeholder="Assigned lot number"
+                placeholder={t('athlete.fields.lotNumber')}
               />
             </Form.Item>
           </Col>
@@ -283,13 +284,13 @@ export const AthleteForm = () => {
           <Col span={8}>
             <Form.Item
               name="bodyweight"
-              label="Bodyweight (kg)"
+              label={t('athlete.fields.bodyweight')}
             >
               <InputNumber
                 min={0}
                 step={0.1}
                 style={{ width: '100%' }}
-                placeholder="Weigh-in weight"
+                placeholder={t('athlete.fields.bodyweight')}
               />
             </Form.Item>
           </Col>
@@ -297,7 +298,7 @@ export const AthleteForm = () => {
           <Col span={8}>
             <Form.Item
               name="squat_rack_height"
-              label="Squat Rack Height"
+              label={t('athlete.fields.squatRackHeight')}
             >
               <InputNumber
                 min={1}
@@ -311,7 +312,7 @@ export const AthleteForm = () => {
           <Col span={8}>
             <Form.Item
               name="bench_rack_height"
-              label="Bench Rack Height"
+              label={t('athlete.fields.benchRackHeight')}
             >
               <InputNumber
                 min={1}
@@ -325,7 +326,7 @@ export const AthleteForm = () => {
 
         <Form.Item>
           <Button type="primary" htmlType="submit" icon={<SaveOutlined />} loading={loading}>
-            {isEditMode ? 'Update Athlete' : 'Create Athlete'}
+            {t('common.save')}
           </Button>
         </Form.Item>
       </Form>

@@ -3,6 +3,7 @@ import { Table, Button, Space, Tag, Input, Popconfirm, message } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, DownloadOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Athlete } from '../types';
 import { useAthleteStore } from '../stores/athleteStore';
 
@@ -11,6 +12,7 @@ interface AthleteListProps {
 }
 
 export const AthleteList = ({ competitionId }: AthleteListProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { athletes, loadAthletes, deleteAthlete } = useAthleteStore();
   const [loading, setLoading] = useState(false);
@@ -25,7 +27,7 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
     try {
       await loadAthletes(competitionId);
     } catch (error) {
-      message.error('Failed to load athletes');
+      message.error(t('athlete.messages.error'));
       console.error(error);
     } finally {
       setLoading(false);
@@ -35,15 +37,15 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
   const handleDelete = async (id: string) => {
     try {
       await deleteAthlete(id);
-      message.success('Athlete deleted successfully');
+      message.success(t('athlete.messages.deleted'));
     } catch (error) {
-      message.error('Failed to delete athlete');
+      message.error(t('athlete.messages.error'));
       console.error(error);
     }
   };
 
   const handleExportCSV = () => {
-    const csvHeaders = ['Last Name', 'First Name', 'Date of Birth', 'Gender', 'Weight Class', 'Division', 'Lot Number', 'Bodyweight'];
+    const csvHeaders = [t('athlete.fields.lastName'), t('athlete.fields.firstName'), t('athlete.fields.dateOfBirth'), t('athlete.fields.gender'), t('athlete.fields.weightClass'), t('athlete.fields.division'), t('athlete.fields.lotNumber'), t('athlete.fields.bodyweight')];
     const csvData = filteredAthletes.map((athlete) => [
       athlete.last_name,
       athlete.first_name,
@@ -65,7 +67,7 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
     link.href = URL.createObjectURL(blob);
     link.download = `athletes_${competitionId}.csv`;
     link.click();
-    message.success('CSV exported successfully');
+    message.success(t('athlete.messages.exportSuccess'));
   };
 
   const competitionAthletes = athletes.filter((a) => a.competition_id === competitionId);
@@ -78,7 +80,7 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
 
   const columns: ColumnsType<Athlete> = [
     {
-      title: 'Lot #',
+      title: t('athlete.fields.lotNumber'),
       dataIndex: 'lot_number',
       key: 'lot_number',
       width: 80,
@@ -86,68 +88,68 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
       sorter: (a, b) => (a.lot_number || 999) - (b.lot_number || 999),
     },
     {
-      title: 'Last Name',
+      title: t('athlete.fields.lastName'),
       dataIndex: 'last_name',
       key: 'last_name',
       sorter: (a, b) => a.last_name.localeCompare(b.last_name),
     },
     {
-      title: 'First Name',
+      title: t('athlete.fields.firstName'),
       dataIndex: 'first_name',
       key: 'first_name',
       sorter: (a, b) => a.first_name.localeCompare(b.first_name),
     },
     {
-      title: 'Gender',
+      title: t('athlete.fields.gender'),
       dataIndex: 'gender',
       key: 'gender',
       width: 80,
       render: (gender: string) => (
-        <Tag color={gender === 'M' ? 'blue' : 'pink'}>{gender}</Tag>
+        <Tag color={gender === 'M' ? 'blue' : 'pink'}>{t(`athlete.gender.${gender}`)}</Tag>
       ),
       filters: [
-        { text: 'Male', value: 'M' },
-        { text: 'Female', value: 'F' },
+        { text: t('athlete.gender.M'), value: 'M' },
+        { text: t('athlete.gender.F'), value: 'F' },
       ],
       onFilter: (value, record) => record.gender === value,
     },
     {
-      title: 'Weight Class',
+      title: t('athlete.fields.weightClass'),
       dataIndex: 'weight_class',
       key: 'weight_class',
       width: 120,
     },
     {
-      title: 'Division',
+      title: t('athlete.fields.division'),
       dataIndex: 'division',
       key: 'division',
       width: 100,
       render: (division: string) => (
         <Tag color={division === 'raw' ? 'green' : 'purple'}>
-          {division.toUpperCase()}
+          {t(`athlete.division.${division}`).toUpperCase()}
         </Tag>
       ),
       filters: [
-        { text: 'Raw', value: 'raw' },
-        { text: 'Equipped', value: 'equipped' },
+        { text: t('athlete.division.raw'), value: 'raw' },
+        { text: t('athlete.division.equipped'), value: 'equipped' },
       ],
       onFilter: (value, record) => record.division === value,
     },
     {
-      title: 'Age Category',
+      title: t('athlete.fields.ageCategory'),
       dataIndex: 'age_category',
       key: 'age_category',
       width: 120,
     },
     {
-      title: 'Bodyweight',
+      title: t('athlete.fields.bodyweight'),
       dataIndex: 'bodyweight',
       key: 'bodyweight',
       width: 110,
       render: (weight: number | null) => weight ? `${weight} kg` : '-',
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       width: 180,
       render: (_, record) => (
@@ -157,17 +159,17 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
             icon={<EditOutlined />}
             onClick={() => navigate(`/competitions/${competitionId}/athletes/${record.id}/edit`)}
           >
-            Edit
+            {t('common.edit')}
           </Button>
           <Popconfirm
-            title="Delete athlete"
-            description="Are you sure you want to delete this athlete?"
+            title={t('common.delete')}
+            description={t('athlete.messages.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.yes')}
+            cancelText={t('common.no')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
+              {t('common.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -179,7 +181,7 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
     <div>
       <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between' }}>
         <Input
-          placeholder="Search athletes..."
+          placeholder={t('common.search')}
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -191,14 +193,14 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
             onClick={handleExportCSV}
             disabled={filteredAthletes.length === 0}
           >
-            Export CSV
+            {t('athlete.export')}
           </Button>
           <Button
             type="primary"
             icon={<PlusOutlined />}
             onClick={() => navigate(`/competitions/${competitionId}/athletes/new`)}
           >
-            Add Athlete
+            {t('athlete.new')}
           </Button>
         </Space>
       </div>
@@ -211,7 +213,7 @@ export const AthleteList = ({ competitionId }: AthleteListProps) => {
         pagination={{
           pageSize: 20,
           showSizeChanger: true,
-          showTotal: (total) => `Total ${total} athletes`,
+          showTotal: (total) => `${t('athlete.total')} ${total}`,
         }}
       />
     </div>

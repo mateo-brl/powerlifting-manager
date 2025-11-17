@@ -10,12 +10,14 @@ import {
   ImportOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCompetitionStore } from '../stores/competitionStore';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { formatDate } from '../../../shared/utils/formatters';
 import { AthleteList } from '../../athlete/components/AthleteList';
 
 export const CompetitionDetail = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const { competitions } = useCompetitionStore();
@@ -33,7 +35,7 @@ export const CompetitionDetail = () => {
     try {
       await loadAthletes(competitionId);
     } catch (error) {
-      message.error('Failed to load competition data');
+      message.error(t('competition.messages.error'));
       console.error(error);
     }
   };
@@ -41,8 +43,8 @@ export const CompetitionDetail = () => {
   if (!competition) {
     return (
       <Card>
-        <p>Competition not found</p>
-        <Button onClick={() => navigate('/competitions')}>Back to List</Button>
+        <p>{t('errors.notFound')}</p>
+        <Button onClick={() => navigate('/competitions')}>{t('common.back')}</Button>
       </Card>
     );
   }
@@ -63,15 +65,15 @@ export const CompetitionDetail = () => {
   const tabItems = [
     {
       key: 'athletes',
-      label: 'Athletes',
+      label: t('competition.tabs.athletes'),
       children: <AthleteList competitionId={competition.id} />,
     },
     {
       key: 'actions',
-      label: 'Competition Actions',
+      label: t('competition.actions'),
       children: (
         <div>
-          <h3 style={{ marginBottom: 16 }}>Competition Management</h3>
+          <h3 style={{ marginBottom: 16 }}>{t('competition.actions')}</h3>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} lg={8}>
               <Card
@@ -80,8 +82,8 @@ export const CompetitionDetail = () => {
                 style={{ textAlign: 'center', cursor: 'pointer' }}
               >
                 <TeamOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
-                <h3>Weigh-In / Pesée</h3>
-                <p>Record athlete bodyweights and opening attempts</p>
+                <h3>{t('weighIn.title')}</h3>
+                <p>{t('weighIn.title')}</p>
               </Card>
             </Col>
 
@@ -92,8 +94,8 @@ export const CompetitionDetail = () => {
                 style={{ textAlign: 'center', cursor: 'pointer' }}
               >
                 <TeamOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
-                <h3>Flight Management</h3>
-                <p>Calculate and manage competition flights</p>
+                <h3>{t('flight.title')}</h3>
+                <p>{t('flight.title')}</p>
               </Card>
             </Col>
 
@@ -104,8 +106,8 @@ export const CompetitionDetail = () => {
                 style={{ textAlign: 'center', cursor: 'pointer' }}
               >
                 <TrophyOutlined style={{ fontSize: 48, color: '#f5222d', marginBottom: 16 }} />
-                <h3>Live Competition</h3>
-                <p>Manage real-time competition flow</p>
+                <h3>{t('competition.tabs.live')}</h3>
+                <p>{t('live.title')}</p>
               </Card>
             </Col>
 
@@ -116,8 +118,8 @@ export const CompetitionDetail = () => {
                 style={{ textAlign: 'center', cursor: 'pointer' }}
               >
                 <BarChartOutlined style={{ fontSize: 48, color: '#faad14', marginBottom: 16 }} />
-                <h3>Rankings & Results</h3>
-                <p>View competition standings and results</p>
+                <h3>{t('rankings.title')}</h3>
+                <p>{t('rankings.title')}</p>
               </Card>
             </Col>
 
@@ -128,8 +130,8 @@ export const CompetitionDetail = () => {
                 style={{ textAlign: 'center', cursor: 'pointer' }}
               >
                 <ImportOutlined style={{ fontSize: 48, color: '#722ed1', marginBottom: 16 }} />
-                <h3>Import Athletes</h3>
-                <p>Bulk import athletes from CSV file</p>
+                <h3>{t('athlete.import')}</h3>
+                <p>{t('athlete.import')}</p>
               </Card>
             </Col>
           </Row>
@@ -138,20 +140,20 @@ export const CompetitionDetail = () => {
     },
     {
       key: 'info',
-      label: 'Information',
+      label: t('common.info'),
       children: (
         <Descriptions bordered column={1}>
-          <Descriptions.Item label="Competition Name">{competition.name}</Descriptions.Item>
-          <Descriptions.Item label="Date">{formatDate(competition.date)}</Descriptions.Item>
-          <Descriptions.Item label="Location">{competition.location || '-'}</Descriptions.Item>
-          <Descriptions.Item label="Federation">{competition.federation}</Descriptions.Item>
-          <Descriptions.Item label="Status">
+          <Descriptions.Item label={t('competition.fields.name')}>{competition.name}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.date')}>{formatDate(competition.date)}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.location')}>{competition.location || '-'}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.federation')}>{competition.federation}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.status')}>
             <Tag color={getStatusColor(competition.status)}>
-              {competition.status.toUpperCase()}
+              {t(`competition.status.${competition.status}`).toUpperCase()}
             </Tag>
           </Descriptions.Item>
-          <Descriptions.Item label="Created">{formatDate(competition.created_at)}</Descriptions.Item>
-          <Descriptions.Item label="Last Updated">{formatDate(competition.updated_at)}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.createdAt')}>{formatDate(competition.created_at)}</Descriptions.Item>
+          <Descriptions.Item label={t('competition.fields.updatedAt')}>{formatDate(competition.updated_at)}</Descriptions.Item>
         </Descriptions>
       ),
     },
@@ -167,19 +169,19 @@ export const CompetitionDetail = () => {
               icon={<UserAddOutlined />}
               onClick={() => navigate(`/competitions/${competition.id}/athletes/new`)}
             >
-              Add Athlete
+              {t('athlete.new')}
             </Button>
             <Button
               icon={<EditOutlined />}
               onClick={() => navigate(`/competitions/${competition.id}/edit`)}
             >
-              Edit
+              {t('common.edit')}
             </Button>
             <Button
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate('/competitions')}
             >
-              Back
+              {t('common.back')}
             </Button>
           </Space>
         }

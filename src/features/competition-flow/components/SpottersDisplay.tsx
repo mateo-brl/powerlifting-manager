@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
-import { Card, Typography, Space, Tag, Alert, Spin } from 'antd';
+import { Typography, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { WebSocketEvent } from '../../../shared/types/websocket';
 import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { calculateBarLoading, getLoadingOrder, BAR_WEIGHTS, TOTAL_COLLAR_WEIGHT } from '../utils/barLoading';
@@ -23,9 +24,9 @@ interface CurrentAthleteData {
 }
 
 export const SpottersDisplay = () => {
+  const { t } = useTranslation();
   const [currentAthlete, setCurrentAthlete] = useState<CurrentAthleteData | null>(null);
   const [competitionName, setCompetitionName] = useState<string>('');
-  const [isConnected, setIsConnected] = useState(false);
 
   // Handler for processing events (useCallback to avoid closure issues)
   const handleEvent = useCallback((event: WebSocketEvent) => {
@@ -33,7 +34,6 @@ export const SpottersDisplay = () => {
 
     if (event.type === 'competition_started') {
       setCompetitionName(event.data.competition_name);
-      setIsConnected(true);
     }
 
     if (event.type === 'athlete_up') {
@@ -46,28 +46,19 @@ export const SpottersDisplay = () => {
         rack_height: event.data.rack_height,
         safety_height: event.data.safety_height,
       });
-      setIsConnected(true);
-    }
-
-    if (event.type === 'competition_paused' || event.type === 'competition_ended') {
-      setIsConnected(false);
     }
   }, []);
 
   // WebSocket connection (for Tauri mode)
-  const { status } = useWebSocket(
+  useWebSocket(
     isBrowserMode() ? null : 'ws://127.0.0.1:9001',
     {
       onMessage: handleEvent,
       onConnect: () => {
         console.log('[SpottersDisplay] Connected to WebSocket server');
-        setIsConnected(true);
       },
       onDisconnect: () => {
         console.log('[SpottersDisplay] Disconnected from WebSocket server');
-        if (!isBrowserMode()) {
-          setIsConnected(false);
-        }
       },
     }
   );
@@ -103,10 +94,10 @@ export const SpottersDisplay = () => {
         <div style={{ textAlign: 'center' }}>
           <Spin size="large" />
           <Title level={2} style={{ margin: '16px 0 0 0' }}>
-            SPOTTERS DISPLAY
+            {t('spottersDisplay.title')}
           </Title>
           <Text style={{ fontSize: 18 }}>
-            Waiting for competition to start...
+            {t('spottersDisplay.waitingForCompetition')}
           </Text>
         </div>
       </div>
@@ -146,7 +137,7 @@ export const SpottersDisplay = () => {
         marginBottom: '15px'
       }}>
         <Title level={1} style={{ margin: 0, fontSize: 32 }}>
-          SPOTTERS DISPLAY
+          {t('spottersDisplay.title')}
         </Title>
         {competitionName && (
           <Text style={{ fontSize: 14, color: '#666' }}>
@@ -172,7 +163,7 @@ export const SpottersDisplay = () => {
                 width: '25%',
                 background: '#f0f0f0'
               }}>
-                ATHLETE
+                {t('spottersDisplay.athlete')}
               </td>
               <td style={{
                 padding: '12px 20px',
@@ -189,15 +180,15 @@ export const SpottersDisplay = () => {
                 fontWeight: 'bold',
                 background: '#f0f0f0'
               }}>
-                LIFT
+                {t('spottersDisplay.lift')}
               </td>
               <td style={{
                 padding: '12px 20px',
                 fontSize: 20,
                 fontWeight: 'bold'
               }}>
-                {getLiftName()} - Attempt #{currentAthlete.attempt_number}
-                {currentAthlete.lot_number && ` (Lot ${currentAthlete.lot_number})`}
+                {getLiftName()} - {t('live.attempt.number', { number: currentAthlete.attempt_number })}
+                {currentAthlete.lot_number && ` (${t('spottersDisplay.lotNumber', { number: currentAthlete.lot_number })})`}
               </td>
             </tr>
             <tr>
@@ -207,7 +198,7 @@ export const SpottersDisplay = () => {
                 fontWeight: 'bold',
                 background: '#f0f0f0'
               }}>
-                WEIGHT
+                {t('spottersDisplay.weight')}
               </td>
               <td style={{
                 padding: '12px 20px',
@@ -234,22 +225,22 @@ export const SpottersDisplay = () => {
           textAlign: 'center'
         }}>
           <div style={{ fontSize: 16, marginBottom: 8, fontWeight: 'bold', color: '#d48806' }}>
-            {getLiftName() === 'SQUAT' && 'SQUAT RACK HEIGHT'}
-            {getLiftName() === 'BENCH PRESS' && 'BENCH RACK SETTINGS'}
-            {getLiftName() === 'DEADLIFT' && 'RACK HEIGHT'}
+            {getLiftName() === 'SQUAT' && t('spottersDisplay.rackHeights.squat')}
+            {getLiftName() === 'BENCH PRESS' && t('spottersDisplay.rackHeights.bench')}
+            {getLiftName() === 'DEADLIFT' && t('spottersDisplay.rackHeights.deadlift')}
           </div>
           <div style={{ fontSize: 32, fontWeight: 'bold', fontFamily: 'monospace' }}>
             {getLiftName() === 'SQUAT' && currentAthlete.rack_height}
             {getLiftName() === 'BENCH PRESS' && (
               <>
                 {currentAthlete.rack_height && (
-                  <span>RACK: {currentAthlete.rack_height}</span>
+                  <span>{t('spottersDisplay.rackHeights.rack')}: {currentAthlete.rack_height}</span>
                 )}
                 {currentAthlete.rack_height && currentAthlete.safety_height && (
                   <span style={{ margin: '0 15px' }}>|</span>
                 )}
                 {currentAthlete.safety_height && (
-                  <span>SAFETY: {currentAthlete.safety_height}</span>
+                  <span>{t('spottersDisplay.rackHeights.safety')}: {currentAthlete.safety_height}</span>
                 )}
               </>
             )}
@@ -261,7 +252,7 @@ export const SpottersDisplay = () => {
       {/* Bar Loading - Simple List */}
       <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
         <Title level={2} style={{ margin: '0 0 10px 0', fontSize: 22 }}>
-          BAR LOADING ({barWeight}kg bar)
+          {t('spottersDisplay.barLoading.title', { weight: barWeight })}
         </Title>
 
         {/* Plate List */}
@@ -273,9 +264,9 @@ export const SpottersDisplay = () => {
           }}>
             <thead>
               <tr style={{ background: '#f0f0f0', borderBottom: '2px solid black' }}>
-                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>QUANTITY</th>
-                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>PLATE WEIGHT</th>
-                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>COLOR</th>
+                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.quantity')}</th>
+                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.plateWeight')}</th>
+                <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.color')}</th>
               </tr>
             </thead>
             <tbody>
@@ -305,7 +296,7 @@ export const SpottersDisplay = () => {
         {/* Visual Bar Diagram */}
         <div style={{ flex: '0 0 auto' }}>
           <Text strong style={{ fontSize: 14, display: 'block', marginBottom: 8 }}>
-            BAR LOADING (each side):
+            {t('spottersDisplay.barLoading.diagram')}
           </Text>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
             {/* Left side */}
@@ -342,7 +333,7 @@ export const SpottersDisplay = () => {
                     borderRadius: 3,
                   }}
                 />
-                <Text style={{ fontSize: 11, display: 'block', marginTop: 2, fontWeight: 'bold' }}>C</Text>
+                <Text style={{ fontSize: 11, display: 'block', marginTop: 2, fontWeight: 'bold' }}>{t('spottersDisplay.barLoading.collar')}</Text>
               </div>
             </div>
 
@@ -360,7 +351,7 @@ export const SpottersDisplay = () => {
                   justifyContent: 'center',
                 }}
               >
-                <Text style={{ fontSize: 10, color: 'white', fontWeight: 'bold' }}>BAR</Text>
+                <Text style={{ fontSize: 10, color: 'white', fontWeight: 'bold' }}>{t('spottersDisplay.barLoading.bar')}</Text>
               </div>
             </div>
 
@@ -377,7 +368,7 @@ export const SpottersDisplay = () => {
                     borderRadius: 3,
                   }}
                 />
-                <Text style={{ fontSize: 11, display: 'block', marginTop: 2, fontWeight: 'bold' }}>C</Text>
+                <Text style={{ fontSize: 11, display: 'block', marginTop: 2, fontWeight: 'bold' }}>{t('spottersDisplay.barLoading.collar')}</Text>
               </div>
 
               {/* Plates */}
@@ -406,7 +397,13 @@ export const SpottersDisplay = () => {
           {/* Summary */}
           <div style={{ marginTop: 12, padding: '10px', background: '#f0f0f0', border: '2px solid black', borderRadius: 6 }}>
             <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
-              {barLoading.totalPlates} plates per side | Bar: {barWeight}kg + Collars: {TOTAL_COLLAR_WEIGHT}kg + Plates: {barLoading.platePerSide}kg × 2 = <strong>{barLoading.actualWeight}kg</strong>
+              {t('spottersDisplay.barLoading.summary', {
+                plates: barLoading.totalPlates,
+                bar: barWeight,
+                collars: TOTAL_COLLAR_WEIGHT,
+                plateWeight: barLoading.platePerSide,
+                total: barLoading.actualWeight
+              })}
             </Text>
           </div>
         </div>

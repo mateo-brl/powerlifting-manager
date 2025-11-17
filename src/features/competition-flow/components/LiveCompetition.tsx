@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
 import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -17,6 +18,7 @@ import { useCompetitionStore } from '../../competition/stores/competitionStore';
 const { Title, Text } = Typography;
 
 export const LiveCompetition = () => {
+  const { t } = useTranslation();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
@@ -122,11 +124,11 @@ export const LiveCompetition = () => {
 
   const handleStartCompetition = () => {
     if (attemptOrder.length === 0) {
-      message.warning('No athletes ready for this lift');
+      message.warning(t('live.messages.noAthletes'));
       return;
     }
     setIsCompetitionActive(true);
-    message.success(`Competition started - ${currentLift.toUpperCase()}`);
+    message.success(t('live.messages.started', { lift: currentLift.toUpperCase() }));
 
     // Broadcast competition started event
     const competition = competitions.find(c => c.id === competitionId);
@@ -162,7 +164,7 @@ export const LiveCompetition = () => {
 
   const handlePauseCompetition = () => {
     setIsCompetitionActive(false);
-    message.info('Competition paused');
+    message.info(t('live.messages.paused'));
 
     // Broadcast pause event
     broadcast({
@@ -196,7 +198,7 @@ export const LiveCompetition = () => {
         });
       }
     } else {
-      message.info('All attempts completed for this lift');
+      message.info(t('live.messages.allAttemptsCompleted'));
       setIsCompetitionActive(false);
 
       // Broadcast competition ended
@@ -213,7 +215,7 @@ export const LiveCompetition = () => {
     setCurrentLift(newLift);
     setCurrentIndex(0);
     setIsCompetitionActive(false);
-    message.info(`Switched to ${newLift.toUpperCase()}`);
+    message.info(t('live.messages.switchLift', { lift: newLift.toUpperCase() }));
 
     // Broadcast lift changed
     broadcast({
@@ -230,7 +232,7 @@ export const LiveCompetition = () => {
   const handleOpenExternalDisplay = () => {
     const displayUrl = `${window.location.origin}/display`;
     window.open(displayUrl, 'ExternalDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
-    message.success('External display opened in new window');
+    message.success(t('live.display.opened'));
   };
 
   const handleOpenSpottersDisplay = () => {
@@ -274,18 +276,18 @@ export const LiveCompetition = () => {
       }
     }, 500); // Small delay to ensure new window is ready
 
-    message.success('Spotters display opened in new window');
+    message.success(t('live.display.opened'));
   };
 
   // Get available lifts based on competition format
   const getAvailableLifts = () => {
     if (competitionFormat === 'bench_only') {
-      return [{ value: 'bench', label: 'Bench Press' }];
+      return [{ value: 'bench', label: t('live.lifts.bench') }];
     }
     return [
-      { value: 'squat', label: 'Squat' },
-      { value: 'bench', label: 'Bench Press' },
-      { value: 'deadlift', label: 'Deadlift' },
+      { value: 'squat', label: t('live.lifts.squat') },
+      { value: 'bench', label: t('live.lifts.bench') },
+      { value: 'deadlift', label: t('live.lifts.deadlift') },
     ];
   };
 
@@ -295,10 +297,10 @@ export const LiveCompetition = () => {
         title={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <Title level={3} style={{ margin: 0 }}>Live Competition Management</Title>
+              <Title level={3} style={{ margin: 0 }}>{t('live.title')}</Title>
               {competition && (
                 <Text type="secondary" style={{ fontSize: 12 }}>
-                  {competition.name} • Format: {competitionFormat === 'bench_only' ? 'Bench' : 'SBD'}
+                  {competition.name} • {t('competition.format.label')}: {competitionFormat === 'bench_only' ? t('competition.format.bench') : t('competition.format.sbd')}
                 </Text>
               )}
             </div>
@@ -319,7 +321,7 @@ export const LiveCompetition = () => {
                   size="large"
                   disabled={!hasAttempts}
                 >
-                  Start
+                  {t('live.start')}
                 </Button>
               ) : (
                 <Button
@@ -327,7 +329,7 @@ export const LiveCompetition = () => {
                   onClick={handlePauseCompetition}
                   size="large"
                 >
-                  Pause
+                  {t('live.pause')}
                 </Button>
               )}
             </Space>
@@ -338,14 +340,14 @@ export const LiveCompetition = () => {
             icon={<ArrowLeftOutlined />}
             onClick={() => navigate(`/competitions/${competitionId}`)}
           >
-            Back
+            {t('common.back')}
           </Button>
         }
       >
         {competitionWeighIns.length === 0 && (
           <Alert
-            message="No Weigh-Ins"
-            description="No athletes have been weighed in yet. Please complete weigh-ins before starting the competition."
+            message={t('live.messages.noWeighIns')}
+            description={t('live.messages.completeWeighIns')}
             type="warning"
             showIcon
             style={{ marginBottom: 24 }}
@@ -360,7 +362,7 @@ export const LiveCompetition = () => {
                 items={[
                   {
                     key: 'tracker',
-                    label: 'Attempt Tracker',
+                    label: t('live.attemptTracker'),
                     children: currentAttempt && competitionId ? (
                       <AttemptTracker
                         currentAttempt={currentAttempt}
@@ -370,15 +372,15 @@ export const LiveCompetition = () => {
                       />
                     ) : (
                       <Alert
-                        message="No Current Attempt"
-                        description="All attempts for this lift have been completed."
+                        message={t('live.attempt.pending')}
+                        description={t('live.messages.allAttemptsCompleted')}
                         type="info"
                       />
                     ),
                   },
                   {
                     key: 'order',
-                    label: 'Attempt Order',
+                    label: t('live.attemptOrder'),
                     children: (
                       <AttemptOrderList
                         attempts={attemptOrder}
@@ -396,35 +398,35 @@ export const LiveCompetition = () => {
                 {/* Timer - resets when athlete changes */}
                 <Timer
                   key={currentAttempt ? `${currentAttempt.athlete_id}-${currentAttempt.attempt_number}` : 'no-attempt'}
-                  onComplete={() => message.warning('Time is up!')}
+                  onComplete={() => message.warning(t('live.timer.timeUp'))}
                 />
 
                 {/* Competition Info */}
-                <Card title="Competition Status" size="small">
+                <Card title={t('live.competitionInfo.title')} size="small">
                   <p>
-                    <strong>Current Lift:</strong> {currentLift.toUpperCase()}
+                    <strong>{t('live.currentLift')}:</strong> {currentLift.toUpperCase()}
                   </p>
                   <p>
-                    <strong>Attempt:</strong> {currentIndex + 1} / {attemptOrder.length}
+                    <strong>{t('live.attempt.result')}:</strong> {currentIndex + 1} / {attemptOrder.length}
                   </p>
                   <p>
-                    <strong>Athletes:</strong> {competitionAthletes.length}
+                    <strong>{t('live.competitionInfo.athletes')}:</strong> {competitionAthletes.length}
                   </p>
                   <p>
-                    <strong>Weighed In:</strong> {competitionWeighIns.length}
+                    <strong>{t('live.competitionInfo.weighedIn')}:</strong> {competitionWeighIns.length}
                   </p>
                   <p>
-                    <strong>Status:</strong>{' '}
+                    <strong>{t('competition.fields.status')}:</strong>{' '}
                     {isCompetitionActive ? (
-                      <span style={{ color: '#52c41a', fontWeight: 'bold' }}>● ACTIVE</span>
+                      <span style={{ color: '#52c41a', fontWeight: 'bold' }}>● {t('live.status.active')}</span>
                     ) : (
-                      <span style={{ color: '#faad14' }}>● PAUSED</span>
+                      <span style={{ color: '#faad14' }}>● {t('live.status.paused')}</span>
                     )}
                   </p>
                 </Card>
 
                 {/* Quick Actions */}
-                <Card title="Quick Actions" size="small">
+                <Card title={t('live.quickActions.title')} size="small">
                   <Space direction="vertical" style={{ width: '100%' }}>
                     <Button
                       type="primary"
@@ -433,7 +435,7 @@ export const LiveCompetition = () => {
                       block
                       style={{ background: '#722ed1', borderColor: '#722ed1' }}
                     >
-                      Open External Display
+                      {t('live.display.external')}
                     </Button>
                     <Button
                       type="primary"
@@ -442,24 +444,24 @@ export const LiveCompetition = () => {
                       block
                       style={{ background: '#13c2c2', borderColor: '#13c2c2' }}
                     >
-                      Open Spotters Display
+                      {t('live.display.spotters')}
                     </Button>
                     <Button
                       icon={<ReloadOutlined />}
                       onClick={() => {
                         setCurrentIndex(0);
-                        message.success('Reset to first attempt');
+                        message.success(t('live.messages.reset'));
                       }}
                       block
                     >
-                      Reset to Start
+                      {t('live.quickActions.resetToStart')}
                     </Button>
                     <Button
                       onClick={handleNextAttempt}
                       disabled={!isCompetitionActive}
                       block
                     >
-                      Skip to Next Attempt
+                      {t('live.quickActions.skipAttempt')}
                     </Button>
                   </Space>
                 </Card>
@@ -470,8 +472,8 @@ export const LiveCompetition = () => {
 
         {!hasAttempts && competitionWeighIns.length > 0 && (
           <Alert
-            message="All Attempts Completed"
-            description={`All athletes have completed their ${currentLift} attempts. Switch to the next lift to continue.`}
+            message={t('live.messages.allAttemptsCompleted')}
+            description={t('live.messages.allAttemptsCompleted')}
             type="success"
             showIcon
           />
