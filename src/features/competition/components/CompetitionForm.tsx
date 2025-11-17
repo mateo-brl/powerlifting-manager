@@ -5,12 +5,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { useCompetitionStore } from '../stores/competitionStore';
 import { FEDERATIONS } from '../../../shared/constants';
+import { CompetitionFormat } from '../types';
 
 interface CompetitionFormData {
   name: string;
   date: dayjs.Dayjs;
   location?: string;
   federation: string;
+  format: CompetitionFormat;
 }
 
 export const CompetitionForm = () => {
@@ -30,6 +32,7 @@ export const CompetitionForm = () => {
           date: dayjs(competition.date),
           location: competition.location || undefined,
           federation: competition.federation,
+          format: competition.format || 'full_power',
         });
       }
     }
@@ -43,6 +46,7 @@ export const CompetitionForm = () => {
         date: values.date.format('YYYY-MM-DD'),
         location: values.location || undefined,
         federation: values.federation,
+        format: values.format,
       };
 
       if (isEditMode && id) {
@@ -80,6 +84,7 @@ export const CompetitionForm = () => {
         onFinish={handleSubmit}
         initialValues={{
           federation: 'IPF',
+          format: 'full_power',
         }}
       >
         <Form.Item
@@ -139,6 +144,19 @@ export const CompetitionForm = () => {
               label: fed.label,
               value: fed.value,
             }))}
+          />
+        </Form.Item>
+
+        <Form.Item
+          name="format"
+          label="Competition Format"
+          rules={[{ required: true, message: 'Please select a format' }]}
+        >
+          <Select
+            options={[
+              { value: 'full_power', label: '🏋️ Full Power (SBD - Squat + Bench + Deadlift)' },
+              { value: 'bench_only', label: '💪 Bench Only' },
+            ]}
           />
         </Form.Item>
 

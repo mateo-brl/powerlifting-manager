@@ -14,7 +14,7 @@ import { LiftType } from '../types';
 import { AttemptOrder } from '../../weigh-in/types';
 import { useCompetitionStore } from '../../competition/stores/competitionStore';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
 
 export const LiveCompetition = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
@@ -25,7 +25,17 @@ export const LiveCompetition = () => {
   const { broadcast } = useBroadcastStore();
   const { competitions } = useCompetitionStore();
 
-  const [currentLift, setCurrentLift] = useState<LiftType>('squat');
+  // Get competition and its format
+  const competition = competitions.find(c => c.id === competitionId);
+  const competitionFormat = competition?.format || 'full_power';
+
+  // Set initial lift based on format
+  const getInitialLift = (): LiftType => {
+    if (competitionFormat === 'bench_only') return 'bench';
+    return 'squat';
+  };
+
+  const [currentLift, setCurrentLift] = useState<LiftType>(getInitialLift());
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [attemptOrder, setAttemptOrder] = useState<AttemptOrder[]>([]);
   const [isCompetitionActive, setIsCompetitionActive] = useState(false);
@@ -209,12 +219,31 @@ export const LiveCompetition = () => {
     message.success('External display opened in new window');
   };
 
+  // Get available lifts based on competition format
+  const getAvailableLifts = () => {
+    if (competitionFormat === 'bench_only') {
+      return [{ value: 'bench', label: 'Bench Press' }];
+    }
+    return [
+      { value: 'squat', label: 'Squat' },
+      { value: 'bench', label: 'Bench Press' },
+      { value: 'deadlift', label: 'Deadlift' },
+    ];
+  };
+
   return (
     <div>
       <Card
         title={
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Title level={3} style={{ margin: 0 }}>Live Competition Management</Title>
+            <div>
+              <Title level={3} style={{ margin: 0 }}>Live Competition Management</Title>
+              {competition && (
+                <Text type="secondary" style={{ fontSize: 12 }}>
+                  {competition.name} • Format: {competitionFormat === 'bench_only' ? '💪 Bench Only' : '🏋️ Full Power (SBD)'}
+                </Text>
+              )}
+            </div>
             <Space>
               <Select
                 value={currentLift}
@@ -222,11 +251,7 @@ export const LiveCompetition = () => {
                 style={{ width: 150 }}
                 size="large"
                 disabled={isCompetitionActive}
-                options={[
-                  { value: 'squat', label: 'Squat' },
-                  { value: 'bench', label: 'Bench Press' },
-                  { value: 'deadlift', label: 'Deadlift' },
-                ]}
+                options={getAvailableLifts()}
               />
               {!isCompetitionActive ? (
                 <Button
@@ -310,8 +335,11 @@ export const LiveCompetition = () => {
 
             <Col span={8}>
               <Space direction="vertical" style={{ width: '100%' }} size="large">
-                {/* Timer */}
-                <Timer onComplete={() => message.warning('Time is up!')} />
+                {/* Timer - resets when athlete changes */}
+                <Timer
+                  key={currentAttempt ? `${currentAttempt.athlete_id}-${currentAttempt.attempt_number}` : 'no-attempt'}
+                  onComplete={() => message.warning('Time is up!')}
+                />
 
                 {/* Competition Info */}
                 <Card title="Competition Status" size="small">

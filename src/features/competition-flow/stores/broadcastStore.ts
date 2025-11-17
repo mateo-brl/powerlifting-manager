@@ -2,6 +2,21 @@ import { create } from 'zustand';
 import { WebSocketEvent } from '../../../shared/types/websocket';
 import { invoke } from '../../../shared/utils/tauriWrapper';
 
+// Create BroadcastChannel for cross-window communication in browser mode
+const CHANNEL_NAME = 'powerlifting-broadcast';
+let broadcastChannel: BroadcastChannel | null = null;
+
+// Check if we're in browser mode (not Tauri)
+const isBrowserMode = () => {
+  return !(window as any).__TAURI__;
+};
+
+// Initialize BroadcastChannel in browser mode
+if (isBrowserMode() && typeof BroadcastChannel !== 'undefined') {
+  broadcastChannel = new BroadcastChannel(CHANNEL_NAME);
+  console.log('[BroadcastChannel] Initialized for browser mode');
+}
+
 interface BroadcastState {
   // Current state
   currentEvent: WebSocketEvent | null;
@@ -38,11 +53,20 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
       }
     });
 
-    // Also broadcast to WebSocket server (for external displays)
-    invoke('broadcast_websocket_event', { event })
-      .catch((error) => {
-        console.error('[Broadcast] WebSocket error:', error);
-      });
+    // Broadcast to other windows/tabs
+    if (isBrowserMode()) {
+      // Use BroadcastChannel in browser mode
+      if (broadcastChannel) {
+        broadcastChannel.postMessage(event);
+        console.log('[BroadcastChannel] Posted message:', event.type);
+      }
+    } else {
+      // Use Tauri WebSocket in app mode
+      invoke('broadcast_websocket_event', { event })
+        .catch((error) => {
+          console.error('[Broadcast] WebSocket error:', error);
+        });
+    }
   },
 
   subscribe: (callback: (event: WebSocketEvent) => void) => {

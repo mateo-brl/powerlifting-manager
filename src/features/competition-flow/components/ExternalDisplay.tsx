@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useBroadcastStore } from '../stores/broadcastStore';
+import { useEffect, useState, useCallback } from 'react';
 import { WebSocketEvent } from '../../../shared/types/websocket';
+import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { Card, Tag, Space, Typography } from 'antd';
 import {
   TrophyOutlined,
@@ -11,8 +11,12 @@ import {
 
 const { Title, Text } = Typography;
 
+// Check if we're in browser mode (not Tauri)
+const isBrowserMode = () => {
+  return !(window as any).__TAURI__;
+};
+
 export const ExternalDisplay = () => {
-  const { currentEvent, subscribe } = useBroadcastStore();
   const [currentAthlete, setCurrentAthlete] = useState<string>('');
   const [currentWeight, setCurrentWeight] = useState<number>(0);
   const [currentAttempt, setCurrentAttempt] = useState<1 | 2 | 3>(1);
@@ -20,63 +24,106 @@ export const ExternalDisplay = () => {
   const [lastResult, setLastResult] = useState<'success' | 'failure' | null>(null);
   const [competitionName, setCompetitionName] = useState<string>('');
   const [isPaused, setIsPaused] = useState(false);
+  const [timerSeconds, setTimerSeconds] = useState<number>(60);
+  const [timerRunning, setTimerRunning] = useState(false);
+  const [connectionMode, setConnectionMode] = useState<'websocket' | 'broadcast' | 'disconnected'>('disconnected');
+  const [showConnectionStatus, setShowConnectionStatus] = useState(true);
 
+  // Handler for processing events (useCallback to avoid closure issues)
+  const handleEvent = useCallback((event: WebSocketEvent) => {
+    console.log('[ExternalDisplay] Received event:', event.type);
+
+    switch (event.type) {
+      case 'competition_started':
+        setCompetitionName(event.data.competition_name);
+        setCurrentLift(event.data.lift_type.toUpperCase());
+        setIsPaused(false);
+        setLastResult(null);
+        break;
+
+      case 'competition_paused':
+        setIsPaused(true);
+        break;
+
+      case 'athlete_up':
+        setCurrentAthlete(event.data.athlete_name);
+        setCurrentWeight(event.data.weight_kg);
+        setCurrentAttempt(event.data.attempt_number);
+        setLastResult(null);
+        setIsPaused(false);
+        break;
+
+      case 'attempt_result':
+        setLastResult(event.data.result);
+        break;
+
+      case 'lift_changed':
+        setCurrentLift(event.data.lift_type.toUpperCase());
+        setLastResult(null);
+        break;
+
+      case 'competition_ended':
+        setLastResult(null);
+        break;
+
+      case 'timer_update':
+        console.log('[ExternalDisplay] Timer update:', event.data.seconds_remaining, 'running:', event.data.is_running);
+        setTimerSeconds(prevSeconds => {
+          console.log('[ExternalDisplay] Setting timer from', prevSeconds, 'to', event.data.seconds_remaining);
+          return event.data.seconds_remaining;
+        });
+        setTimerRunning(prevRunning => {
+          console.log('[ExternalDisplay] Setting timerRunning from', prevRunning, 'to', event.data.is_running);
+          return event.data.is_running;
+        });
+        break;
+    }
+  }, []);
+
+  // WebSocket connection (for Tauri mode)
+  const { status } = useWebSocket(
+    isBrowserMode() ? null : 'ws://127.0.0.1:9001',
+    {
+      onMessage: handleEvent,
+      onConnect: () => {
+        console.log('[ExternalDisplay] Connected to WebSocket server');
+        setConnectionMode('websocket');
+      },
+      onDisconnect: () => {
+        console.log('[ExternalDisplay] Disconnected from WebSocket server');
+        if (!isBrowserMode()) {
+          setConnectionMode('disconnected');
+        }
+      },
+    }
+  );
+
+  // BroadcastChannel listener (for browser mode)
   useEffect(() => {
-    // Subscribe to broadcast events
-    const unsubscribe = subscribe((event: WebSocketEvent) => {
-      console.log('[ExternalDisplay] Received event:', event.type);
+    if (!isBrowserMode()) return;
 
-      switch (event.type) {
-        case 'competition_started':
-          setCompetitionName(event.data.competition_name);
-          setCurrentLift(event.data.lift_type.toUpperCase());
-          setIsPaused(false);
-          setLastResult(null);
-          break;
+    const channel = new BroadcastChannel('powerlifting-broadcast');
+    setConnectionMode('broadcast');
+    console.log('[ExternalDisplay] Using BroadcastChannel for browser mode');
 
-        case 'competition_paused':
-          setIsPaused(true);
-          break;
-
-        case 'athlete_up':
-          setCurrentAthlete(event.data.athlete_name);
-          setCurrentWeight(event.data.weight_kg);
-          setCurrentAttempt(event.data.attempt_number);
-          setLastResult(null);
-          setIsPaused(false);
-          break;
-
-        case 'attempt_result':
-          setLastResult(event.data.result);
-          break;
-
-        case 'lift_changed':
-          setCurrentLift(event.data.lift_type.toUpperCase());
-          setLastResult(null);
-          break;
-
-        case 'competition_ended':
-          setLastResult(null);
-          break;
-      }
-    });
+    channel.onmessage = (event) => {
+      console.log('[ExternalDisplay] BroadcastChannel received:', event.data);
+      handleEvent(event.data as WebSocketEvent);
+    };
 
     return () => {
-      unsubscribe();
+      channel.close();
     };
-  }, [subscribe]);
+  }, [handleEvent]);
 
-  // Initialize from current event if available
+  // Hide connection status after 10 seconds
   useEffect(() => {
-    if (currentEvent) {
-      if (currentEvent.type === 'athlete_up') {
-        setCurrentAthlete(currentEvent.data.athlete_name);
-        setCurrentWeight(currentEvent.data.weight_kg);
-        setCurrentAttempt(currentEvent.data.attempt_number);
-        setCurrentLift(currentEvent.data.lift_type.toUpperCase());
-      }
-    }
-  }, [currentEvent]);
+    const timer = setTimeout(() => {
+      setShowConnectionStatus(false);
+    }, 10000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   const getLiftColor = (lift: string) => {
     switch (lift) {
@@ -111,6 +158,70 @@ export const ExternalDisplay = () => {
           <Title level={2} style={{ color: 'white', margin: 0 }}>
             <TrophyOutlined /> {competitionName}
           </Title>
+        </div>
+      )}
+
+      {/* Connection Status */}
+      {showConnectionStatus && connectionMode === 'broadcast' && (
+        <Card
+          style={{
+            marginBottom: 20,
+            background: '#52c41a',
+            border: 'none',
+            textAlign: 'center',
+          }}
+        >
+          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+            ✓ Connected (Browser Mode - BroadcastChannel)
+          </Text>
+        </Card>
+      )}
+      {showConnectionStatus && connectionMode === 'websocket' && (
+        <Card
+          style={{
+            marginBottom: 20,
+            background: '#52c41a',
+            border: 'none',
+            textAlign: 'center',
+          }}
+        >
+          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+            ✓ Connected (Tauri Mode - WebSocket)
+          </Text>
+        </Card>
+      )}
+      {connectionMode === 'disconnected' && (
+        <Card
+          style={{
+            marginBottom: 20,
+            background: '#ff4d4f',
+            border: 'none',
+            textAlign: 'center',
+          }}
+        >
+          <Text style={{ color: 'white' }}>
+            <ClockCircleOutlined /> Connecting to server... ({status})
+          </Text>
+        </Card>
+      )}
+
+      {/* Timer Display */}
+      {timerRunning && (
+        <div
+          style={{
+            marginBottom: 30,
+            padding: '20px 40px',
+            background: timerSeconds <= 10 ? '#ff4d4f' : timerSeconds <= 30 ? '#faad14' : '#52c41a',
+            borderRadius: 12,
+            textAlign: 'center',
+          }}
+        >
+          <div style={{ fontSize: 18, color: 'white', marginBottom: 8, opacity: 0.9 }}>
+            TIME REMAINING
+          </div>
+          <div style={{ fontSize: 72, fontWeight: 'bold', color: 'white', fontFamily: 'monospace' }}>
+            {timerSeconds}s
+          </div>
         </div>
       )}
 
@@ -192,20 +303,35 @@ export const ExternalDisplay = () => {
               <div style={{ marginTop: 20 }}>
                 {lastResult === 'success' ? (
                   <div>
-                    <CheckCircleFilled
-                      style={{ fontSize: 80, color: '#52c41a' }}
-                    />
-                    <Title level={2} style={{ color: '#52c41a', marginTop: 16 }}>
-                      GOOD LIFT ✓
+                    <div style={{
+                      display: 'inline-block',
+                      background: '#ffffff',
+                      borderRadius: '50%',
+                      padding: '20px',
+                      border: '4px solid #1890ff'
+                    }}>
+                      <CheckCircleFilled
+                        style={{ fontSize: 80, color: '#1890ff' }}
+                      />
+                    </div>
+                    <Title level={2} style={{ color: '#ffffff', marginTop: 16 }}>
+                      GOOD LIFT ✓ (WHITE)
                     </Title>
                   </div>
                 ) : (
                   <div>
-                    <CloseCircleFilled
-                      style={{ fontSize: 80, color: '#ff4d4f' }}
-                    />
+                    <div style={{
+                      display: 'inline-block',
+                      background: '#ff4d4f',
+                      borderRadius: '50%',
+                      padding: '20px'
+                    }}>
+                      <CloseCircleFilled
+                        style={{ fontSize: 80, color: '#ffffff' }}
+                      />
+                    </div>
                     <Title level={2} style={{ color: '#ff4d4f', marginTop: 16 }}>
-                      NO LIFT ✗
+                      NO LIFT ✗ (RED)
                     </Title>
                   </div>
                 )}

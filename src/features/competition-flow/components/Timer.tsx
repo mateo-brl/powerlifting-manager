@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Button, Card, Progress } from 'antd';
 import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { useBroadcastStore } from '../stores/broadcastStore';
 
 const TOTAL_TIME = 60; // 60 seconds
 const ALERT_TIMES = [30, 15, 10]; // Alert at these times
@@ -10,16 +11,44 @@ interface TimerProps {
 }
 
 export const Timer = ({ onComplete }: TimerProps) => {
+  const { broadcast } = useBroadcastStore();
   const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
   const [isRunning, setIsRunning] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const onCompleteRef = useRef(onComplete);
+  const broadcastRef = useRef(broadcast);
+
+  // Keep refs up to date
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+    broadcastRef.current = broadcast;
+  }, [onComplete, broadcast]);
 
   useEffect(() => {
-    if (isRunning && timeLeft > 0) {
+    console.log('[Timer] useEffect triggered - isRunning:', isRunning);
+    if (isRunning) {
+      console.log('[Timer] Starting interval');
       intervalRef.current = setInterval(() => {
+        console.log('[Timer] Interval tick');
         setTimeLeft(prev => {
+          if (prev <= 0) {
+            console.log('[Timer] Already at 0, stopping');
+            return prev;
+          }
+
           const newTime = prev - 1;
+          console.log('[Timer] Decrementing from', prev, 'to', newTime);
+
+          // Broadcast timer update
+          broadcastRef.current({
+            type: 'timer_update',
+            data: {
+              seconds_remaining: newTime,
+              is_running: true,
+              is_warning: newTime <= 30,
+            },
+          });
 
           // Play sound at alert times
           if (ALERT_TIMES.includes(newTime)) {
@@ -30,12 +59,18 @@ export const Timer = ({ onComplete }: TimerProps) => {
           if (newTime === 0) {
             playLongBeep();
             setIsRunning(false);
-            onComplete?.();
+            onCompleteRef.current?.();
           }
 
           return newTime;
         });
       }, 1000);
+    } else {
+      // Clear interval when paused
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
     }
 
     return () => {
@@ -43,7 +78,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
         clearInterval(intervalRef.current);
       }
     };
-  }, [isRunning, timeLeft, onComplete]);
+  }, [isRunning]);
 
   const playBeep = () => {
     // Simple beep using Web Audio API
@@ -69,16 +104,46 @@ export const Timer = ({ onComplete }: TimerProps) => {
   const handleStart = () => {
     setIsRunning(true);
     setHasStarted(true);
+
+    // Broadcast timer started
+    broadcast({
+      type: 'timer_update',
+      data: {
+        seconds_remaining: timeLeft,
+        is_running: true,
+        is_warning: timeLeft <= 30,
+      },
+    });
   };
 
   const handlePause = () => {
     setIsRunning(false);
+
+    // Broadcast timer paused
+    broadcast({
+      type: 'timer_update',
+      data: {
+        seconds_remaining: timeLeft,
+        is_running: false,
+        is_warning: timeLeft <= 30,
+      },
+    });
   };
 
   const handleReset = () => {
     setIsRunning(false);
     setTimeLeft(TOTAL_TIME);
     setHasStarted(false);
+
+    // Broadcast timer reset
+    broadcast({
+      type: 'timer_update',
+      data: {
+        seconds_remaining: TOTAL_TIME,
+        is_running: false,
+        is_warning: false,
+      },
+    });
   };
 
   const percentage = ((TOTAL_TIME - timeLeft) / TOTAL_TIME) * 100;

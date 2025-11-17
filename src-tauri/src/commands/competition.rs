@@ -11,6 +11,7 @@ pub struct Competition {
     pub location: Option<String>,
     pub federation: String,
     pub status: String,
+    pub format: String, // "full_power", "bench_only", "push_pull"
     pub created_at: String,
     pub updated_at: String,
 }
@@ -21,6 +22,7 @@ pub struct CreateCompetitionInput {
     pub date: String,
     pub location: Option<String>,
     pub federation: String,
+    pub format: Option<String>, // defaults to "full_power"
 }
 
 #[derive(Debug, Deserialize)]
@@ -30,6 +32,7 @@ pub struct UpdateCompetitionInput {
     pub location: Option<String>,
     pub federation: Option<String>,
     pub status: Option<String>,
+    pub format: Option<String>,
 }
 
 pub struct CompetitionState {
@@ -49,6 +52,7 @@ pub async fn create_competition(
         location: input.location,
         federation: input.federation,
         status: "upcoming".to_string(),
+        format: input.format.unwrap_or_else(|| "full_power".to_string()),
         created_at: now.clone(),
         updated_at: now,
     };
@@ -92,6 +96,9 @@ pub async fn update_competition(
             }
             if let Some(status) = input.status {
                 c.status = status;
+            }
+            if let Some(format) = input.format {
+                c.format = format;
             }
             c.updated_at = now;
             Ok(c.clone())

@@ -1,3 +1,4 @@
+use chrono;
 use futures_util::{SinkExt, StreamExt};
 use serde_json::Value;
 use tokio::net::{TcpListener, TcpStream};
@@ -76,6 +77,12 @@ async fn handle_connection(stream: TcpStream, broadcast_tx: BroadcastSender) {
 
 /// Broadcast an event to all connected WebSocket clients
 pub fn broadcast_event(tx: &BroadcastSender, event: Value) {
-    let json_string = serde_json::to_string(&event).unwrap_or_default();
+    // Wrap the event in a WebSocketMessage format with timestamp
+    let message = serde_json::json!({
+        "timestamp": chrono::Utc::now().to_rfc3339(),
+        "event": event
+    });
+    let json_string = serde_json::to_string(&message).unwrap_or_default();
+    println!("[WebSocket] Broadcasting: {}", json_string);
     let _ = tx.send(json_string);
 }

@@ -1,3 +1,5 @@
+export type CompetitionFormat = 'full_power' | 'bench_only';
+
 export interface Competition {
   id: string;
   name: string;
@@ -5,6 +7,7 @@ export interface Competition {
   location: string;
   federation: string;
   status: 'upcoming' | 'in_progress' | 'completed';
+  format: CompetitionFormat;
   created_at: string;
   updated_at: string;
 }
@@ -14,6 +17,7 @@ export interface CreateCompetitionInput {
   date: string;
   location: string;
   federation: string;
+  format?: CompetitionFormat;
 }
 
 export interface UpdateCompetitionInput {
@@ -22,4 +26,5 @@ export interface UpdateCompetitionInput {
   location?: string;
   federation?: string;
   status?: 'upcoming' | 'in_progress' | 'completed';
+  format?: CompetitionFormat;
 }

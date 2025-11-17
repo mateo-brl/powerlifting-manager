@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react';
-import { Card, Button, InputNumber, message, Space, Typography, Tag, Badge, Divider } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, TrophyOutlined, HistoryOutlined } from '@ant-design/icons';
+import { useState, useEffect, useCallback } from 'react';
+import { Card, Button, InputNumber, message, Space, Typography, Tag } from 'antd';
 import { AttemptOrder } from '../../weigh-in/types';
 import { LiftType } from '../types';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -31,6 +30,8 @@ export const AttemptTracker = ({
   ]);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isAttemptCompleted, setIsAttemptCompleted] = useState(false);
+  const [attemptResult, setAttemptResult] = useState<'success' | 'failure' | null>(null);
 
   // Get previous attempts for this athlete and lift type
   const previousAttempts = attempts.filter(
@@ -39,28 +40,39 @@ export const AttemptTracker = ({
          a.attempt_number < currentAttempt.attempt_number
   ).sort((a, b) => a.attempt_number - b.attempt_number);
 
+  // Create a stable key for the current attempt
+  const attemptKey = `${currentAttempt.athlete_id}-${currentAttempt.attempt_number}-${liftType}`;
+
   useEffect(() => {
-    // Reset for new attempt
+    // Reset for new attempt (only when athlete/attempt actually changes)
     setWeight(currentAttempt.weight_kg);
     setRefereeVotes([null, null, null]);
     setAttemptId(null);
-  }, [currentAttempt]);
+    setIsAttemptCompleted(false);
+    setAttemptResult(null);
+  }, [attemptKey, currentAttempt.weight_kg]);
 
-  const handleRefereeVote = (refereeIndex: 0 | 1 | 2, decision: boolean) => {
-    const newVotes = [...refereeVotes] as [boolean | null, boolean | null, boolean | null];
-    newVotes[refereeIndex] = decision;
-    setRefereeVotes(newVotes);
-  };
+  const handleRefereeVote = useCallback((refereeIndex: 0 | 1 | 2, decision: boolean) => {
+    console.log('[AttemptTracker] Referee', refereeIndex + 1, 'voted:', decision ? 'Good Lift' : 'No Lift');
+    setRefereeVotes(prevVotes => {
+      const newVotes = [...prevVotes] as [boolean | null, boolean | null, boolean | null];
+      newVotes[refereeIndex] = decision;
+      console.log('[AttemptTracker] New votes:', newVotes);
+      return newVotes;
+    });
+  }, []);
 
   const canSubmit = refereeVotes.every(vote => vote !== null);
 
   const handleSubmit = async () => {
+    console.log('[AttemptTracker] handleSubmit called - canSubmit:', canSubmit);
     if (!canSubmit) {
       message.warning('All 3 referees must vote');
       return;
     }
 
     setIsSubmitting(true);
+    console.log('[AttemptTracker] Submitting attempt with votes:', refereeVotes);
     try {
       // Create or update attempt
       if (!attemptId) {
@@ -105,10 +117,9 @@ export const AttemptTracker = ({
 
       message.success(success ? 'Good lift! ✓' : 'No lift ✗');
 
-      // Move to next attempt after a short delay
-      setTimeout(() => {
-        onComplete();
-      }, 1500);
+      // Mark attempt as completed but don't move to next automatically
+      setIsAttemptCompleted(true);
+      setAttemptResult(success ? 'success' : 'failure');
     } catch (error) {
       message.error('Failed to record attempt');
       console.error(error);
@@ -117,180 +128,204 @@ export const AttemptTracker = ({
     }
   };
 
+  const handleNextAthlete = () => {
+    onComplete();
+  };
+
   const greenCount = refereeVotes.filter(v => v === true).length;
   const redCount = refereeVotes.filter(v => v === false).length;
 
   return (
-    <Card>
-      {/* Previous Attempts History */}
+    <Card bodyStyle={{ padding: '16px' }}>
+      {/* Previous Attempts History - Compact */}
       {previousAttempts.length > 0 && (
-        <div style={{ marginBottom: 16 }}>
-          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
-            <HistoryOutlined style={{ marginRight: 8 }} />
-            <Text strong>Previous Attempts for {liftType.toUpperCase()}</Text>
-          </div>
-          <Space size="small">
+        <div style={{ marginBottom: 8 }}>
+          <Space size="small" wrap>
             {previousAttempts.map((attempt) => (
               <Tag
                 key={attempt.id}
-                color={attempt.result === 'success' ? 'success' : 'error'}
-                style={{ fontSize: 14, padding: '4px 12px' }}
+                style={{
+                  fontSize: 12,
+                  padding: '2px 8px',
+                  background: attempt.result === 'success' ? '#ffffff' : '#ff4d4f',
+                  color: attempt.result === 'success' ? '#000000' : '#ffffff',
+                  border: attempt.result === 'success' ? '1px solid #1890ff' : 'none'
+                }}
               >
-                Attempt {attempt.attempt_number}: {attempt.weight_kg} kg{' '}
-                {attempt.result === 'success' ? '✓' : '✗'}
+                #{attempt.attempt_number}: {attempt.weight_kg}kg {attempt.result === 'success' ? '✓' : '✗'}
               </Tag>
             ))}
           </Space>
-          <Divider style={{ margin: '12px 0' }} />
         </div>
       )}
 
-      {/* Current Athlete Display */}
-      <div style={{ background: '#1890ff', color: 'white', padding: 24, borderRadius: 8, marginBottom: 24 }}>
+      {/* Current Athlete Display - Compact */}
+      <div style={{ background: '#1890ff', color: 'white', padding: 12, borderRadius: 8, marginBottom: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
-            <div style={{ fontSize: 14, opacity: 0.9, marginBottom: 8 }}>
-              <TrophyOutlined /> CURRENT ATTEMPT
-            </div>
-            <Title level={2} style={{ color: 'white', margin: 0, marginBottom: 8 }}>
+            <Title level={4} style={{ color: 'white', margin: 0, marginBottom: 4 }}>
               {currentAttempt.athlete_name}
             </Title>
-            <Space>
-              <Tag color="blue">Lot #{currentAttempt.lot_number}</Tag>
-              <Tag color="green">Attempt #{currentAttempt.attempt_number}</Tag>
+            <Space size="small">
+              <Tag style={{ margin: 0, fontSize: 11 }}>Lot {currentAttempt.lot_number}</Tag>
+              <Tag style={{ margin: 0, fontSize: 11 }}>Att. {currentAttempt.attempt_number}</Tag>
               {currentAttempt.rack_height && (
-                <Tag color="purple">Rack: {currentAttempt.rack_height}</Tag>
+                <Tag style={{ margin: 0, fontSize: 11 }}>Rack {currentAttempt.rack_height}</Tag>
               )}
             </Space>
           </div>
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 14, opacity: 0.9, marginBottom: 8 }}>
-              {liftType.toUpperCase()}
-            </div>
-            <div style={{ fontSize: 56, fontWeight: 'bold', fontFamily: 'monospace' }}>
+            <div style={{ fontSize: 12, opacity: 0.9 }}>{liftType.toUpperCase()}</div>
+            <div style={{ fontSize: 42, fontWeight: 'bold', fontFamily: 'monospace' }}>
               {weight} kg
             </div>
           </div>
         </div>
       </div>
 
-      {/* Weight Adjustment */}
-      <div style={{ marginBottom: 24 }}>
-        <Text strong>Adjust Weight (optional)</Text>
-        <div style={{ marginTop: 8 }}>
-          <InputNumber
-            value={weight}
-            onChange={(val) => val && setWeight(val)}
-            min={currentAttempt.weight_kg - 2.5}
-            max={currentAttempt.weight_kg + 20}
-            step={2.5}
-            style={{ width: 200 }}
-            size="large"
-            addonAfter="kg"
-          />
-          <Text type="secondary" style={{ marginLeft: 16 }}>
-            Original: {currentAttempt.weight_kg} kg
-          </Text>
-        </div>
+      {/* Weight Adjustment - Inline */}
+      <div style={{ marginBottom: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
+        <Text strong style={{ fontSize: 13 }}>Weight:</Text>
+        <InputNumber
+          value={weight}
+          onChange={(val) => val && setWeight(val)}
+          min={currentAttempt.weight_kg - 2.5}
+          max={currentAttempt.weight_kg + 20}
+          step={2.5}
+          style={{ width: 120 }}
+          size="small"
+          addonAfter="kg"
+        />
+        <Text type="secondary" style={{ fontSize: 12 }}>
+          (Original: {currentAttempt.weight_kg} kg)
+        </Text>
       </div>
 
-      {/* Referee Lights */}
-      <div style={{ marginBottom: 24 }}>
-        <Title level={4}>Referee Decisions</Title>
-        <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginTop: 16 }}>
+      {/* Referee Lights - Compact */}
+      <div style={{ marginBottom: 12 }}>
+        <Text strong style={{ fontSize: 13, marginBottom: 8, display: 'block' }}>Referee Decisions</Text>
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
           {[0, 1, 2].map((index) => (
             <Card
               key={index}
+              size="small"
               style={{
                 flex: 1,
                 textAlign: 'center',
                 background: '#f5f5f5',
-                border: '2px solid #d9d9d9',
+                border: '1px solid #d9d9d9',
               }}
-              styles={{ body: { padding: '24px 16px' } }}
+              bodyStyle={{ padding: '8px' }}
             >
-              <div style={{ marginBottom: 16 }}>
-                <Badge
-                  status={
-                    refereeVotes[index] === true
-                      ? 'success'
-                      : refereeVotes[index] === false
-                      ? 'error'
-                      : 'default'
-                  }
-                  text={`Referee ${index + 1}`}
-                />
+              <div style={{ marginBottom: 6, fontSize: 12, fontWeight: 'bold' }}>
+                Ref {index + 1}
+                {refereeVotes[index] !== null && (
+                  <span style={{ marginLeft: 4 }}>
+                    {refereeVotes[index] ? '⚪' : '🔴'}
+                  </span>
+                )}
               </div>
 
-              <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Space direction="vertical" size="small" style={{ width: '100%' }}>
                 <Button
                   type={refereeVotes[index] === true ? 'primary' : 'default'}
-                  icon={<CheckCircleFilled />}
                   onClick={() => handleRefereeVote(index as 0 | 1 | 2, true)}
-                  size="large"
+                  size="small"
                   block
                   style={{
-                    background: refereeVotes[index] === true ? '#52c41a' : undefined,
-                    borderColor: refereeVotes[index] === true ? '#52c41a' : undefined,
-                    height: 60,
+                    background: refereeVotes[index] === true ? '#ffffff' : undefined,
+                    borderColor: refereeVotes[index] === true ? '#1890ff' : undefined,
+                    color: refereeVotes[index] === true ? '#000000' : undefined,
+                    fontSize: 11,
+                    height: 32,
+                    fontWeight: refereeVotes[index] === true ? 'bold' : undefined,
                   }}
                 >
-                  Good Lift
+                  ⚪ White
                 </Button>
                 <Button
                   type={refereeVotes[index] === false ? 'primary' : 'default'}
-                  icon={<CloseCircleFilled />}
                   onClick={() => handleRefereeVote(index as 0 | 1 | 2, false)}
-                  size="large"
+                  size="small"
                   block
                   danger={refereeVotes[index] === false}
-                  style={{ height: 60 }}
+                  style={{
+                    fontSize: 11,
+                    height: 32,
+                    background: refereeVotes[index] === false ? '#ff4d4f' : undefined,
+                    borderColor: refereeVotes[index] === false ? '#ff4d4f' : undefined,
+                  }}
                 >
-                  No Lift
+                  🔴 Red
                 </Button>
               </Space>
             </Card>
           ))}
         </div>
 
-        {/* Vote Summary */}
+        {/* Vote Summary - Compact */}
         {canSubmit && (
-          <div style={{ marginTop: 24, textAlign: 'center' }}>
-            <Space size="large">
-              <div>
-                <CheckCircleFilled style={{ fontSize: 24, color: '#52c41a', marginRight: 8 }} />
-                <Text strong style={{ fontSize: 18 }}>
-                  {greenCount} Green
-                </Text>
-              </div>
-              <div>
-                <CloseCircleFilled style={{ fontSize: 24, color: '#ff4d4f', marginRight: 8 }} />
-                <Text strong style={{ fontSize: 18 }}>
-                  {redCount} Red
-                </Text>
-              </div>
-              <div>
-                <Tag color={greenCount >= 2 ? 'success' : 'error'} style={{ fontSize: 16, padding: '8px 16px' }}>
-                  {greenCount >= 2 ? '✓ GOOD LIFT' : '✗ NO LIFT'}
-                </Tag>
-              </div>
+          <div style={{ marginTop: 8, textAlign: 'center', padding: '8px', background: '#fafafa', borderRadius: 4 }}>
+            <Space size="middle">
+              <Text strong style={{ fontSize: 13 }}>⚪ {greenCount}</Text>
+              <Text strong style={{ fontSize: 13 }}>🔴 {redCount}</Text>
+              <Tag
+                color={greenCount >= 2 ? undefined : 'error'}
+                style={{
+                  fontSize: 12,
+                  padding: '4px 12px',
+                  background: greenCount >= 2 ? '#ffffff' : undefined,
+                  color: greenCount >= 2 ? '#000000' : undefined,
+                  border: greenCount >= 2 ? '1px solid #1890ff' : undefined,
+                  fontWeight: 'bold'
+                }}
+              >
+                {greenCount >= 2 ? '✓ GOOD' : '✗ NO LIFT'}
+              </Tag>
             </Space>
           </div>
         )}
       </div>
 
-      {/* Submit Button */}
-      <Button
-        type="primary"
-        size="large"
-        block
-        onClick={handleSubmit}
-        disabled={!canSubmit}
-        loading={isSubmitting}
-        style={{ height: 60, fontSize: 18, fontWeight: 'bold' }}
-      >
-        {canSubmit ? 'Confirm Attempt & Continue' : 'Waiting for all referee decisions...'}
-      </Button>
+      {/* Submit Button or Next Athlete Button - Compact */}
+      {!isAttemptCompleted ? (
+        <Button
+          type="primary"
+          size="middle"
+          block
+          onClick={handleSubmit}
+          disabled={!canSubmit}
+          loading={isSubmitting}
+          style={{ height: 44, fontSize: 14, fontWeight: 'bold', marginTop: 8 }}
+        >
+          {canSubmit ? 'Confirm Attempt' : 'Waiting for decisions...'}
+        </Button>
+      ) : (
+        <div style={{ marginTop: 8 }}>
+          <div style={{
+            padding: '12px',
+            marginBottom: '8px',
+            borderRadius: '6px',
+            textAlign: 'center',
+            background: attemptResult === 'success' ? '#ffffff' : '#ff4d4f',
+            border: attemptResult === 'success' ? '2px solid #1890ff' : 'none',
+            color: attemptResult === 'success' ? '#000000' : '#ffffff'
+          }}>
+            <Title level={5} style={{ margin: 0, color: attemptResult === 'success' ? '#000000' : '#ffffff' }}>
+              {attemptResult === 'success' ? '✓ GOOD LIFT (WHITE)' : '✗ NO LIFT (RED)'}
+            </Title>
+          </div>
+          <Button
+            type="primary"
+            size="middle"
+            block
+            onClick={handleNextAthlete}
+            style={{ height: 44, fontSize: 14, fontWeight: 'bold', background: '#52c41a', borderColor: '#52c41a' }}
+          >
+            Next Athlete →
+          </Button>
+        </div>
+      )}
     </Card>
   );
 };

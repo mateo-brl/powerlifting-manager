@@ -26,6 +26,7 @@ export function generateMockCompetition(): Competition {
     location: cities[Math.floor(Math.random() * cities.length)],
     federation: 'IPF',
     status: 'upcoming',
+    format: Math.random() > 0.7 ? 'bench_only' : 'full_power',
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
   };
