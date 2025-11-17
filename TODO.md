@@ -69,7 +69,7 @@
   - Division (raw/equipped)
   - Validation selon règles IPF
 
-- [ ] Créer `AthleteImport.tsx`
+- [x] Créer `AthleteImport.tsx` ✅
   - Upload CSV
   - Preview des données
   - Validation et import en masse
@@ -88,6 +88,8 @@
   - `/live` - Compétition en direct
 
 - [x] Créer Layout avec menu de navigation ✅
+- [x] Ajouter onglet "Competition Actions" avec cartes cliquables ✅
+- [x] Ajouter boutons "Back" dans toutes les pages de gestion ✅
 
 ---
 
@@ -108,13 +110,13 @@
 
 ### Calcul des Flights (Groupes)
 
-- [ ] Créer algorithme de répartition en flights
+- [x] Créer algorithme de répartition en flights ✅
   - Par catégorie de poids
   - Par nombre d'athlètes (max 14 par flight recommandé)
   - Équilibrer les groupes
 
-- [ ] UI pour visualiser et ajuster les flights
-- [ ] Stocker les flights en DB
+- [x] UI pour visualiser et ajuster les flights ✅
+- [ ] Stocker les flights en DB (actuellement en mémoire)
 
 ### Ordre de Passage
 
@@ -283,28 +285,35 @@
 
 **Phases complétées** :
 - ✅ Phase 0 - Setup Initial (100%)
-- ✅ Phase 1 - CRUD de Base (95% - manque import CSV)
-- ✅ Phase 2 - Logique Métier (85% - manque flights)
+- ✅ Phase 1 - CRUD de Base (100% - import CSV complété)
+- ✅ Phase 2 - Logique Métier (95% - flights en mémoire, manque persistance DB)
 - ✅ Phase 3 - Temps Réel (90% - manque WebSocket)
 - ⏳ Phase 4 - Documents (0%)
 
 **Fonctionnalités clés implémentées** :
-- Gestion complète des compétitions et athlètes
-- Module de pesée fonctionnel
-- Système de tentatives avec votes d'arbitres (3 lumières)
-- Calculs de scores (DOTS, Wilks, IPF GL)
-- Classements live (catégorie + absolu)
-- Timer de compétition
-- Mode démo avec données factices
-- Compatible navigateur ET application native Tauri
+- ✅ Gestion complète des compétitions et athlètes
+- ✅ Import/Export CSV des athlètes
+- ✅ Module de pesée fonctionnel
+- ✅ Système de tentatives avec votes d'arbitres (3 lumières)
+- ✅ Calculs de scores (DOTS, Wilks, IPF GL)
+- ✅ Classements live (catégorie + absolu)
+- ✅ Timer de compétition
+- ✅ Gestion des flights automatique
+- ✅ Navigation améliorée avec onglet "Competition Actions"
+- ✅ Boutons de retour dans toutes les pages
+- ✅ Mode démo avec données factices
+- ✅ Compatible navigateur ET application native Tauri
 
 **Prochaines étapes prioritaires** :
-1. Implémenter SQLite persistant (remplacer stockage mémoire)
-2. Système de flights automatique
-3. WebSocket pour affichage externe
-4. Export PDF/Excel
-5. Tests E2E
+1. WebSocket pour affichage externe
+2. Export PDF (feuilles de route, résultats)
+3. Export Excel (complet)
+4. Export format OpenPowerlifting
+5. Persistance des flights en DB
+6. Tests unitaires et E2E
+7. Polish UX (dark mode, confirmations, i18n)
+8. Build et distribution
 
 ---
 
-**Dernière mise à jour** : 2025-11-16 - Phases 1-3 complétées ✅
+**Dernière mise à jour** : 2025-11-17 - Navigation améliorée + Import CSV ✅
