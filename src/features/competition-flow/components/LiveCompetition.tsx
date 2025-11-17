@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -100,7 +100,19 @@ export const LiveCompetition = () => {
     });
 
     const ordered = calculateAttemptOrder(attemptData, competitionAthletes);
-    setAttemptOrder(ordered);
+
+    // Enrich with weigh-in data (rack heights)
+    const enrichedOrdered = ordered.map(attempt => {
+      const weighIn = competitionWeighIns.find(w => w.athlete_id === attempt.athlete_id);
+      return {
+        ...attempt,
+        rack_height: currentLift === 'squat' ? weighIn?.squat_rack_height :
+                    currentLift === 'bench' ? weighIn?.bench_rack_height : undefined,
+        safety_height: currentLift === 'bench' ? weighIn?.bench_safety_height : undefined,
+      };
+    });
+
+    setAttemptOrder(enrichedOrdered);
 
     // Reset index if we're past the end
     if (currentIndex >= ordered.length) {
@@ -142,6 +154,7 @@ export const LiveCompetition = () => {
           lift_type: currentLift,
           lot_number: currentAttempt.lot_number,
           rack_height: currentAttempt.rack_height,
+          safety_height: currentAttempt.safety_height,
         },
       });
     }
@@ -178,6 +191,7 @@ export const LiveCompetition = () => {
             lift_type: currentLift,
             lot_number: nextAttempt.lot_number,
             rack_height: nextAttempt.rack_height,
+            safety_height: nextAttempt.safety_height,
           },
         });
       }
@@ -217,6 +231,50 @@ export const LiveCompetition = () => {
     const displayUrl = `${window.location.origin}/display`;
     window.open(displayUrl, 'ExternalDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
     message.success('External display opened in new window');
+  };
+
+  const handleOpenSpottersDisplay = () => {
+    const spottersUrl = `${window.location.origin}/spotters`;
+    window.open(spottersUrl, 'SpottersDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
+
+    // Re-broadcast current state for the new window
+    setTimeout(() => {
+      const competition = competitions.find(c => c.id === competitionId);
+      if (competition) {
+        console.log('[LiveCompetition] Re-broadcasting state for spotters display');
+        console.log('[LiveCompetition] isCompetitionActive:', isCompetitionActive);
+        console.log('[LiveCompetition] currentAttempt:', currentAttempt);
+
+        // Always broadcast competition started if we have a competition
+        broadcast({
+          type: 'competition_started',
+          data: {
+            competition_id: competitionId || '',
+            competition_name: competition.name,
+            lift_type: currentLift,
+          },
+        });
+
+        // Broadcast current athlete if available (regardless of competition status)
+        if (currentAttempt) {
+          broadcast({
+            type: 'athlete_up',
+            data: {
+              athlete_id: currentAttempt.athlete_id,
+              athlete_name: currentAttempt.athlete_name,
+              weight_kg: currentAttempt.weight_kg,
+              attempt_number: currentAttempt.attempt_number,
+              lift_type: currentLift,
+              lot_number: currentAttempt.lot_number,
+              rack_height: currentAttempt.rack_height,
+              safety_height: currentAttempt.safety_height,
+            },
+          });
+        }
+      }
+    }, 500); // Small delay to ensure new window is ready
+
+    message.success('Spotters display opened in new window');
   };
 
   // Get available lifts based on competition format
@@ -376,6 +434,15 @@ export const LiveCompetition = () => {
                       style={{ background: '#722ed1', borderColor: '#722ed1' }}
                     >
                       Open External Display
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<TeamOutlined />}
+                      onClick={handleOpenSpottersDisplay}
+                      block
+                      style={{ background: '#13c2c2', borderColor: '#13c2c2' }}
+                    >
+                      Open Spotters Display
                     </Button>
                     <Button
                       icon={<ReloadOutlined />}

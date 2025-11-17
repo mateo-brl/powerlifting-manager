@@ -13,6 +13,7 @@ import { FlightManagement } from './features/competition-flow/components/FlightM
 import { LiveCompetition } from './features/competition-flow/components/LiveCompetition';
 import { Rankings } from './features/competition-flow/components/Rankings';
 import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
+import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Routes>
           {/* External Display Route (fullscreen, no layout) */}
           <Route path="/display" element={<ExternalDisplay />} />
+          <Route path="/spotters" element={<SpottersDisplay />} />
 
           {/* Main App Routes */}
           <Route path="/" element={<Layout />}>

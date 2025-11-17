@@ -110,6 +110,7 @@ export function generateMockWeighIns(athletes: Athlete[]): WeighIn[] {
       opening_deadlift: Math.max(baseDeadlift, 60),
       squat_rack_height: athlete.squat_rack_height,
       bench_rack_height: athlete.bench_rack_height,
+      bench_safety_height: athlete.bench_rack_height ? athlete.bench_rack_height - 2 : undefined, // Safety bars 2 notches below rack
       flight: undefined,
       lot_number: athlete.lot_number,
     });

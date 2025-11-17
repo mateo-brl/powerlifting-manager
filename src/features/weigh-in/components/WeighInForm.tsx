@@ -14,6 +14,7 @@ interface WeighInFormData {
   opening_deadlift: number;
   squat_rack_height?: number;
   bench_rack_height?: number;
+  bench_safety_height?: number;
 }
 
 export const WeighInForm = () => {
@@ -92,6 +93,7 @@ export const WeighInForm = () => {
         opening_deadlift: values.opening_deadlift,
         squat_rack_height: values.squat_rack_height,
         bench_rack_height: values.bench_rack_height,
+        bench_safety_height: values.bench_safety_height,
       });
 
       message.success('Weigh-in completed successfully');
@@ -278,7 +280,7 @@ export const WeighInForm = () => {
 
             <Card type="inner" title="Rack Heights (Optional)">
               <Row gutter={16}>
-                <Col span={12}>
+                <Col span={8}>
                   <Form.Item
                     name="squat_rack_height"
                     label="Squat Rack Height"
@@ -291,10 +293,23 @@ export const WeighInForm = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={12}>
+                <Col span={8}>
                   <Form.Item
                     name="bench_rack_height"
                     label="Bench Rack Height"
+                  >
+                    <InputNumber
+                      min={1}
+                      max={20}
+                      style={{ width: '100%' }}
+                      placeholder="1-20"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item
+                    name="bench_safety_height"
+                    label="Bench Safety Height"
                   >
                     <InputNumber
                       min={1}

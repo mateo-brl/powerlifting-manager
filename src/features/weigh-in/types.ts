@@ -9,6 +9,7 @@ export interface WeighIn {
   opening_deadlift: number;
   squat_rack_height?: number;
   bench_rack_height?: number;
+  bench_safety_height?: number;
   flight?: string;
   lot_number?: number;
 }
@@ -22,6 +23,7 @@ export interface CreateWeighInInput {
   opening_deadlift: number;
   squat_rack_height?: number;
   bench_rack_height?: number;
+  bench_safety_height?: number;
 }
 
 export interface Flight {
@@ -41,4 +43,5 @@ export interface AttemptOrder {
   weight_kg: number;
   lot_number: number;
   rack_height?: number;
+  safety_height?: number;
 }

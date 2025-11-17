@@ -15,6 +15,7 @@ pub struct WeighIn {
     pub opening_deadlift: f64,
     pub squat_rack_height: Option<i32>,
     pub bench_rack_height: Option<i32>,
+    pub bench_safety_height: Option<i32>,
     pub flight: Option<String>,
     pub lot_number: Option<i32>,
 }
@@ -29,6 +30,7 @@ pub struct CreateWeighInInput {
     pub opening_deadlift: f64,
     pub squat_rack_height: Option<i32>,
     pub bench_rack_height: Option<i32>,
+    pub bench_safety_height: Option<i32>,
 }
 
 pub struct WeighInState {
@@ -51,6 +53,7 @@ pub async fn create_weigh_in(
         opening_deadlift: input.opening_deadlift,
         squat_rack_height: input.squat_rack_height,
         bench_rack_height: input.bench_rack_height,
+        bench_safety_height: input.bench_safety_height,
         flight: None,
         lot_number: None,
     };
