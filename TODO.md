@@ -216,17 +216,22 @@
 
 ### Export Excel
 
-- [ ] Implémenter export avec ExcelJS
-- [ ] Feuilles :
-  - Athlètes inscrits
-  - Tentatives
-  - Résultats
-  - Statistiques
+- [x] Implémenter export CSV complet ✅
+- [x] Export des classements avec tous les scores ✅
+  - Rank, Name, Gender, Weight Class, Bodyweight
+  - Best Squat, Bench, Deadlift, Total
+  - IPF GL Points, DOTS, Wilks
 
 ### Export OpenPowerlifting
 
-- [ ] Créer CSV format OpenPowerlifting
-- [ ] Colonnes : Name, Sex, Event, Equipment, Age, Division, BodyweightKg, WeightClassKg, Squat1Kg, ...
+- [x] Créer CSV format OpenPowerlifting ✅
+- [x] Colonnes conformes au format officiel ✅
+  - Name, Sex, Event, Equipment, Age, Division
+  - BodyweightKg, WeightClassKg
+  - Squat1Kg, Squat2Kg, Squat3Kg, Best3SquatKg
+  - Bench1Kg, Bench2Kg, Bench3Kg, Best3BenchKg
+  - Deadlift1Kg, Deadlift2Kg, Deadlift3Kg, Best3DeadliftKg
+  - TotalKg, Place, Dots, Wilks, Goodlift
 
 ---
 
@@ -288,7 +293,7 @@
 - ✅ Phase 1 - CRUD de Base (100% - import CSV complété)
 - ✅ Phase 2 - Logique Métier (95% - flights en mémoire, manque persistance DB)
 - ✅ Phase 3 - Temps Réel (90% - manque WebSocket)
-- ⏳ Phase 4 - Documents (0%)
+- 🔄 Phase 4 - Documents (40% - exports CSV/OpenPowerlifting complétés, manque PDF)
 
 **Fonctionnalités clés implémentées** :
 - ✅ Gestion complète des compétitions et athlètes
@@ -297,6 +302,8 @@
 - ✅ Système de tentatives avec votes d'arbitres (3 lumières)
 - ✅ Calculs de scores (DOTS, Wilks, IPF GL)
 - ✅ Classements live (catégorie + absolu)
+- ✅ Export Excel des classements complets
+- ✅ Export format OpenPowerlifting officiel
 - ✅ Timer de compétition
 - ✅ Gestion des flights automatique
 - ✅ Navigation améliorée avec onglet "Competition Actions"
@@ -305,15 +312,15 @@
 - ✅ Compatible navigateur ET application native Tauri
 
 **Prochaines étapes prioritaires** :
-1. WebSocket pour affichage externe
-2. Export PDF (feuilles de route, résultats)
-3. Export Excel (complet)
-4. Export format OpenPowerlifting
-5. Persistance des flights en DB
-6. Tests unitaires et E2E
-7. Polish UX (dark mode, confirmations, i18n)
-8. Build et distribution
+1. Export PDF (feuilles de route, résultats)
+2. WebSocket pour affichage externe
+3. Persistance des flights en DB
+4. Tests unitaires et E2E
+5. Polish UX (dark mode, i18n, thème personnalisé)
+6. Build et distribution (Windows, Linux)
+7. Documentation utilisateur complète
+8. Vidéo de démonstration
 
 ---
 
-**Dernière mise à jour** : 2025-11-17 - Navigation améliorée + Import CSV ✅
+**Dernière mise à jour** : 2025-11-17 - Exports Excel & OpenPowerlifting ✅
