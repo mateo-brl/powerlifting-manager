@@ -295,6 +295,39 @@ Nouvelle formule moderne plus précise que Wilks.
 - "Add Athlete" ou "Import Athletes" (CSV)
 - Remplir les informations
 
+#### 📄 Format CSV pour l'Import d'Athlètes
+
+Pour importer plusieurs athlètes en une seule fois, créez un fichier CSV avec les colonnes suivantes :
+
+**Colonnes requises :**
+- `first_name` : Prénom de l'athlète
+- `last_name` : Nom de famille
+- `date_of_birth` : Date de naissance (format: YYYY-MM-DD)
+- `gender` : M ou F
+- `weight_class` : Catégorie de poids (ex: 74, 83, 93, 105, 120, 120+, etc.)
+
+**Colonnes optionnelles :**
+- `division` : raw ou equipped (par défaut: raw)
+- `age_category` : sub_junior, junior, open, master1, master2, master3, master4 (par défaut: open)
+- `team` : Nom de l'équipe ou club
+- `lot_number` : Numéro de lot (1-4)
+
+**Exemple de fichier CSV :**
+```csv
+first_name,last_name,date_of_birth,gender,weight_class,division,age_category,team,lot_number
+Jean,Martin,1995-03-15,M,83,raw,open,Club Paris,1
+Sophie,Bernard,1998-07-22,F,63,raw,open,Club Lyon,2
+Pierre,Dubois,1992-11-08,M,93,equipped,open,Club Marseille,1
+Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
+```
+
+**Instructions :**
+1. Créez le fichier CSV avec les colonnes ci-dessus
+2. Dans la compétition, allez sur "Athletes" → "Import Athletes"
+3. Cliquez sur "Upload" et sélectionnez votre fichier CSV
+4. Vérifiez l'aperçu des données
+5. Cliquez sur "Import Athletes" pour finaliser l'import
+
 ### 3. Pesée
 - Ouvrir la compétition → "Competition Actions" → "Weigh-In"
 - Sélectionner un athlète
