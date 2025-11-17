@@ -273,6 +273,7 @@
     "display": {
       "external": "Ouvrir Affichage Externe",
       "spotters": "Ouvrir Affichage Spotters",
+      "warmup": "Ouvrir Salle de Chauffe",
       "opened": "Affichage ouvert dans une nouvelle fenêtre"
     },
     "quickActions": {
@@ -338,6 +339,17 @@
       "bar": "BARRE",
       "collar": "C"
     }
+  },
+  "warmupDisplay": {
+    "title": "SALLE DE CHAUFFE",
+    "waitingForCompetition": "En attente du début de la compétition...",
+    "position": "Position",
+    "attempt": "Tentative",
+    "weight": "Poids",
+    "onPlatform": "EN COURS",
+    "onDeck": "SUIVANT",
+    "inHole": "APRÈS",
+    "noAthletes": "Aucun athlète dans l'ordre de passage"
   },
   "rankings": {
     "title": "Classements & Résultats",

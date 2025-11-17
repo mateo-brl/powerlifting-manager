@@ -17,6 +17,7 @@ import { Rankings } from './features/competition-flow/components/Rankings';
 import { WeightDeclarations } from './features/competition-flow/components/WeightDeclarations';
 import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
 import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
+import { WarmupDisplay } from './features/competition-flow/components/WarmupDisplay';
 import './i18n/config';
 
 function App() {
@@ -27,9 +28,10 @@ function App() {
     <ConfigProvider locale={antdLocale}>
       <BrowserRouter>
         <Routes>
-          {/* External Display Route (fullscreen, no layout) */}
+          {/* External Display Routes (fullscreen, no layout) */}
           <Route path="/display" element={<ExternalDisplay />} />
           <Route path="/spotters" element={<SpottersDisplay />} />
+          <Route path="/warmup" element={<WarmupDisplay />} />
 
           {/* Main App Routes */}
           <Route path="/" element={<Layout />}>

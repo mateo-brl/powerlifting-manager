@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, FileTextOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, FileTextOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -159,6 +159,21 @@ export const LiveCompetition = () => {
           safety_height: currentAttempt.safety_height,
         },
       });
+
+      // Broadcast initial attempt order for warmup display
+      broadcast({
+        type: 'attempt_order_update',
+        data: {
+          attempt_order: attemptOrder.map(a => ({
+            athlete_id: a.athlete_id,
+            athlete_name: a.athlete_name,
+            weight_kg: a.weight_kg,
+            attempt_number: a.attempt_number,
+            lot_number: a.lot_number,
+          })),
+          current_index: currentIndex,
+        },
+      });
     }
   };
 
@@ -194,6 +209,21 @@ export const LiveCompetition = () => {
             lot_number: nextAttempt.lot_number,
             rack_height: nextAttempt.rack_height,
             safety_height: nextAttempt.safety_height,
+          },
+        });
+
+        // Also broadcast updated attempt order with new index for warmup display
+        broadcast({
+          type: 'attempt_order_update',
+          data: {
+            attempt_order: attemptOrder.map(a => ({
+              athlete_id: a.athlete_id,
+              athlete_name: a.athlete_name,
+              weight_kg: a.weight_kg,
+              attempt_number: a.attempt_number,
+              lot_number: a.lot_number,
+            })),
+            current_index: nextIndex,
           },
         });
       }
@@ -278,6 +308,82 @@ export const LiveCompetition = () => {
 
     message.success(t('live.display.opened'));
   };
+
+  const handleOpenWarmupDisplay = () => {
+    const warmupUrl = `${window.location.origin}/warmup`;
+    window.open(warmupUrl, 'WarmupDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
+
+    // Re-broadcast current state for the new window
+    setTimeout(() => {
+      const competition = competitions.find(c => c.id === competitionId);
+      if (competition) {
+        console.log('[LiveCompetition] Re-broadcasting state for warmup display');
+
+        // Broadcast competition started
+        broadcast({
+          type: 'competition_started',
+          data: {
+            competition_id: competitionId || '',
+            competition_name: competition.name,
+            lift_type: currentLift,
+          },
+        });
+
+        // Broadcast current athlete if available
+        if (currentAttempt) {
+          broadcast({
+            type: 'athlete_up',
+            data: {
+              athlete_id: currentAttempt.athlete_id,
+              athlete_name: currentAttempt.athlete_name,
+              weight_kg: currentAttempt.weight_kg,
+              attempt_number: currentAttempt.attempt_number,
+              lift_type: currentLift,
+              lot_number: currentAttempt.lot_number,
+              rack_height: currentAttempt.rack_height,
+              safety_height: currentAttempt.safety_height,
+            },
+          });
+        }
+
+        // Broadcast attempt order for warmup display
+        broadcast({
+          type: 'attempt_order_update',
+          data: {
+            attempt_order: attemptOrder.map(a => ({
+              athlete_id: a.athlete_id,
+              athlete_name: a.athlete_name,
+              weight_kg: a.weight_kg,
+              attempt_number: a.attempt_number,
+              lot_number: a.lot_number,
+            })),
+            current_index: currentIndex,
+          },
+        });
+      }
+    }, 500); // Small delay to ensure new window is ready
+
+    message.success(t('live.display.opened'));
+  };
+
+  // Broadcast attempt order updates to warmup display
+  useEffect(() => {
+    if (attemptOrder.length > 0) {
+      broadcast({
+        type: 'attempt_order_update',
+        data: {
+          attempt_order: attemptOrder.map(a => ({
+            athlete_id: a.athlete_id,
+            athlete_name: a.athlete_name,
+            weight_kg: a.weight_kg,
+            attempt_number: a.attempt_number,
+            lot_number: a.lot_number,
+          })),
+          current_index: currentIndex,
+        },
+      });
+    }
+  }, [attemptOrder, currentIndex, broadcast]);
 
   // Get available lifts based on competition format
   const getAvailableLifts = () => {
@@ -445,6 +551,15 @@ export const LiveCompetition = () => {
                       style={{ background: '#13c2c2', borderColor: '#13c2c2' }}
                     >
                       {t('live.display.spotters')}
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<UsergroupAddOutlined />}
+                      onClick={handleOpenWarmupDisplay}
+                      block
+                      style={{ background: '#52c41a', borderColor: '#52c41a' }}
+                    >
+                      {t('live.display.warmup')}
                     </Button>
                     <Link to={`/competitions/${competitionId}/declarations`} style={{ display: 'block' }}>
                       <Button

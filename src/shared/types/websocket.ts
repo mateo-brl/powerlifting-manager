@@ -9,7 +9,8 @@ export type WebSocketEventType =
   | 'lift_changed'
   | 'competition_started'
   | 'competition_paused'
-  | 'competition_ended';
+  | 'competition_ended'
+  | 'attempt_order_update';
 
 export interface AthleteUpEvent {
   type: 'athlete_up';
@@ -77,6 +78,20 @@ export interface CompetitionEndedEvent {
   };
 }
 
+export interface AttemptOrderUpdateEvent {
+  type: 'attempt_order_update';
+  data: {
+    attempt_order: Array<{
+      athlete_id: string;
+      athlete_name: string;
+      weight_kg: number;
+      attempt_number: 1 | 2 | 3;
+      lot_number?: number;
+    }>;
+    current_index: number;
+  };
+}
+
 export type WebSocketEvent =
   | AthleteUpEvent
   | AttemptResultEvent
@@ -84,7 +99,8 @@ export type WebSocketEvent =
   | LiftChangedEvent
   | CompetitionStartedEvent
   | CompetitionPausedEvent
-  | CompetitionEndedEvent;
+  | CompetitionEndedEvent
+  | AttemptOrderUpdateEvent;
 
 export interface WebSocketMessage {
   timestamp: string;

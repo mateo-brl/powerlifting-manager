@@ -98,6 +98,24 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Interface optimisée sans scroll
 - Synchronisation temps réel via BroadcastChannel/WebSocket
 
+### ✅ Salle de Chauffe (Warmup Room Display)
+- **Écran dédié pour la salle de chauffe** avec vue complète des passages
+- **Affichage des 3 tentatives** pour chaque athlète :
+  - Poids de chaque tentative (1, 2, 3)
+  - Indicateurs visuels de statut :
+    - ✅ **Vert** : Tentative réussie (Good Lift)
+    - ❌ **Rouge** : Tentative échouée (No Lift)
+    - ⏳ **Bleu** : Tentative en cours
+    - **-** : Pas encore déclarée
+- **Tri intelligent automatique** :
+  - 🟢 **En haut** : Athlète qui passe actuellement (ligne verte)
+  - ⚪ **Au milieu** : Athlètes à venir (triés par poids de tentative)
+  - ⚫ **En bas** : Athlètes ayant terminé leurs 3 tentatives (grisés)
+- **Auto-scroll** : Suit automatiquement l'athlète en cours
+- **Synchronisation temps réel** via BroadcastChannel/WebSocket
+- Affichage du nom, lot number et des 3 poids
+- Interface optimisée pour affichage permanent sans interaction
+
 ### ✅ Déclarations de Poids
 - **Système de gestion des déclarations** pour les tentatives suivantes
 - **Calcul automatique des poids suggérés** selon les règles IPF :
@@ -211,6 +229,8 @@ liftmanager/
 │   │       │   ├── Timer.tsx
 │   │       │   ├── ExternalDisplay.tsx
 │   │       │   ├── SpottersDisplay.tsx
+│   │       │   ├── WarmupDisplay.tsx
+│   │       │   ├── WeightDeclarations.tsx
 │   │       │   ├── FlightManagement.tsx
 │   │       │   └── Rankings.tsx
 │   │       ├── stores/
@@ -364,6 +384,7 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
 - **Ouvrir les affichages externes**:
   - **"Open External Display"** → Écran public (athlète, timer, résultats)
   - **"Open Spotters Display"** → Écran technique (chargement de barre, racks)
+  - **"Open Warmup Room"** → Écran salle de chauffe (ordre de passage, 3 tentatives)
 - Pour chaque athlète:
   1. **Les spotters préparent la barre** selon l'affichage technique
   2. **Démarrer le timer** manuellement (bouton Start)

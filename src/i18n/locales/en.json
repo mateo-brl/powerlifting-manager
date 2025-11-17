@@ -273,6 +273,7 @@
     "display": {
       "external": "Open External Display",
       "spotters": "Open Spotters Display",
+      "warmup": "Open Warmup Room",
       "opened": "Display opened in new window"
     },
     "quickActions": {
@@ -338,6 +339,17 @@
       "bar": "BAR",
       "collar": "C"
     }
+  },
+  "warmupDisplay": {
+    "title": "WARMUP ROOM",
+    "waitingForCompetition": "Waiting for competition to start...",
+    "position": "Position",
+    "attempt": "Attempt",
+    "weight": "Weight",
+    "onPlatform": "ON PLATFORM",
+    "onDeck": "ON DECK",
+    "inHole": "IN THE HOLE",
+    "noAthletes": "No athletes in attempt order"
   },
   "rankings": {
     "title": "Rankings & Results",
