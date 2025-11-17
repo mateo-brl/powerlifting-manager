@@ -15,6 +15,9 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 ### ✅ Gestion de Compétitions
 - Création et édition de compétitions
 - Support multi-fédérations (IPF, USAPL, USPA, FFForce)
+- **Formats de compétition**:
+  - 🏋️ **Full Power (SBD)**: Squat + Bench + Deadlift
+  - 💪 **Bench Only**: Compétitions de développé couché uniquement
 - Statuts de compétition (upcoming, in_progress, completed)
 - Tableau de bord avec statistiques en temps réel
 
@@ -37,13 +40,22 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Validation de l'équilibre des flights
 
 ### ✅ Compétition en Direct
-- Interface de gestion en temps réel
-- Sélection du mouvement (squat, bench, deadlift)
+- Interface de gestion en temps réel optimisée (sans scroll)
+- Sélection du mouvement adaptée au format de compétition
 - Ordre de passage automatique selon les règles IPF
-- Timer de compétition (1 minute / 60 secondes)
-- Système d'arbitrage à 3 lumières
-- Enregistrement automatique des tentatives
-- Navigation entre les tentatives
+- **Timer de compétition**:
+  - Compte à rebours de 60 secondes
+  - Reset automatique à chaque changement d'athlète
+  - Contrôle manuel (pas de démarrage automatique)
+  - Alertes sonores à 30s, 15s et 10s
+- **Système d'arbitrage IPF conforme**:
+  - 3 juges indépendants
+  - Lumières **blanches** (Good Lift) et **rouges** (No Lift)
+  - Affichage en temps réel des votes
+  - Calcul automatique du résultat (2/3 pour valider)
+- Enregistrement automatique des tentatives en base de données
+- Contrôle manuel pour passer à l'athlète suivant
+- Affichage du résultat avant de continuer
 
 ### ✅ Classements et Résultats
 - Calcul automatique des scores:
@@ -55,9 +67,21 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Filtres par genre et catégorie de poids
 - Export des résultats
 
+### ✅ Affichage Externe (Broadcast)
+- **Écran externe temps réel** pour le public et les athlètes
+- Affichage de l'athlète en cours (nom, poids, tentative)
+- Timer synchronisé avec indication des alertes
+- Résultats en direct avec lumières IPF (blanc/rouge)
+- **Modes de communication**:
+  - **BroadcastChannel** en mode navigateur (développement)
+  - **WebSocket** en mode Tauri (production)
+- Ouverture dans une nouvelle fenêtre depuis l'interface de gestion
+- Design professionnel adapté aux projecteurs
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
+- Formats variés (Full Power et Bench Only)
 - Idéal pour tester l'application
 
 ## 🚀 Stack Technique
@@ -75,6 +99,7 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 ### Backend
 - **Language**: Rust
 - **Database**: SQLite (via tauri-plugin-sql)
+- **Real-time**: WebSocket server (tokio-tungstenite)
 - **Architecture**: Feature-based structure
 
 ### Calculs et Algorithmes
@@ -173,6 +198,7 @@ liftmanager/
 - date (TEXT NOT NULL)
 - location (TEXT)
 - federation (TEXT NOT NULL)
+- format (TEXT NOT NULL) -- 'full_power' | 'bench_only'
 - status (TEXT DEFAULT 'upcoming')
 - created_at, updated_at (TIMESTAMP)
 ```
@@ -236,6 +262,9 @@ Nouvelle formule moderne plus précise que Wilks.
 ### 1. Créer une Compétition
 - Aller sur "Dashboard" → "New Competition"
 - Remplir le nom, date, lieu, fédération
+- **Choisir le format**:
+  - Full Power (SBD) pour compétition complète
+  - Bench Only pour compétition de développé couché uniquement
 - Sauvegarder
 
 ### 2. Ajouter des Athlètes
@@ -254,10 +283,18 @@ Nouvelle formule moderne plus précise que Wilks.
 
 ### 5. Lancer la Compétition
 - "Competition Actions" → "Live Competition"
-- Sélectionner le mouvement (Squat/Bench/Deadlift)
-- Cliquer "Start"
-- Utiliser le système d'arbitrage à 3 lumières
-- Confirmer chaque tentative
+- Sélectionner le mouvement (selon le format)
+  - Full Power: Squat → Bench → Deadlift
+  - Bench Only: Bench uniquement
+- Cliquer "Start" pour démarrer la session
+- **Ouvrir l'affichage externe** (bouton "Open External Display")
+- Pour chaque athlète:
+  1. **Démarrer le timer** manuellement (bouton Start)
+  2. Les **3 juges votent** avec les lumières blanches/rouges
+  3. **Confirmer la tentative** une fois les 3 votes enregistrés
+  4. Le résultat s'affiche (Good Lift blanc ou No Lift rouge)
+  5. Cliquer sur **"Next Athlete"** pour passer au suivant
+  6. Le timer se réinitialise automatiquement à 60s
 
 ### 6. Voir les Résultats
 - "Competition Actions" → "Rankings & Results"
@@ -266,15 +303,37 @@ Nouvelle formule moderne plus précise que Wilks.
 
 ## 🚧 Statut du Projet
 
-- ✅ **Phase 1**: Setup + CRUD complet (Complétée)
-- ✅ **Phase 2**: Logique métier (Pesée, Flights) (Complétée)
-- ✅ **Phase 3**: Compétition en temps réel (Complétée)
-- ✅ **Phase 4**: Calculs de scores et classements (Complétée)
-- 🔄 **Améliorations continues**: UI/UX, navigation, mode démo
+- ✅ **Phase 1**: Setup + CRUD complet
+- ✅ **Phase 2**: Logique métier (Pesée, Flights)
+- ✅ **Phase 3**: Compétition en temps réel + Broadcast
+- ✅ **Phase 4**: Calculs de scores et classements
+- ✅ **Phase 5**: Améliorations UX/UI
+  - Interface compacte sans scroll
+  - Conformité IPF (lumières blanches/rouges)
+  - Formats de compétition (Full Power, Bench Only)
+  - Contrôle manuel du flux de compétition
+  - Timer avec reset automatique
+  - Affichage externe WebSocket
+- 🔄 **Évolutions futures**:
+  - Export PDF des résultats
+  - Statistiques avancées
+  - Support multi-plateformes (Windows, macOS, Linux)
+
+## 🎨 Conformité IPF
+
+Cette application respecte les standards officiels de l'IPF :
+- ⚪ **Lumières blanches** pour les "Good Lift"
+- 🔴 **Lumières rouges** pour les "No Lift"
+- ⏱️ Timer de 60 secondes entre chaque tentative
+- 📊 Formule IPF GL Points 2020 officielle
+- 🏋️ Support des formats Full Power et Bench Only
+- 📋 Ordre de passage conforme aux règlements
 
 ## 🤝 Contribution
 
-Projet développé par [@mateobrl](https://github.com/mateobrl)
+Projet développé avec ❤️ par [@mateobrl](https://github.com/mateobrl)
+
+Développé avec l'assistance de **Claude Code** (Anthropic)
 
 ## 📝 Licence
 
