@@ -10,6 +10,8 @@ Application desktop professionnelle pour gérer des compétitions de powerliftin
 
 Powerlifting Manager est une solution complète pour organiser et gérer des compétitions de powerlifting conformes aux règles IPF (International Powerlifting Federation) et autres fédérations. L'application permet de gérer tout le cycle de vie d'une compétition, de la création jusqu'à la génération des classements finaux.
 
+**🌍 Application Bilingue** : Interface complète disponible en **Français** et **Anglais** avec changement de langue à la volée.
+
 ## ✨ Fonctionnalités Principales
 
 ### ✅ Gestion de Compétitions
@@ -96,6 +98,20 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Interface optimisée sans scroll
 - Synchronisation temps réel via BroadcastChannel/WebSocket
 
+### ✅ Déclarations de Poids
+- **Système de gestion des déclarations** pour les tentatives suivantes
+- **Calcul automatique des poids suggérés** selon les règles IPF :
+  - +2,5kg minimum après une tentative réussie
+  - Même poids après un échec
+- **Interface de déclaration** :
+  - Tableau récapitulatif de tous les athlètes
+  - Affichage du résultat de la dernière tentative (Bon/Mauvais Mouvement)
+  - Poids suggéré et champ de saisie pour le poids déclaré
+  - Statut de déclaration (En Attente/Déclaré)
+- Accessible depuis les Actions Rapides de la compétition en direct
+- Support du clic molette pour ouverture dans un nouvel onglet
+- Interface bilingue FR/EN complète
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
@@ -111,6 +127,7 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **UI Components**: Ant Design 5.x
 - **Routing**: React Router v6
 - **State Management**: Zustand
+- **Internationalization**: react-i18next (FR/EN)
 - **Date Handling**: Day.js
 - **Validation**: Zod
 
@@ -355,6 +372,11 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   5. Le résultat s'affiche (Good Lift blanc ou No Lift rouge)
   6. Cliquer sur **"Next Athlete"** pour passer au suivant
   7. Le timer se réinitialise automatiquement à 60s
+- **Gérer les déclarations de poids** :
+  - Cliquer sur **"Déclarations de Poids"** dans les Actions Rapides
+  - Visualiser tous les athlètes devant déclarer leur prochain poids
+  - Le système suggère automatiquement le poids minimum (IPF)
+  - Entrer les poids déclarés et enregistrer
 
 ### 6. Voir les Résultats
 - "Competition Actions" → "Rankings & Results"
