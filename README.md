@@ -78,6 +78,24 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Ouverture dans une nouvelle fenêtre depuis l'interface de gestion
 - Design professionnel adapté aux projecteurs
 
+### ✅ Affichage Spotters
+- **Écran dédié pour l'équipe technique** (spotters et loaders)
+- **Calculateur de chargement de barre IPF**:
+  - Prise en compte des colliers obligatoires (2.5kg chacun, 5kg total)
+  - Calcul automatique de la combinaison optimale de disques
+  - Plaques standards IPF avec codes couleur
+  - Schéma visuel symétrique de la barre chargée
+- **Affichage des hauteurs de racks**:
+  - Hauteur de rack squat
+  - Hauteur de rack bench press
+  - Hauteur de sécurité bench press
+- **Informations athlète**:
+  - Nom, mouvement, tentative, lot number
+  - Poids à charger en gros caractères
+- Liste détaillée des disques par côté
+- Interface optimisée sans scroll
+- Synchronisation temps réel via BroadcastChannel/WebSocket
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
@@ -108,6 +126,7 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Attempt ordering (weight-based, lot-based)
 - Flight distribution algorithm
 - Age category calculation
+- **Bar loading calculator** (greedy algorithm pour combinaison optimale de disques)
 
 ## 🛠️ Installation
 
@@ -173,10 +192,14 @@ liftmanager/
 │   │       │   ├── LiveCompetition.tsx
 │   │       │   ├── AttemptTracker.tsx
 │   │       │   ├── Timer.tsx
+│   │       │   ├── ExternalDisplay.tsx
+│   │       │   ├── SpottersDisplay.tsx
 │   │       │   ├── FlightManagement.tsx
 │   │       │   └── Rankings.tsx
 │   │       ├── stores/
+│   │       │   └── broadcastStore.ts
 │   │       └── utils/
+│   │           └── barLoading.ts
 │   └── shared/              # Utilitaires partagés
 │       ├── constants/
 │       ├── utils/
@@ -224,7 +247,7 @@ liftmanager/
 - athlete_id, competition_id (TEXT FK)
 - bodyweight (REAL NOT NULL)
 - opening_squat, opening_bench, opening_deadlift (REAL)
-- squat_rack_height, bench_rack_height (INTEGER)
+- squat_rack_height, bench_rack_height, bench_safety_height (INTEGER)
 ```
 
 ### Table: attempts
@@ -276,6 +299,7 @@ Nouvelle formule moderne plus précise que Wilks.
 - Ouvrir la compétition → "Competition Actions" → "Weigh-In"
 - Sélectionner un athlète
 - Entrer le poids et les tentatives d'ouverture
+- Configurer les hauteurs de racks (squat, bench) et sécurité (bench)
 
 ### 4. Calculer les Flights
 - "Competition Actions" → "Flight Management"
@@ -287,14 +311,17 @@ Nouvelle formule moderne plus précise que Wilks.
   - Full Power: Squat → Bench → Deadlift
   - Bench Only: Bench uniquement
 - Cliquer "Start" pour démarrer la session
-- **Ouvrir l'affichage externe** (bouton "Open External Display")
+- **Ouvrir les affichages externes**:
+  - **"Open External Display"** → Écran public (athlète, timer, résultats)
+  - **"Open Spotters Display"** → Écran technique (chargement de barre, racks)
 - Pour chaque athlète:
-  1. **Démarrer le timer** manuellement (bouton Start)
-  2. Les **3 juges votent** avec les lumières blanches/rouges
-  3. **Confirmer la tentative** une fois les 3 votes enregistrés
-  4. Le résultat s'affiche (Good Lift blanc ou No Lift rouge)
-  5. Cliquer sur **"Next Athlete"** pour passer au suivant
-  6. Le timer se réinitialise automatiquement à 60s
+  1. **Les spotters préparent la barre** selon l'affichage technique
+  2. **Démarrer le timer** manuellement (bouton Start)
+  3. Les **3 juges votent** avec les lumières blanches/rouges
+  4. **Confirmer la tentative** une fois les 3 votes enregistrés
+  5. Le résultat s'affiche (Good Lift blanc ou No Lift rouge)
+  6. Cliquer sur **"Next Athlete"** pour passer au suivant
+  7. Le timer se réinitialise automatiquement à 60s
 
 ### 6. Voir les Résultats
 - "Competition Actions" → "Rankings & Results"
@@ -328,6 +355,10 @@ Cette application respecte les standards officiels de l'IPF :
 - 📊 Formule IPF GL Points 2020 officielle
 - 🏋️ Support des formats Full Power et Bench Only
 - 📋 Ordre de passage conforme aux règlements
+- ⚖️ **Chargement de barre IPF**:
+  - Prise en compte des colliers obligatoires (2.5kg × 2 = 5kg)
+  - Plaques standards IPF avec codes couleur officiels
+  - Barre hommes 20kg / Barre femmes 15kg
 
 ## 🤝 Contribution
 
