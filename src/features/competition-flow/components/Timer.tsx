@@ -105,7 +105,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
           percent={percentage}
           strokeColor={getColor()}
           showInfo={false}
-          size={[undefined, 12]}
+          strokeWidth={12}
         />
       </div>
 

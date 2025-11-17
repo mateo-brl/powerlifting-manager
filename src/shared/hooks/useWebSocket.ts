@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { WebSocketEvent, WebSocketMessage, WebSocketStatus, WebSocketConfig } from '../types/websocket';
+import { WebSocketEvent, WebSocketMessage, WebSocketStatus } from '../types/websocket';
 
 interface UseWebSocketOptions {
   onMessage?: (event: WebSocketEvent) => void;
@@ -27,7 +27,7 @@ export const useWebSocket = (url: string | null, options: UseWebSocketOptions = 
 
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectAttemptsRef = useRef(0);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<number | null>(null);
   const shouldConnectRef = useRef(true);
 
   // Clean up reconnect timeout
