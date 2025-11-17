@@ -41,6 +41,8 @@ export function calculateAthleteScore(
     gender: athlete.gender,
     weight_class: athlete.weight_class,
     bodyweight: weighIn.bodyweight,
+    division: athlete.division,
+    age_category: athlete.age_category,
     best_squat,
     best_bench,
     best_deadlift,

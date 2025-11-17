@@ -41,6 +41,8 @@ export interface AthleteScore {
   gender: string;
   weight_class: string;
   bodyweight: number;
+  division?: string; // raw | equipped
+  age_category?: string; // Open, Master 1, etc.
   // Best lifts
   best_squat: number;
   best_bench: number;

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Table, Tabs, Tag, Select, Space, Typography, Button } from 'antd';
-import { TrophyOutlined, FireOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { Card, Table, Tabs, Tag, Select, Space, Typography, Button, message } from 'antd';
+import { TrophyOutlined, FireOutlined, ArrowLeftOutlined, DownloadOutlined, FileExcelOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -20,6 +20,132 @@ export const Rankings = () => {
 
   const [selectedGender, setSelectedGender] = useState<'all' | 'M' | 'F'>('all');
   const [selectedWeightClass, setSelectedWeightClass] = useState<string>('all');
+
+  // Export functions
+  const handleExportExcel = () => {
+    const csvHeaders = [
+      'Rank',
+      'Name',
+      'Gender',
+      'Weight Class',
+      'Bodyweight',
+      'Best Squat',
+      'Best Bench',
+      'Best Deadlift',
+      'Total',
+      'IPF GL Points',
+      'DOTS',
+      'Wilks'
+    ];
+
+    const csvData = categoryScores.map((score, index) => [
+      score.category_rank || index + 1,
+      score.athlete_name,
+      score.gender,
+      score.weight_class,
+      score.bodyweight.toFixed(1),
+      score.best_squat || 0,
+      score.best_bench || 0,
+      score.best_deadlift || 0,
+      score.total || 0,
+      score.ipf_gl_points?.toFixed(2) || '',
+      score.dots_score?.toFixed(2) || '',
+      score.wilks_score?.toFixed(2) || ''
+    ]);
+
+    const csvContent = [
+      csvHeaders.join(','),
+      ...csvData.map((row) => row.join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `rankings_${competitionId}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    message.success('Rankings exported successfully');
+  };
+
+  const handleExportOpenPowerlifting = () => {
+    // OpenPowerlifting format
+    const headers = [
+      'Name',
+      'Sex',
+      'Event',
+      'Equipment',
+      'Age',
+      'Division',
+      'BodyweightKg',
+      'WeightClassKg',
+      'Squat1Kg',
+      'Squat2Kg',
+      'Squat3Kg',
+      'Best3SquatKg',
+      'Bench1Kg',
+      'Bench2Kg',
+      'Bench3Kg',
+      'Best3BenchKg',
+      'Deadlift1Kg',
+      'Deadlift2Kg',
+      'Deadlift3Kg',
+      'Best3DeadliftKg',
+      'TotalKg',
+      'Place',
+      'Dots',
+      'Wilks',
+      'Glossbrenner',
+      'Goodlift'
+    ];
+
+    const data = categoryScores.map((score) => {
+      // Find athlete attempts
+      const athleteAttempts = attempts.filter(a => a.athlete_id === score.athlete_id);
+      const squatAttempts = athleteAttempts.filter(a => a.lift_type === 'squat').sort((a, b) => a.attempt_number - b.attempt_number);
+      const benchAttempts = athleteAttempts.filter(a => a.lift_type === 'bench').sort((a, b) => a.attempt_number - b.attempt_number);
+      const deadliftAttempts = athleteAttempts.filter(a => a.lift_type === 'deadlift').sort((a, b) => a.attempt_number - b.attempt_number);
+
+      return [
+        score.athlete_name,
+        score.gender,
+        'SBD', // Full powerlifting
+        score.division === 'raw' ? 'Raw' : 'Single-ply',
+        '', // Age - would need to calculate from DOB
+        score.age_category || '',
+        score.bodyweight.toFixed(2),
+        score.weight_class.replace('+', ''),
+        squatAttempts[0]?.result === 'success' ? squatAttempts[0].weight_kg : (squatAttempts[0] ? -squatAttempts[0].weight_kg : ''),
+        squatAttempts[1]?.result === 'success' ? squatAttempts[1].weight_kg : (squatAttempts[1] ? -squatAttempts[1].weight_kg : ''),
+        squatAttempts[2]?.result === 'success' ? squatAttempts[2].weight_kg : (squatAttempts[2] ? -squatAttempts[2].weight_kg : ''),
+        score.best_squat || '',
+        benchAttempts[0]?.result === 'success' ? benchAttempts[0].weight_kg : (benchAttempts[0] ? -benchAttempts[0].weight_kg : ''),
+        benchAttempts[1]?.result === 'success' ? benchAttempts[1].weight_kg : (benchAttempts[1] ? -benchAttempts[1].weight_kg : ''),
+        benchAttempts[2]?.result === 'success' ? benchAttempts[2].weight_kg : (benchAttempts[2] ? -benchAttempts[2].weight_kg : ''),
+        score.best_bench || '',
+        deadliftAttempts[0]?.result === 'success' ? deadliftAttempts[0].weight_kg : (deadliftAttempts[0] ? -deadliftAttempts[0].weight_kg : ''),
+        deadliftAttempts[1]?.result === 'success' ? deadliftAttempts[1].weight_kg : (deadliftAttempts[1] ? -deadliftAttempts[1].weight_kg : ''),
+        deadliftAttempts[2]?.result === 'success' ? deadliftAttempts[2].weight_kg : (deadliftAttempts[2] ? -deadliftAttempts[2].weight_kg : ''),
+        score.best_deadlift || '',
+        score.total || '',
+        score.category_rank || '',
+        score.dots_score?.toFixed(2) || '',
+        score.wilks_score?.toFixed(2) || '',
+        '', // Glossbrenner
+        score.ipf_gl_points?.toFixed(2) || ''
+      ];
+    });
+
+    const csvContent = [
+      headers.join(','),
+      ...data.map((row) => row.join(',')),
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `openpowerlifting_${competitionId}_${new Date().toISOString().split('T')[0]}.csv`;
+    link.click();
+    message.success('OpenPowerlifting format exported successfully');
+  };
 
   useEffect(() => {
     if (competitionId) {
@@ -194,11 +320,11 @@ export const Rankings = () => {
     <div>
       <Card
         title={
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
             <Title level={3} style={{ margin: 0 }}>
               <TrophyOutlined /> Competition Rankings
             </Title>
-            <Space>
+            <Space wrap>
               <Select
                 value={selectedGender}
                 onChange={setSelectedGender}
@@ -218,6 +344,20 @@ export const Rankings = () => {
                   ...weightClasses.map(wc => ({ value: wc, label: `${wc} kg` })),
                 ]}
               />
+              <Button
+                icon={<FileExcelOutlined />}
+                onClick={handleExportExcel}
+                disabled={categoryScores.length === 0}
+              >
+                Export Excel
+              </Button>
+              <Button
+                icon={<DownloadOutlined />}
+                onClick={handleExportOpenPowerlifting}
+                disabled={categoryScores.length === 0}
+              >
+                OpenPowerlifting
+              </Button>
             </Space>
           </div>
         }
