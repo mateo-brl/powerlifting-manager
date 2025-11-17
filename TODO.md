@@ -116,7 +116,11 @@
   - Équilibrer les groupes
 
 - [x] UI pour visualiser et ajuster les flights ✅
-- [ ] Stocker les flights en DB (actuellement en mémoire)
+- [x] Stocker les flights en DB ✅
+  - Table flights avec migration SQL
+  - Commandes Rust CRUD complètes
+  - Store Zustand pour la persistance
+  - FlightManagement migré vers DB
 
 ### Ordre de Passage
 
@@ -142,7 +146,7 @@
 
 ---
 
-## ⚡ Phase 3 - Temps Réel ✅ COMPLÉTÉ
+## ⚡ Phase 3 - Temps Réel ✅ 100% COMPLÉTÉ
 
 ### Gestion des Tentatives
 
@@ -171,9 +175,18 @@
 
 ### WebSocket pour Affichage
 
-- [ ] Implémenter WebSocket serveur en Rust
-- [ ] Créer events : athlete_up, attempt_result, rankings_update
-- [ ] Créer pages d'affichage (fullscreen)
+- [x] Implémenter WebSocket serveur en Rust ✅
+  - Serveur sur port 9001
+  - Broadcast channel avec tokio
+  - Commande Tauri pour broadcaster
+- [x] Créer events : athlete_up, attempt_result, rankings_update ✅
+  - 7 types d'événements définis
+  - Types TypeScript complets
+  - Intégration avec broadcastStore
+- [x] Créer pages d'affichage (fullscreen) ✅
+  - ExternalDisplay component
+  - Affichage en temps réel
+  - Design professionnel
 
 ### Calcul des Scores
 
@@ -291,8 +304,8 @@
 **Phases complétées** :
 - ✅ Phase 0 - Setup Initial (100%)
 - ✅ Phase 1 - CRUD de Base (100% - import CSV complété)
-- ✅ Phase 2 - Logique Métier (95% - flights en mémoire, manque persistance DB)
-- ✅ Phase 3 - Temps Réel (90% - manque WebSocket)
+- ✅ Phase 2 - Logique Métier (100% - flights persistés en DB)
+- ✅ Phase 3 - Temps Réel (100% - WebSocket serveur Rust opérationnel)
 - 🔄 Phase 4 - Documents (40% - exports CSV/OpenPowerlifting complétés, manque PDF)
 
 **Fonctionnalités clés implémentées** :
@@ -305,22 +318,22 @@
 - ✅ Export Excel des classements complets
 - ✅ Export format OpenPowerlifting officiel
 - ✅ Timer de compétition
-- ✅ Gestion des flights automatique
+- ✅ Gestion des flights automatique avec persistance DB
 - ✅ Navigation améliorée avec onglet "Competition Actions"
 - ✅ Boutons de retour dans toutes les pages
 - ✅ Mode démo avec données factices
 - ✅ Compatible navigateur ET application native Tauri
+- ✅ WebSocket serveur Rust pour affichage externe temps réel
+- ✅ Système de broadcast dual (local + WebSocket)
 
 **Prochaines étapes prioritaires** :
 1. Export PDF (feuilles de route, résultats)
-2. WebSocket pour affichage externe
-3. Persistance des flights en DB
-4. Tests unitaires et E2E
-5. Polish UX (dark mode, i18n, thème personnalisé)
-6. Build et distribution (Windows, Linux)
-7. Documentation utilisateur complète
-8. Vidéo de démonstration
+2. Tests unitaires et E2E
+3. Polish UX (dark mode, i18n, thème personnalisé)
+4. Build et distribution (Windows, Linux)
+5. Documentation utilisateur complète
+6. Vidéo de démonstration
 
 ---
 
-**Dernière mise à jour** : 2025-11-17 - Exports Excel & OpenPowerlifting ✅
+**Dernière mise à jour** : 2025-11-17 - Phase 3 complétée à 100% (WebSocket + Flights DB) ✅

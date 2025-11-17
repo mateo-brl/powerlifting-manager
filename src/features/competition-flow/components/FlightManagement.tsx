@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Button, Card, Table, Tag, message, Alert, Space } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
+import { useFlightStore } from '../stores/flightStore';
 import { calculateFlights, validateFlightBalance } from '../utils/flightCalculation';
 import { Flight } from '../../weigh-in/types';
 import type { ColumnsType } from 'antd/es/table';
@@ -13,7 +14,7 @@ export const FlightManagement = () => {
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
-  const [flights, setFlights] = useState<Flight[]>([]);
+  const { flights, loadFlights, createFlight, deleteFlightsByCompetition } = useFlightStore();
   const [validation, setValidation] = useState<{ valid: boolean; warnings: string[] }>({
     valid: true,
     warnings: [],
@@ -23,28 +24,67 @@ export const FlightManagement = () => {
     if (competitionId) {
       loadAthletes(competitionId);
       loadWeighIns(competitionId);
+      loadFlights(competitionId);
     }
-  }, [competitionId]);
+  }, [competitionId, loadAthletes, loadWeighIns, loadFlights]);
 
   const competitionAthletes = athletes.filter(a => a.competition_id === competitionId);
   const competitionWeighIns = weighIns.filter(w => w.competition_id === competitionId);
+  const competitionFlights = flights.filter(f => f.competition_id === competitionId);
 
-  const handleCalculateFlights = () => {
+  const handleCalculateFlights = async () => {
     if (competitionWeighIns.length === 0) {
       message.warning('No weigh-ins recorded yet');
       return;
     }
 
-    const calculatedFlights = calculateFlights(competitionAthletes, competitionWeighIns);
-    const validation = validateFlightBalance(calculatedFlights);
+    if (!competitionId) {
+      message.error('No competition ID');
+      return;
+    }
 
-    setFlights(calculatedFlights);
-    setValidation(validation);
+    try {
+      // Delete existing flights for this competition
+      await deleteFlightsByCompetition(competitionId);
 
-    if (validation.valid) {
-      message.success(`${calculatedFlights.length} flights created successfully`);
-    } else {
-      message.warning('Flights created with warnings');
+      // Calculate new flights
+      const calculatedFlights = calculateFlights(competitionAthletes, competitionWeighIns);
+      const validation = validateFlightBalance(calculatedFlights);
+
+      // Save flights to database
+      for (const flight of calculatedFlights) {
+        await createFlight({
+          competition_id: competitionId,
+          name: flight.name,
+          athlete_ids: flight.athlete_ids,
+          lift_type: flight.lift_type,
+          status: flight.status,
+        });
+      }
+
+      setValidation(validation);
+
+      if (validation.valid) {
+        message.success(`${calculatedFlights.length} flights created successfully`);
+      } else {
+        message.warning('Flights created with warnings');
+      }
+    } catch (error) {
+      message.error('Failed to create flights');
+      console.error(error);
+    }
+  };
+
+  const handleRecalculate = async () => {
+    if (!competitionId) return;
+
+    try {
+      await deleteFlightsByCompetition(competitionId);
+      message.info('Flights cleared. Click "Calculate Flights" to regenerate.');
+      setValidation({ valid: true, warnings: [] });
+    } catch (error) {
+      message.error('Failed to clear flights');
+      console.error(error);
     }
   };
 
@@ -88,8 +128,21 @@ export const FlightManagement = () => {
         title="Flight Management"
         extra={
           <Space>
-            <Button type="primary" onClick={handleCalculateFlights}>
-              Calculate Flights
+            {competitionFlights.length > 0 && (
+              <Button
+                icon={<ReloadOutlined />}
+                onClick={handleRecalculate}
+                danger
+              >
+                Clear Flights
+              </Button>
+            )}
+            <Button
+              type="primary"
+              onClick={handleCalculateFlights}
+              disabled={competitionWeighIns.length === 0}
+            >
+              {competitionFlights.length > 0 ? 'Recalculate Flights' : 'Calculate Flights'}
             </Button>
             <Button
               icon={<ArrowLeftOutlined />}
@@ -125,16 +178,16 @@ export const FlightManagement = () => {
           />
         )}
 
-        {flights.length > 0 && (
+        {competitionFlights.length > 0 && (
           <Table
             columns={flightColumns}
-            dataSource={flights}
+            dataSource={competitionFlights}
             rowKey="id"
             pagination={false}
           />
         )}
 
-        {flights.length === 0 && (
+        {competitionFlights.length === 0 && (
           <div style={{ textAlign: 'center', padding: 40, color: '#8c8c8c' }}>
             No flights calculated yet. Click "Calculate Flights" to generate flights automatically.
           </div>

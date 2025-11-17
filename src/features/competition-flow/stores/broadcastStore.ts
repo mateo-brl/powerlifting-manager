@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { WebSocketEvent } from '../../../shared/types/websocket';
+import { invoke } from '../../../shared/utils/tauriWrapper';
 
 interface BroadcastState {
   // Current state
@@ -27,7 +28,7 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
       eventHistory: [...state.eventHistory.slice(-99), event], // Keep last 100 events
     }));
 
-    // Notify all listeners
+    // Notify all listeners (for local components)
     const { listeners } = get();
     listeners.forEach((callback) => {
       try {
@@ -36,6 +37,12 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
         console.error('[Broadcast] Listener error:', error);
       }
     });
+
+    // Also broadcast to WebSocket server (for external displays)
+    invoke('broadcast_websocket_event', { event })
+      .catch((error) => {
+        console.error('[Broadcast] WebSocket error:', error);
+      });
   },
 
   subscribe: (callback: (event: WebSocketEvent) => void) => {
