@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -446,6 +446,16 @@ export const LiveCompetition = () => {
                     >
                       {t('live.display.spotters')}
                     </Button>
+                    <Link to={`/competitions/${competitionId}/declarations`} style={{ display: 'block' }}>
+                      <Button
+                        type="default"
+                        icon={<FileTextOutlined />}
+                        block
+                        style={{ borderColor: '#1890ff', color: '#1890ff' }}
+                      >
+                        {t('declarations.title')}
+                      </Button>
+                    </Link>
                     <Button
                       icon={<ReloadOutlined />}
                       onClick={() => {

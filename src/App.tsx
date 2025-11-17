@@ -14,6 +14,7 @@ import { WeighInForm } from './features/weigh-in/components/WeighInForm';
 import { FlightManagement } from './features/competition-flow/components/FlightManagement';
 import { LiveCompetition } from './features/competition-flow/components/LiveCompetition';
 import { Rankings } from './features/competition-flow/components/Rankings';
+import { WeightDeclarations } from './features/competition-flow/components/WeightDeclarations';
 import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
 import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
 import './i18n/config';
@@ -54,6 +55,7 @@ function App() {
 
               {/* Phase 3: Live Competition Routes */}
               <Route path=":competitionId/live" element={<LiveCompetition />} />
+              <Route path=":competitionId/declarations" element={<WeightDeclarations />} />
               <Route path=":competitionId/rankings" element={<Rankings />} />
             </Route>
 

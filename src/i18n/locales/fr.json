@@ -366,6 +366,29 @@
     "export": "Exporter les Résultats",
     "exportSuccess": "Résultats exportés avec succès"
   },
+  "declarations": {
+    "title": "Déclarations de Poids",
+    "description": "Gérer les déclarations de poids pour la prochaine tentative des athlètes",
+    "lastAttempt": "Dernière Tentative",
+    "nextAttempt": "Prochaine Tentative",
+    "suggestedWeight": "Poids Suggéré",
+    "declaredWeight": "Poids Déclaré",
+    "saveAll": "Enregistrer Toutes les Déclarations",
+    "noDeclarations": "Aucune déclaration en attente",
+    "status": {
+      "pending": "En Attente",
+      "declared": "Déclaré"
+    },
+    "info": {
+      "title": "Système de Déclaration de Poids",
+      "description": "Après chaque tentative, les athlètes doivent déclarer leur prochain poids. Entrez le poids et cliquez sur 'Enregistrer Toutes les Déclarations'. Le poids suggéré est le minimum autorisé (dernier réussi + 2,5kg, ou même poids si échec)."
+    },
+    "messages": {
+      "saved": "Toutes les déclarations enregistrées avec succès",
+      "undeclaredWarning": "{{count}} athlètes n'ont pas encore déclaré leur prochain poids",
+      "error": "Échec de l'enregistrement des déclarations"
+    }
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion",

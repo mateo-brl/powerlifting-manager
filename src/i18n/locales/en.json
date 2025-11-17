@@ -366,6 +366,29 @@
     "export": "Export Results",
     "exportSuccess": "Results exported successfully"
   },
+  "declarations": {
+    "title": "Weight Declarations",
+    "description": "Manage next attempt weight declarations for athletes",
+    "lastAttempt": "Last Attempt",
+    "nextAttempt": "Next Attempt",
+    "suggestedWeight": "Suggested Weight",
+    "declaredWeight": "Declared Weight",
+    "saveAll": "Save All Declarations",
+    "noDeclarations": "No declarations pending",
+    "status": {
+      "pending": "Pending",
+      "declared": "Declared"
+    },
+    "info": {
+      "title": "Weight Declaration System",
+      "description": "After each attempt, athletes must declare their next weight. Enter the weight and click 'Save All Declarations'. The suggested weight is the minimum allowed (last successful + 2.5kg, or same weight if failed)."
+    },
+    "messages": {
+      "saved": "All declarations saved successfully",
+      "undeclaredWarning": "{{count}} athletes have not declared their next weight yet",
+      "error": "Failed to save declarations"
+    }
+  },
   "errors": {
     "generic": "An error occurred",
     "networkError": "Network error. Please check your connection",
