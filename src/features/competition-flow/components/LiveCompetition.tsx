@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -16,6 +16,7 @@ const { Title } = Typography;
 
 export const LiveCompetition = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
   const { attempts, loadAttempts } = useAttemptStore();
@@ -166,6 +167,14 @@ export const LiveCompetition = () => {
               )}
             </Space>
           </div>
+        }
+        extra={
+          <Button
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(`/competitions/${competitionId}`)}
+          >
+            Back
+          </Button>
         }
       >
         {competitionWeighIns.length === 0 && (

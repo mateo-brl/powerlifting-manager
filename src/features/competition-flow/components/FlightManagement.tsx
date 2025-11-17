@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Button, Card, Table, Tag, message, Alert } from 'antd';
-import { useParams } from 'react-router-dom';
+import { Button, Card, Table, Tag, message, Alert, Space } from 'antd';
+import { useParams, useNavigate } from 'react-router-dom';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { calculateFlights, validateFlightBalance } from '../utils/flightCalculation';
@@ -9,6 +10,7 @@ import type { ColumnsType } from 'antd/es/table';
 
 export const FlightManagement = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
   const [flights, setFlights] = useState<Flight[]>([]);
@@ -85,9 +87,17 @@ export const FlightManagement = () => {
       <Card
         title="Flight Management"
         extra={
-          <Button type="primary" onClick={handleCalculateFlights}>
-            Calculate Flights
-          </Button>
+          <Space>
+            <Button type="primary" onClick={handleCalculateFlights}>
+              Calculate Flights
+            </Button>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(`/competitions/${competitionId}`)}
+            >
+              Back
+            </Button>
+          </Space>
         }
       >
         <div style={{ marginBottom: 16 }}>

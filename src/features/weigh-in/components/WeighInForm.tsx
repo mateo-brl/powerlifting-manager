@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col } from 'antd';
-import { SaveOutlined, CheckCircleOutlined, WarningOutlined } from '@ant-design/icons';
-import { useParams } from 'react-router-dom';
+import { SaveOutlined, CheckCircleOutlined, WarningOutlined, ArrowLeftOutlined } from '@ant-design/icons';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../stores/weighInStore';
 import { isWeightClassValid } from '../../../shared/utils/calculations';
@@ -18,6 +18,7 @@ interface WeighInFormData {
 
 export const WeighInForm = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { createWeighIn } = useWeighInStore();
   const [form] = Form.useForm<WeighInFormData>();
@@ -100,7 +101,18 @@ export const WeighInForm = () => {
   };
 
   return (
-    <Card title="Weigh-In / Pesée" style={{ maxWidth: 900, margin: '0 auto' }}>
+    <Card
+      title="Weigh-In / Pesée"
+      style={{ maxWidth: 900, margin: '0 auto' }}
+      extra={
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(`/competitions/${competitionId}`)}
+        >
+          Back to Competition
+        </Button>
+      }
+    >
       {selectedAthlete && (
         <Card type="inner" style={{ marginBottom: 24 }}>
           <Descriptions column={2} size="small">

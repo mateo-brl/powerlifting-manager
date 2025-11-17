@@ -1,6 +1,14 @@
 import { useEffect } from 'react';
-import { Card, Descriptions, Button, Space, Tag, message, Tabs } from 'antd';
-import { ArrowLeftOutlined, EditOutlined, UserAddOutlined } from '@ant-design/icons';
+import { Card, Descriptions, Button, Space, Tag, message, Tabs, Row, Col } from 'antd';
+import {
+  ArrowLeftOutlined,
+  EditOutlined,
+  UserAddOutlined,
+  TeamOutlined,
+  TrophyOutlined,
+  BarChartOutlined,
+  ImportOutlined
+} from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useCompetitionStore } from '../stores/competitionStore';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
@@ -59,6 +67,76 @@ export const CompetitionDetail = () => {
       children: <AthleteList competitionId={competition.id} />,
     },
     {
+      key: 'actions',
+      label: 'Competition Actions',
+      children: (
+        <div>
+          <h3 style={{ marginBottom: 16 }}>Competition Management</h3>
+          <Row gutter={[16, 16]}>
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/weigh-in`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <TeamOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
+                <h3>Weigh-In / Pesée</h3>
+                <p>Record athlete bodyweights and opening attempts</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/flights`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <TeamOutlined style={{ fontSize: 48, color: '#52c41a', marginBottom: 16 }} />
+                <h3>Flight Management</h3>
+                <p>Calculate and manage competition flights</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/live`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <TrophyOutlined style={{ fontSize: 48, color: '#f5222d', marginBottom: 16 }} />
+                <h3>Live Competition</h3>
+                <p>Manage real-time competition flow</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/rankings`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <BarChartOutlined style={{ fontSize: 48, color: '#faad14', marginBottom: 16 }} />
+                <h3>Rankings & Results</h3>
+                <p>View competition standings and results</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/athletes/import`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <ImportOutlined style={{ fontSize: 48, color: '#722ed1', marginBottom: 16 }} />
+                <h3>Import Athletes</h3>
+                <p>Bulk import athletes from CSV file</p>
+              </Card>
+            </Col>
+          </Row>
+        </div>
+      ),
+    },
+    {
       key: 'info',
       label: 'Information',
       children: (
@@ -106,7 +184,7 @@ export const CompetitionDetail = () => {
           </Space>
         }
       >
-        <Tabs defaultActiveKey="athletes" items={tabItems} />
+        <Tabs defaultActiveKey="actions" items={tabItems} />
       </Card>
     </div>
   );

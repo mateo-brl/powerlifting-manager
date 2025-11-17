@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import { Card, Table, Tabs, Tag, Select, Space, Typography } from 'antd';
-import { TrophyOutlined, FireOutlined } from '@ant-design/icons';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, Table, Tabs, Tag, Select, Space, Typography, Button } from 'antd';
+import { TrophyOutlined, FireOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -13,6 +13,7 @@ const { Title } = Typography;
 
 export const Rankings = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
   const { attempts, loadAttempts } = useAttemptStore();
@@ -219,6 +220,14 @@ export const Rankings = () => {
               />
             </Space>
           </div>
+        }
+        extra={
+          <Button
+            icon={<ArrowLeftOutlined />}
+            onClick={() => navigate(`/competitions/${competitionId}`)}
+          >
+            Back to Competition
+          </Button>
         }
       >
         <Tabs
