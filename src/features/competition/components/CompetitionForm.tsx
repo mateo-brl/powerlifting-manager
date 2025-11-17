@@ -96,7 +96,27 @@ export const CompetitionForm = () => {
         <Form.Item
           name="date"
           label="Date"
-          rules={[{ required: true, message: 'Please select competition date' }]}
+          rules={[
+            { required: true, message: 'Please select competition date' },
+            {
+              validator: (_, value) => {
+                if (!value) return Promise.resolve();
+                const selectedDate = value.toDate();
+                const oneYearAgo = new Date();
+                oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
+                const oneYearFuture = new Date();
+                oneYearFuture.setFullYear(oneYearFuture.getFullYear() + 1);
+
+                if (selectedDate < oneYearAgo) {
+                  return Promise.reject(new Error('Competition date cannot be more than 1 year in the past'));
+                }
+                if (selectedDate > oneYearFuture) {
+                  return Promise.reject(new Error('Competition date cannot be more than 1 year in the future'));
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
         >
           <DatePicker style={{ width: '100%' }} format="YYYY-MM-DD" />
         </Form.Item>

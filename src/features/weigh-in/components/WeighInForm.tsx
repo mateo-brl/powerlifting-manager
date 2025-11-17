@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col } from 'antd';
+import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col, Alert } from 'antd';
 import { SaveOutlined, CheckCircleOutlined, WarningOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
@@ -20,7 +20,7 @@ export const WeighInForm = () => {
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
-  const { createWeighIn } = useWeighInStore();
+  const { weighIns, loadWeighIns, createWeighIn } = useWeighInStore();
   const [form] = Form.useForm<WeighInFormData>();
   const [loading, setLoading] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState<any>(null);
@@ -29,11 +29,17 @@ export const WeighInForm = () => {
   useEffect(() => {
     if (competitionId) {
       loadAthletes(competitionId);
+      loadWeighIns(competitionId);
     }
-  }, [competitionId, loadAthletes]);
+  }, [competitionId, loadAthletes, loadWeighIns]);
 
   const competitionAthletes = athletes.filter(a => a.competition_id === competitionId);
-  const notWeighedIn = competitionAthletes; // TODO: filter out already weighed in
+  const competitionWeighIns = weighIns.filter(w => w.competition_id === competitionId);
+
+  // Filter out athletes who have already been weighed in
+  const notWeighedIn = competitionAthletes.filter(athlete =>
+    !competitionWeighIns.some(weighIn => weighIn.athlete_id === athlete.id)
+  );
 
   const handleAthleteSelect = (athleteId: string) => {
     const athlete = competitionAthletes.find(a => a.id === athleteId);
@@ -113,6 +119,25 @@ export const WeighInForm = () => {
         </Button>
       }
     >
+      {competitionAthletes.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <Tag color={notWeighedIn.length === 0 ? 'success' : 'processing'} style={{ fontSize: 14, padding: '4px 12px' }}>
+            {competitionWeighIns.length} / {competitionAthletes.length} athletes weighed in
+            {notWeighedIn.length === 0 && ' - All done! ✓'}
+          </Tag>
+        </div>
+      )}
+
+      {notWeighedIn.length === 0 && competitionAthletes.length > 0 && (
+        <Alert
+          message="All Athletes Weighed In"
+          description="All athletes have been weighed in successfully! You can now proceed to flight management or start the competition."
+          type="success"
+          showIcon
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
       {selectedAthlete && (
         <Card type="inner" style={{ marginBottom: 24 }}>
           <Descriptions column={2} size="small">

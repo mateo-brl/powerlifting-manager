@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Card, Button, InputNumber, message, Space, Typography, Tag, Badge } from 'antd';
-import { CheckCircleFilled, CloseCircleFilled, TrophyOutlined } from '@ant-design/icons';
+import { Card, Button, InputNumber, message, Space, Typography, Tag, Badge, Divider } from 'antd';
+import { CheckCircleFilled, CloseCircleFilled, TrophyOutlined, HistoryOutlined } from '@ant-design/icons';
 import { AttemptOrder } from '../../weigh-in/types';
 import { LiftType } from '../types';
 import { useAttemptStore } from '../stores/attemptStore';
@@ -20,7 +20,7 @@ export const AttemptTracker = ({
   competitionId,
   onComplete,
 }: AttemptTrackerProps) => {
-  const { createAttempt, updateAttempt } = useAttemptStore();
+  const { attempts, createAttempt, updateAttempt } = useAttemptStore();
   const [weight, setWeight] = useState<number>(currentAttempt.weight_kg);
   const [refereeVotes, setRefereeVotes] = useState<[boolean | null, boolean | null, boolean | null]>([
     null,
@@ -29,6 +29,13 @@ export const AttemptTracker = ({
   ]);
   const [attemptId, setAttemptId] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Get previous attempts for this athlete and lift type
+  const previousAttempts = attempts.filter(
+    a => a.athlete_id === currentAttempt.athlete_id &&
+         a.lift_type === liftType &&
+         a.attempt_number < currentAttempt.attempt_number
+  ).sort((a, b) => a.attempt_number - b.attempt_number);
 
   useEffect(() => {
     // Reset for new attempt
@@ -99,6 +106,29 @@ export const AttemptTracker = ({
 
   return (
     <Card>
+      {/* Previous Attempts History */}
+      {previousAttempts.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ display: 'flex', alignItems: 'center', marginBottom: 8 }}>
+            <HistoryOutlined style={{ marginRight: 8 }} />
+            <Text strong>Previous Attempts for {liftType.toUpperCase()}</Text>
+          </div>
+          <Space size="small">
+            {previousAttempts.map((attempt) => (
+              <Tag
+                key={attempt.id}
+                color={attempt.result === 'success' ? 'success' : 'error'}
+                style={{ fontSize: 14, padding: '4px 12px' }}
+              >
+                Attempt {attempt.attempt_number}: {attempt.weight_kg} kg{' '}
+                {attempt.result === 'success' ? '✓' : '✗'}
+              </Tag>
+            ))}
+          </Space>
+          <Divider style={{ margin: '12px 0' }} />
+        </div>
+      )}
+
       {/* Current Athlete Display */}
       <div style={{ background: '#1890ff', color: 'white', padding: 24, borderRadius: 8, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

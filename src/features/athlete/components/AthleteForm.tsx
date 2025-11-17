@@ -163,12 +163,39 @@ export const AthleteForm = () => {
             <Form.Item
               name="date_of_birth"
               label="Date of Birth"
-              rules={[{ required: true, message: 'Please select date of birth' }]}
+              rules={[
+                { required: true, message: 'Please select date of birth' },
+                {
+                  validator: (_, value) => {
+                    if (!value) return Promise.resolve();
+                    const birthDate = value.toDate();
+                    const today = new Date();
+                    let age = today.getFullYear() - birthDate.getFullYear();
+                    const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                      age--;
+                    }
+
+                    if (age < 13) {
+                      return Promise.reject(new Error('Athlete must be at least 13 years old'));
+                    }
+                    if (age > 100) {
+                      return Promise.reject(new Error('Please enter a valid date of birth'));
+                    }
+                    return Promise.resolve();
+                  },
+                },
+              ]}
             >
               <DatePicker
                 style={{ width: '100%' }}
                 format="YYYY-MM-DD"
                 onChange={handleDateChange}
+                disabledDate={(current) => {
+                  // Disable future dates
+                  return current && current > dayjs().endOf('day');
+                }}
               />
             </Form.Item>
           </Col>
