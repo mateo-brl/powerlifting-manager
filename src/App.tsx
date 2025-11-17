@@ -1,6 +1,8 @@
 import { ConfigProvider } from 'antd';
 import frFR from 'antd/locale/fr_FR';
+import enUS from 'antd/locale/en_US';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { CompetitionList } from './features/competition/components/CompetitionList';
@@ -14,10 +16,14 @@ import { LiveCompetition } from './features/competition-flow/components/LiveComp
 import { Rankings } from './features/competition-flow/components/Rankings';
 import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
 import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
+import './i18n/config';
 
 function App() {
+  const { i18n } = useTranslation();
+  const antdLocale = i18n.language === 'fr' ? frFR : enUS;
+
   return (
-    <ConfigProvider locale={frFR}>
+    <ConfigProvider locale={antdLocale}>
       <BrowserRouter>
         <Routes>
           {/* External Display Route (fullscreen, no layout) */}

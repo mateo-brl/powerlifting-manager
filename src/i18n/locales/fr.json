@@ -1,0 +1,377 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "back": "Retour",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "search": "Rechercher",
+    "filter": "Filtrer",
+    "export": "Exporter",
+    "import": "Importer",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "actions": "Actions",
+    "close": "Fermer",
+    "refresh": "Actualiser",
+    "success": "Succès",
+    "error": "Erreur",
+    "warning": "Attention",
+    "info": "Information"
+  },
+  "layout": {
+    "appName": "Powerlifting Manager",
+    "menu": {
+      "dashboard": "Tableau de bord",
+      "competitions": "Compétitions"
+    }
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "welcome": "Bienvenue sur Powerlifting Manager",
+    "description": "Gérez des compétitions de powerlifting de A à Z",
+    "newCompetition": "Nouvelle Compétition",
+    "recentCompetitions": "Compétitions Récentes",
+    "noCompetitions": "Aucune compétition",
+    "createFirst": "Créez votre première compétition pour commencer",
+    "demoData": {
+      "title": "Mode Démo",
+      "description": "Générer des données de démonstration pour tester l'application",
+      "button": "Générer Données Démo",
+      "success": "Données de démonstration générées avec succès !",
+      "error": "Échec de la génération des données de démonstration"
+    },
+    "stats": {
+      "totalCompetitions": "Total Compétitions",
+      "activeCompetitions": "Compétitions Actives",
+      "totalAthletes": "Total Athlètes",
+      "upcomingEvents": "Événements à Venir"
+    }
+  },
+  "competition": {
+    "title": "Compétitions",
+    "new": "Nouvelle Compétition",
+    "edit": "Modifier la Compétition",
+    "view": "Voir la Compétition",
+    "list": "Liste des Compétitions",
+    "details": "Détails de la Compétition",
+    "actions": "Actions de Compétition",
+    "status": {
+      "upcoming": "À venir",
+      "in_progress": "En cours",
+      "completed": "Terminée"
+    },
+    "format": {
+      "label": "Format de Compétition",
+      "sbd": "SBD",
+      "bench": "Bench",
+      "full_power": "SBD",
+      "bench_only": "Bench"
+    },
+    "fields": {
+      "name": "Nom de la Compétition",
+      "date": "Date",
+      "location": "Lieu",
+      "federation": "Fédération",
+      "format": "Format",
+      "status": "Statut",
+      "createdAt": "Créée le",
+      "updatedAt": "Modifiée le"
+    },
+    "form": {
+      "namePlaceholder": "Entrez le nom de la compétition",
+      "locationPlaceholder": "Entrez le lieu",
+      "selectFederation": "Sélectionnez une fédération",
+      "selectFormat": "Sélectionnez un format",
+      "nameRequired": "Veuillez entrer un nom de compétition",
+      "dateRequired": "Veuillez sélectionner une date",
+      "federationRequired": "Veuillez sélectionner une fédération",
+      "formatRequired": "Veuillez sélectionner un format"
+    },
+    "messages": {
+      "created": "Compétition créée avec succès",
+      "updated": "Compétition mise à jour avec succès",
+      "deleted": "Compétition supprimée avec succès",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cette compétition ?",
+      "error": "Une erreur s'est produite"
+    },
+    "tabs": {
+      "overview": "Aperçu",
+      "athletes": "Athlètes",
+      "weighIn": "Pesée",
+      "flights": "Groupes",
+      "live": "Compétition en Direct",
+      "results": "Résultats"
+    }
+  },
+  "athlete": {
+    "title": "Athlètes",
+    "new": "Ajouter un Athlète",
+    "edit": "Modifier l'Athlète",
+    "list": "Liste des Athlètes",
+    "import": "Importer des Athlètes",
+    "export": "Exporter les Athlètes",
+    "total": "Total Athlètes",
+    "fields": {
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "dateOfBirth": "Date de Naissance",
+      "gender": "Sexe",
+      "weightClass": "Catégorie de Poids",
+      "division": "Division",
+      "ageCategory": "Catégorie d'Âge",
+      "lotNumber": "Numéro de Lot",
+      "bodyweight": "Poids de Corps",
+      "team": "Équipe",
+      "squatRackHeight": "Hauteur Rack Squat",
+      "benchRackHeight": "Hauteur Rack Bench"
+    },
+    "gender": {
+      "M": "Homme",
+      "F": "Femme"
+    },
+    "division": {
+      "raw": "Raw",
+      "equipped": "Équipé"
+    },
+    "ageCategory": {
+      "sub_junior": "Sub-Junior",
+      "junior": "Junior",
+      "open": "Open",
+      "master1": "Master 1",
+      "master2": "Master 2",
+      "master3": "Master 3",
+      "master4": "Master 4"
+    },
+    "form": {
+      "firstNamePlaceholder": "Entrez le prénom",
+      "lastNamePlaceholder": "Entrez le nom",
+      "firstNameRequired": "Veuillez entrer le prénom",
+      "lastNameRequired": "Veuillez entrer le nom",
+      "dateRequired": "Veuillez sélectionner la date de naissance",
+      "genderRequired": "Veuillez sélectionner le sexe",
+      "weightClassRequired": "Veuillez sélectionner la catégorie de poids",
+      "divisionRequired": "Veuillez sélectionner la division"
+    },
+    "messages": {
+      "created": "Athlète ajouté avec succès",
+      "updated": "Athlète mis à jour avec succès",
+      "deleted": "Athlète supprimé avec succès",
+      "deleteConfirm": "Êtes-vous sûr de vouloir supprimer cet athlète ?",
+      "imported": "{{count}} athlètes importés avec succès",
+      "exportSuccess": "Athlètes exportés avec succès"
+    }
+  },
+  "weighIn": {
+    "title": "Pesée",
+    "selectAthlete": "Sélectionner un Athlète",
+    "noAthletes": "Aucun athlète disponible",
+    "weighInData": "Données de Pesée",
+    "openingAttempts": "Tentatives d'Ouverture",
+    "rackHeights": "Hauteurs de Racks",
+    "fields": {
+      "bodyweight": "Poids de Corps (kg)",
+      "openingSquat": "Squat d'Ouverture (kg)",
+      "openingBench": "Bench d'Ouverture (kg)",
+      "openingDeadlift": "Deadlift d'Ouverture (kg)",
+      "squatRackHeight": "Hauteur Rack Squat",
+      "benchRackHeight": "Hauteur Rack Bench",
+      "benchSafetyHeight": "Hauteur Sécurité Bench"
+    },
+    "form": {
+      "bodyweightRequired": "Veuillez entrer le poids de corps",
+      "squatRequired": "Veuillez entrer le squat d'ouverture",
+      "benchRequired": "Veuillez entrer le bench d'ouverture",
+      "deadliftRequired": "Veuillez entrer le deadlift d'ouverture"
+    },
+    "messages": {
+      "saved": "Pesée enregistrée avec succès",
+      "updated": "Pesée mise à jour avec succès",
+      "error": "Échec de l'enregistrement de la pesée",
+      "selectAthleteFirst": "Veuillez d'abord sélectionner un athlète"
+    },
+    "validation": {
+      "bodyweightAboveClass": "Le poids de corps dépasse la limite de la catégorie",
+      "bodyweightBelowMinimum": "Le poids de corps est en dessous du minimum"
+    }
+  },
+  "flight": {
+    "title": "Gestion des Groupes",
+    "calculate": "Calculer les Groupes",
+    "recalculate": "Recalculer les Groupes",
+    "noFlights": "Aucun groupe calculé",
+    "flight": "Groupe",
+    "athleteCount": "{{count}} athlètes",
+    "fields": {
+      "name": "Nom du Groupe",
+      "liftType": "Type de Mouvement",
+      "status": "Statut",
+      "athleteCount": "Athlètes"
+    },
+    "status": {
+      "pending": "En attente",
+      "active": "Actif",
+      "completed": "Terminé"
+    },
+    "messages": {
+      "calculated": "Groupes calculés avec succès",
+      "error": "Échec du calcul des groupes",
+      "tooFewAthletes": "Pas assez d'athlètes pour créer des groupes",
+      "unbalanced": "Les groupes sont déséquilibrés"
+    }
+  },
+  "live": {
+    "title": "Gestion de la Compétition en Direct",
+    "start": "Démarrer",
+    "pause": "Pause",
+    "resume": "Reprendre",
+    "stop": "Arrêter",
+    "nextAthlete": "Athlète Suivant",
+    "currentAthlete": "Athlète Actuel",
+    "attemptTracker": "Suivi des Tentatives",
+    "attemptOrder": "Ordre de Passage",
+    "currentLift": "Mouvement Actuel",
+    "selectLift": "Sélectionner un Mouvement",
+    "status": {
+      "active": "ACTIF",
+      "paused": "EN PAUSE",
+      "stopped": "ARRÊTÉ"
+    },
+    "lifts": {
+      "squat": "Squat",
+      "bench": "Développé Couché",
+      "deadlift": "Soulevé de Terre"
+    },
+    "attempt": {
+      "number": "Tentative #{{number}}",
+      "weight": "Poids",
+      "result": "Résultat",
+      "success": "Bon Mouvement",
+      "failure": "Mauvais Mouvement",
+      "pending": "En Attente"
+    },
+    "referee": {
+      "title": "Lumières Arbitres",
+      "left": "Arbitre Gauche",
+      "center": "Arbitre Central",
+      "right": "Arbitre Droit",
+      "goodLift": "Bon Mouvement",
+      "noLift": "Mauvais Mouvement",
+      "vote": "Voter"
+    },
+    "timer": {
+      "title": "Chronomètre",
+      "start": "Démarrer",
+      "stop": "Arrêter",
+      "reset": "Réinitialiser",
+      "timeUp": "Temps écoulé !"
+    },
+    "display": {
+      "external": "Ouvrir Affichage Externe",
+      "spotters": "Ouvrir Affichage Spotters",
+      "opened": "Affichage ouvert dans une nouvelle fenêtre"
+    },
+    "quickActions": {
+      "title": "Actions Rapides",
+      "resetToStart": "Réinitialiser au Début",
+      "skipAttempt": "Passer à la Tentative Suivante"
+    },
+    "competitionInfo": {
+      "title": "Statut de la Compétition",
+      "athletes": "Athlètes",
+      "weighedIn": "Pesés",
+      "attemptProgress": "Tentative {{current}} / {{total}}"
+    },
+    "messages": {
+      "started": "Compétition démarrée - {{lift}}",
+      "paused": "Compétition en pause",
+      "resumed": "Compétition reprise",
+      "stopped": "Compétition arrêtée",
+      "attemptSaved": "Tentative enregistrée avec succès",
+      "allAttemptsCompleted": "Toutes les tentatives terminées pour ce mouvement",
+      "noAthletes": "Aucun athlète prêt pour ce mouvement",
+      "switchLift": "Passage à {{lift}}",
+      "noWeighIns": "Aucun athlète n'a été pesé",
+      "completeWeighIns": "Veuillez compléter les pesées avant de démarrer la compétition",
+      "reset": "Réinitialisation à la première tentative"
+    }
+  },
+  "externalDisplay": {
+    "title": "AFFICHAGE EXTERNE",
+    "waitingForCompetition": "En attente du début de la compétition...",
+    "currentAthlete": "ATHLÈTE ACTUEL",
+    "attempt": "TENTATIVE",
+    "weight": "POIDS",
+    "timer": "TEMPS",
+    "result": "RÉSULTAT",
+    "goodLift": "BON MOUVEMENT",
+    "noLift": "MAUVAIS MOUVEMENT",
+    "referee": "ARBITRE",
+    "timeRemaining": "{{seconds}}s"
+  },
+  "spottersDisplay": {
+    "title": "AFFICHAGE SPOTTERS",
+    "waitingForCompetition": "En attente du début de la compétition...",
+    "athlete": "ATHLÈTE",
+    "lift": "MOUVEMENT",
+    "weight": "POIDS",
+    "lotNumber": "Lot {{number}}",
+    "rackHeights": {
+      "squat": "HAUTEUR RACK SQUAT",
+      "bench": "RÉGLAGES RACK BENCH",
+      "deadlift": "HAUTEUR RACK",
+      "rack": "RACK",
+      "safety": "SÉCURITÉ"
+    },
+    "barLoading": {
+      "title": "CHARGEMENT DE BARRE (barre {{weight}}kg)",
+      "quantity": "QUANTITÉ",
+      "plateWeight": "POIDS DISQUE",
+      "color": "COULEUR",
+      "perSide": "par côté",
+      "diagram": "CHARGEMENT DE BARRE (chaque côté) :",
+      "summary": "{{plates}} disques par côté | Barre : {{bar}}kg + Colliers : {{collars}}kg + Disques : {{plateWeight}}kg × 2 = {{total}}kg",
+      "bar": "BARRE",
+      "collar": "C"
+    }
+  },
+  "rankings": {
+    "title": "Classements & Résultats",
+    "byCategory": "Par Catégorie",
+    "absolute": "Absolu",
+    "filterByGender": "Filtrer par Sexe",
+    "filterByWeightClass": "Filtrer par Catégorie de Poids",
+    "allCategories": "Toutes Catégories",
+    "rank": "Rang",
+    "athlete": "Athlète",
+    "total": "Total",
+    "bodyweight": "Poids de Corps",
+    "score": "Score",
+    "squatBest": "Squat",
+    "benchBest": "Bench",
+    "deadliftBest": "Deadlift",
+    "ipfPoints": "Points IPF",
+    "wilks": "Wilks",
+    "dots": "DOTS",
+    "noResults": "Aucun résultat disponible",
+    "formula": {
+      "ipf": "Points IPF GL",
+      "wilks": "Wilks",
+      "dots": "DOTS"
+    },
+    "export": "Exporter les Résultats",
+    "exportSuccess": "Résultats exportés avec succès"
+  },
+  "errors": {
+    "generic": "Une erreur s'est produite",
+    "networkError": "Erreur réseau. Veuillez vérifier votre connexion",
+    "notFound": "Non trouvé",
+    "unauthorized": "Accès non autorisé",
+    "validationError": "Erreur de validation",
+    "serverError": "Erreur serveur. Veuillez réessayer plus tard"
+  }
+}

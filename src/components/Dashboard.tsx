@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 import { Card, Row, Col, Statistic, Button } from 'antd';
 import { TrophyOutlined, CalendarOutlined, PlusOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useCompetitionStore } from '../features/competition/stores/competitionStore';
 import { DemoDataInitializer } from './DemoDataInitializer';
 
 export const Dashboard = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { competitions, loadCompetitions } = useCompetitionStore();
   const [loading, setLoading] = useState(false);
 
@@ -32,15 +34,15 @@ export const Dashboard = () => {
   return (
     <div>
       <div style={{ marginBottom: 24 }}>
-        <h1>Dashboard</h1>
-        <p>Welcome to Powerlifting Manager</p>
+        <h1>{t('dashboard.title')}</h1>
+        <p>{t('dashboard.welcome')}</p>
       </div>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={6}>
           <Card loading={loading}>
             <Statistic
-              title="Total Competitions"
+              title={t('dashboard.stats.totalCompetitions')}
               value={competitions.length}
               prefix={<TrophyOutlined />}
               valueStyle={{ color: '#1890ff' }}
@@ -51,7 +53,7 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card loading={loading}>
             <Statistic
-              title="Upcoming"
+              title={t('competition.status.upcoming')}
               value={upcomingCompetitions.length}
               prefix={<CalendarOutlined />}
               valueStyle={{ color: '#faad14' }}
@@ -62,7 +64,7 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card loading={loading}>
             <Statistic
-              title="Active"
+              title={t('dashboard.stats.activeCompetitions')}
               value={activeCompetitions.length}
               prefix={<TrophyOutlined />}
               valueStyle={{ color: '#52c41a' }}
@@ -73,7 +75,7 @@ export const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card loading={loading}>
             <Statistic
-              title="Completed"
+              title={t('competition.status.completed')}
               value={completedCompetitions.length}
               prefix={<TrophyOutlined />}
               valueStyle={{ color: '#8c8c8c' }}
@@ -84,7 +86,7 @@ export const Dashboard = () => {
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} lg={16}>
-          <Card title="Quick Actions">
+          <Card title={t('live.quickActions.title')}>
             <Row gutter={16}>
               <Col>
                 <Button
@@ -93,7 +95,7 @@ export const Dashboard = () => {
                   size="large"
                   onClick={() => navigate('/competitions/new')}
                 >
-                  New Competition
+                  {t('dashboard.newCompetition')}
                 </Button>
               </Col>
               <Col>
@@ -102,7 +104,7 @@ export const Dashboard = () => {
                   size="large"
                   onClick={() => navigate('/competitions')}
                 >
-                  View All Competitions
+                  {t('competition.list')}
                 </Button>
               </Col>
             </Row>
@@ -115,7 +117,7 @@ export const Dashboard = () => {
       </Row>
 
       {activeCompetitions.length > 0 && (
-        <Card title="Active Competitions" loading={loading}>
+        <Card title={t('dashboard.stats.activeCompetitions')} loading={loading}>
           {activeCompetitions.map((comp) => (
             <Card.Grid
               key={comp.id}

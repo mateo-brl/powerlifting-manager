@@ -1,6 +1,8 @@
 import { Layout as AntLayout, Menu, Typography } from 'antd';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { TrophyOutlined, HomeOutlined } from '@ant-design/icons';
+import { useTranslation } from 'react-i18next';
+import { LanguageSwitcher } from './LanguageSwitcher';
 
 const { Header, Content, Footer } = AntLayout;
 const { Title } = Typography;
@@ -8,18 +10,19 @@ const { Title } = Typography;
 export const Layout = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
 
   const menuItems = [
     {
       key: '/',
       icon: <HomeOutlined />,
-      label: 'Dashboard',
+      label: t('layout.menu.dashboard'),
       onClick: () => navigate('/'),
     },
     {
       key: '/competitions',
       icon: <TrophyOutlined />,
-      label: 'Competitions',
+      label: t('layout.menu.competitions'),
       onClick: () => navigate('/competitions'),
     },
   ];
@@ -40,16 +43,19 @@ export const Layout = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <TrophyOutlined style={{ fontSize: '24px', color: '#fff' }} />
           <Title level={3} style={{ margin: 0, color: '#fff' }}>
-            Powerlifting Manager
+            {t('layout.appName')}
           </Title>
         </div>
-        <Menu
-          theme="dark"
-          mode="horizontal"
-          selectedKeys={[selectedKey]}
-          items={menuItems}
-          style={{ flex: 1, minWidth: 0, marginLeft: '24px' }}
-        />
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1 }}>
+          <Menu
+            theme="dark"
+            mode="horizontal"
+            selectedKeys={[selectedKey]}
+            items={menuItems}
+            style={{ flex: 1, minWidth: 0, marginLeft: '24px' }}
+          />
+          <LanguageSwitcher />
+        </div>
       </Header>
 
       <Content style={{ padding: '24px', background: '#f0f2f5' }}>

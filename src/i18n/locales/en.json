@@ -1,0 +1,377 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "back": "Back",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "filter": "Filter",
+    "export": "Export",
+    "import": "Import",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "close": "Close",
+    "refresh": "Refresh",
+    "success": "Success",
+    "error": "Error",
+    "warning": "Warning",
+    "info": "Info"
+  },
+  "layout": {
+    "appName": "Powerlifting Manager",
+    "menu": {
+      "dashboard": "Dashboard",
+      "competitions": "Competitions"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome to Powerlifting Manager",
+    "description": "Manage powerlifting competitions from A to Z",
+    "newCompetition": "New Competition",
+    "recentCompetitions": "Recent Competitions",
+    "noCompetitions": "No competitions yet",
+    "createFirst": "Create your first competition to get started",
+    "demoData": {
+      "title": "Demo Mode",
+      "description": "Generate demo data to test the application",
+      "button": "Generate Demo Data",
+      "success": "Demo data generated successfully!",
+      "error": "Failed to generate demo data"
+    },
+    "stats": {
+      "totalCompetitions": "Total Competitions",
+      "activeCompetitions": "Active Competitions",
+      "totalAthletes": "Total Athletes",
+      "upcomingEvents": "Upcoming Events"
+    }
+  },
+  "competition": {
+    "title": "Competitions",
+    "new": "New Competition",
+    "edit": "Edit Competition",
+    "view": "View Competition",
+    "list": "Competition List",
+    "details": "Competition Details",
+    "actions": "Competition Actions",
+    "status": {
+      "upcoming": "Upcoming",
+      "in_progress": "In Progress",
+      "completed": "Completed"
+    },
+    "format": {
+      "label": "Competition Format",
+      "sbd": "SBD",
+      "bench": "Bench",
+      "full_power": "SBD",
+      "bench_only": "Bench"
+    },
+    "fields": {
+      "name": "Competition Name",
+      "date": "Date",
+      "location": "Location",
+      "federation": "Federation",
+      "format": "Format",
+      "status": "Status",
+      "createdAt": "Created At",
+      "updatedAt": "Updated At"
+    },
+    "form": {
+      "namePlaceholder": "Enter competition name",
+      "locationPlaceholder": "Enter location",
+      "selectFederation": "Select a federation",
+      "selectFormat": "Select a format",
+      "nameRequired": "Please enter a competition name",
+      "dateRequired": "Please select a date",
+      "federationRequired": "Please select a federation",
+      "formatRequired": "Please select a format"
+    },
+    "messages": {
+      "created": "Competition created successfully",
+      "updated": "Competition updated successfully",
+      "deleted": "Competition deleted successfully",
+      "deleteConfirm": "Are you sure you want to delete this competition?",
+      "error": "An error occurred"
+    },
+    "tabs": {
+      "overview": "Overview",
+      "athletes": "Athletes",
+      "weighIn": "Weigh-In",
+      "flights": "Flights",
+      "live": "Live Competition",
+      "results": "Results"
+    }
+  },
+  "athlete": {
+    "title": "Athletes",
+    "new": "Add Athlete",
+    "edit": "Edit Athlete",
+    "list": "Athletes List",
+    "import": "Import Athletes",
+    "export": "Export Athletes",
+    "total": "Total Athletes",
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "dateOfBirth": "Date of Birth",
+      "gender": "Gender",
+      "weightClass": "Weight Class",
+      "division": "Division",
+      "ageCategory": "Age Category",
+      "lotNumber": "Lot Number",
+      "bodyweight": "Bodyweight",
+      "team": "Team",
+      "squatRackHeight": "Squat Rack Height",
+      "benchRackHeight": "Bench Rack Height"
+    },
+    "gender": {
+      "M": "Male",
+      "F": "Female"
+    },
+    "division": {
+      "raw": "Raw",
+      "equipped": "Equipped"
+    },
+    "ageCategory": {
+      "sub_junior": "Sub-Junior",
+      "junior": "Junior",
+      "open": "Open",
+      "master1": "Master 1",
+      "master2": "Master 2",
+      "master3": "Master 3",
+      "master4": "Master 4"
+    },
+    "form": {
+      "firstNamePlaceholder": "Enter first name",
+      "lastNamePlaceholder": "Enter last name",
+      "firstNameRequired": "Please enter first name",
+      "lastNameRequired": "Please enter last name",
+      "dateRequired": "Please select date of birth",
+      "genderRequired": "Please select gender",
+      "weightClassRequired": "Please select weight class",
+      "divisionRequired": "Please select division"
+    },
+    "messages": {
+      "created": "Athlete added successfully",
+      "updated": "Athlete updated successfully",
+      "deleted": "Athlete deleted successfully",
+      "deleteConfirm": "Are you sure you want to delete this athlete?",
+      "imported": "{{count}} athletes imported successfully",
+      "exportSuccess": "Athletes exported successfully"
+    }
+  },
+  "weighIn": {
+    "title": "Weigh-In",
+    "selectAthlete": "Select Athlete",
+    "noAthletes": "No athletes available",
+    "weighInData": "Weigh-In Data",
+    "openingAttempts": "Opening Attempts",
+    "rackHeights": "Rack Heights",
+    "fields": {
+      "bodyweight": "Bodyweight (kg)",
+      "openingSquat": "Opening Squat (kg)",
+      "openingBench": "Opening Bench (kg)",
+      "openingDeadlift": "Opening Deadlift (kg)",
+      "squatRackHeight": "Squat Rack Height",
+      "benchRackHeight": "Bench Rack Height",
+      "benchSafetyHeight": "Bench Safety Height"
+    },
+    "form": {
+      "bodyweightRequired": "Please enter bodyweight",
+      "squatRequired": "Please enter opening squat",
+      "benchRequired": "Please enter opening bench",
+      "deadliftRequired": "Please enter opening deadlift"
+    },
+    "messages": {
+      "saved": "Weigh-in saved successfully",
+      "updated": "Weigh-in updated successfully",
+      "error": "Failed to save weigh-in",
+      "selectAthleteFirst": "Please select an athlete first"
+    },
+    "validation": {
+      "bodyweightAboveClass": "Bodyweight exceeds weight class limit",
+      "bodyweightBelowMinimum": "Bodyweight below minimum"
+    }
+  },
+  "flight": {
+    "title": "Flight Management",
+    "calculate": "Calculate Flights",
+    "recalculate": "Recalculate Flights",
+    "noFlights": "No flights calculated yet",
+    "flight": "Flight",
+    "athleteCount": "{{count}} athletes",
+    "fields": {
+      "name": "Flight Name",
+      "liftType": "Lift Type",
+      "status": "Status",
+      "athleteCount": "Athletes"
+    },
+    "status": {
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed"
+    },
+    "messages": {
+      "calculated": "Flights calculated successfully",
+      "error": "Failed to calculate flights",
+      "tooFewAthletes": "Not enough athletes to create flights",
+      "unbalanced": "Flights are unbalanced"
+    }
+  },
+  "live": {
+    "title": "Live Competition Management",
+    "start": "Start",
+    "pause": "Pause",
+    "resume": "Resume",
+    "stop": "Stop",
+    "nextAthlete": "Next Athlete",
+    "currentAthlete": "Current Athlete",
+    "attemptTracker": "Attempt Tracker",
+    "attemptOrder": "Attempt Order",
+    "currentLift": "Current Lift",
+    "selectLift": "Select Lift",
+    "status": {
+      "active": "ACTIVE",
+      "paused": "PAUSED",
+      "stopped": "STOPPED"
+    },
+    "lifts": {
+      "squat": "Squat",
+      "bench": "Bench Press",
+      "deadlift": "Deadlift"
+    },
+    "attempt": {
+      "number": "Attempt #{{number}}",
+      "weight": "Weight",
+      "result": "Result",
+      "success": "Good Lift",
+      "failure": "No Lift",
+      "pending": "Pending"
+    },
+    "referee": {
+      "title": "Referee Lights",
+      "left": "Left Referee",
+      "center": "Center Referee",
+      "right": "Right Referee",
+      "goodLift": "Good Lift",
+      "noLift": "No Lift",
+      "vote": "Vote"
+    },
+    "timer": {
+      "title": "Timer",
+      "start": "Start",
+      "stop": "Stop",
+      "reset": "Reset",
+      "timeUp": "Time is up!"
+    },
+    "display": {
+      "external": "Open External Display",
+      "spotters": "Open Spotters Display",
+      "opened": "Display opened in new window"
+    },
+    "quickActions": {
+      "title": "Quick Actions",
+      "resetToStart": "Reset to Start",
+      "skipAttempt": "Skip to Next Attempt"
+    },
+    "competitionInfo": {
+      "title": "Competition Status",
+      "athletes": "Athletes",
+      "weighedIn": "Weighed In",
+      "attemptProgress": "Attempt {{current}} / {{total}}"
+    },
+    "messages": {
+      "started": "Competition started - {{lift}}",
+      "paused": "Competition paused",
+      "resumed": "Competition resumed",
+      "stopped": "Competition stopped",
+      "attemptSaved": "Attempt saved successfully",
+      "allAttemptsCompleted": "All attempts completed for this lift",
+      "noAthletes": "No athletes ready for this lift",
+      "switchLift": "Switched to {{lift}}",
+      "noWeighIns": "No athletes have been weighed in yet",
+      "completeWeighIns": "Please complete weigh-ins before starting the competition",
+      "reset": "Reset to first attempt"
+    }
+  },
+  "externalDisplay": {
+    "title": "EXTERNAL DISPLAY",
+    "waitingForCompetition": "Waiting for competition to start...",
+    "currentAthlete": "CURRENT ATHLETE",
+    "attempt": "ATTEMPT",
+    "weight": "WEIGHT",
+    "timer": "TIME",
+    "result": "RESULT",
+    "goodLift": "GOOD LIFT",
+    "noLift": "NO LIFT",
+    "referee": "REFEREE",
+    "timeRemaining": "{{seconds}}s"
+  },
+  "spottersDisplay": {
+    "title": "SPOTTERS DISPLAY",
+    "waitingForCompetition": "Waiting for competition to start...",
+    "athlete": "ATHLETE",
+    "lift": "LIFT",
+    "weight": "WEIGHT",
+    "lotNumber": "Lot {{number}}",
+    "rackHeights": {
+      "squat": "SQUAT RACK HEIGHT",
+      "bench": "BENCH RACK SETTINGS",
+      "deadlift": "RACK HEIGHT",
+      "rack": "RACK",
+      "safety": "SAFETY"
+    },
+    "barLoading": {
+      "title": "BAR LOADING ({{weight}}kg bar)",
+      "quantity": "QUANTITY",
+      "plateWeight": "PLATE WEIGHT",
+      "color": "COLOR",
+      "perSide": "per side",
+      "diagram": "BAR LOADING (each side):",
+      "summary": "{{plates}} plates per side | Bar: {{bar}}kg + Collars: {{collars}}kg + Plates: {{plateWeight}}kg × 2 = {{total}}kg",
+      "bar": "BAR",
+      "collar": "C"
+    }
+  },
+  "rankings": {
+    "title": "Rankings & Results",
+    "byCategory": "By Category",
+    "absolute": "Absolute",
+    "filterByGender": "Filter by Gender",
+    "filterByWeightClass": "Filter by Weight Class",
+    "allCategories": "All Categories",
+    "rank": "Rank",
+    "athlete": "Athlete",
+    "total": "Total",
+    "bodyweight": "Bodyweight",
+    "score": "Score",
+    "squatBest": "Squat",
+    "benchBest": "Bench",
+    "deadliftBest": "Deadlift",
+    "ipfPoints": "IPF Points",
+    "wilks": "Wilks",
+    "dots": "DOTS",
+    "noResults": "No results available",
+    "formula": {
+      "ipf": "IPF GL Points",
+      "wilks": "Wilks",
+      "dots": "DOTS"
+    },
+    "export": "Export Results",
+    "exportSuccess": "Results exported successfully"
+  },
+  "errors": {
+    "generic": "An error occurred",
+    "networkError": "Network error. Please check your connection",
+    "notFound": "Not found",
+    "unauthorized": "Unauthorized access",
+    "validationError": "Validation error",
+    "serverError": "Server error. Please try again later"
+  }
+}
