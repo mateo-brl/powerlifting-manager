@@ -167,6 +167,44 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
   - Messages contextuels avec détails
   - Affichage de l'amélioration et de la distance au record
 
+### ✅ Coefficient McCulloch pour Masters
+- **Ajustement d'âge automatique** :
+  - Formule polynomiale officielle McCulloch
+  - Coefficients de 1.01 à 2.60+ pour athlètes 40+ ans
+  - Coefficients distincts hommes/femmes
+  - Application automatique pour catégories Masters
+- **Calculs et affichages** :
+  - Total brut vs total ajusté
+  - Coefficient exact affiché
+  - Classements Masters avec ajustement
+  - Tableau de référence des coefficients par âge (40-90 ans)
+- **Intégration complète** :
+  - Compatible avec tous les exports (PDF, CSV)
+  - Prise en compte dans les classements
+  - Support bilingue FR/EN
+
+### ✅ Gestion Multi-Plateformes
+- **Support de plusieurs plateformes simultanées** :
+  - Création et gestion de plateformes multiples
+  - Association athlètes/tentatives par plateforme
+  - Activation/désactivation des plateformes
+  - Statistiques en temps réel par plateforme
+- **Système de synchronisation intelligent** :
+  - Auto-synchronisation configurable
+  - Intervalle de sync personnalisable
+  - Résolution de conflits automatique (latest/manual/source_priority)
+  - Log de synchronisation avec historique
+- **Fusion intelligente des résultats** :
+  - Détection automatique des conflits
+  - Fusion des tentatives multi-plateformes
+  - Stratégies de résolution configurables
+  - Classements fusionnés automatiquement
+- **Interface de gestion** :
+  - Tableau de bord des plateformes
+  - Statut de progression par plateforme
+  - Indicateurs visuels d'activité
+  - Synchronisation manuelle ou automatique
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
@@ -478,6 +516,16 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - Détection automatique en temps réel
   - Notifications visuelles animées
   - Historique des records battus
+- ✅ **Phase 9**: Coefficient McCulloch pour Masters
+  - Formule polynomiale officielle pour athlètes 40+ ans
+  - Ajustement automatique des totaux selon l'âge
+  - Coefficients distincts hommes/femmes (1.01 à 2.60+)
+  - Classements Masters avec totaux ajustés
+- ✅ **Phase 10**: Gestion Multi-Plateformes
+  - Support de plusieurs plateformes simultanées
+  - Système de synchronisation automatique
+  - Fusion intelligente des résultats avec résolution de conflits
+  - Interface de gestion avec statistiques en temps réel
 - 🔄 **Évolutions futures**:
   - Interface d'administration des records
   - Statistiques avancées
