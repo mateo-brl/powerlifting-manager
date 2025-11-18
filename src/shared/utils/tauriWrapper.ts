@@ -14,13 +14,51 @@ declare global {
 export const isTauri = typeof window !== 'undefined' &&
   window.__TAURI_INTERNALS__ !== undefined;
 
-// Stockage en mémoire pour le mode navigateur
+// Clés pour le localStorage
+const STORAGE_KEYS = {
+  competitions: 'pl_competitions',
+  athletes: 'pl_athletes',
+  weighIns: 'pl_weighIns',
+  attempts: 'pl_attempts',
+  flights: 'pl_flights',
+};
+
+// Stockage persistant avec localStorage pour le mode navigateur
 const browserStorage = {
-  competitions: [] as any[],
-  athletes: [] as any[],
-  weighIns: [] as any[],
-  attempts: [] as any[],
-  flights: [] as any[],
+  get competitions() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.competitions) || '[]');
+  },
+  set competitions(value: any[]) {
+    localStorage.setItem(STORAGE_KEYS.competitions, JSON.stringify(value));
+  },
+
+  get athletes() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.athletes) || '[]');
+  },
+  set athletes(value: any[]) {
+    localStorage.setItem(STORAGE_KEYS.athletes, JSON.stringify(value));
+  },
+
+  get weighIns() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.weighIns) || '[]');
+  },
+  set weighIns(value: any[]) {
+    localStorage.setItem(STORAGE_KEYS.weighIns, JSON.stringify(value));
+  },
+
+  get attempts() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.attempts) || '[]');
+  },
+  set attempts(value: any[]) {
+    localStorage.setItem(STORAGE_KEYS.attempts, JSON.stringify(value));
+  },
+
+  get flights() {
+    return JSON.parse(localStorage.getItem(STORAGE_KEYS.flights) || '[]');
+  },
+  set flights(value: any[]) {
+    localStorage.setItem(STORAGE_KEYS.flights, JSON.stringify(value));
+  },
 };
 
 // Import dynamique de Tauri seulement si disponible
@@ -67,21 +105,25 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       };
-      browserStorage.competitions.push(comp);
+      const comps = browserStorage.competitions;
+      comps.push(comp);
+      browserStorage.competitions = comps;
       return comp;
 
     case 'get_competitions':
       return [...browserStorage.competitions];
 
     case 'update_competition':
-      const compIndex = browserStorage.competitions.findIndex(c => c.id === args!.id);
+      const competitions = browserStorage.competitions;
+      const compIndex = competitions.findIndex(c => c.id === args!.id);
       if (compIndex >= 0) {
-        browserStorage.competitions[compIndex] = {
-          ...browserStorage.competitions[compIndex],
+        competitions[compIndex] = {
+          ...competitions[compIndex],
           ...args!.input,
           updated_at: new Date().toISOString(),
         };
-        return browserStorage.competitions[compIndex];
+        browserStorage.competitions = competitions;
+        return competitions[compIndex];
       }
       throw new Error('Competition not found');
 
@@ -96,7 +138,9 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
         ...args!.input,
         created_at: new Date().toISOString(),
       };
-      browserStorage.athletes.push(athlete);
+      const athletes = browserStorage.athletes;
+      athletes.push(athlete);
+      browserStorage.athletes = athletes;
       return athlete;
 
     case 'get_athletes':
@@ -105,13 +149,15 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
       );
 
     case 'update_athlete':
-      const athleteIndex = browserStorage.athletes.findIndex(a => a.id === args!.id);
+      const athletesList = browserStorage.athletes;
+      const athleteIndex = athletesList.findIndex(a => a.id === args!.id);
       if (athleteIndex >= 0) {
-        browserStorage.athletes[athleteIndex] = {
-          ...browserStorage.athletes[athleteIndex],
+        athletesList[athleteIndex] = {
+          ...athletesList[athleteIndex],
           ...args!.input,
         };
-        return browserStorage.athletes[athleteIndex];
+        browserStorage.athletes = athletesList;
+        return athletesList[athleteIndex];
       }
       throw new Error('Athlete not found');
 
@@ -126,7 +172,9 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
         ...args!.input,
         weighed_in_at: new Date().toISOString(),
       };
-      browserStorage.weighIns.push(weighIn);
+      const weighIns = browserStorage.weighIns;
+      weighIns.push(weighIn);
+      browserStorage.weighIns = weighIns;
       return weighIn;
 
     case 'get_weigh_ins':
@@ -146,17 +194,21 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
         result: 'pending',
         timestamp: new Date().toISOString(),
       };
-      browserStorage.attempts.push(attempt);
+      const attempts = browserStorage.attempts;
+      attempts.push(attempt);
+      browserStorage.attempts = attempts;
       return attempt;
 
     case 'update_attempt':
-      const attemptIndex = browserStorage.attempts.findIndex(a => a.id === args!.input.id);
+      const attemptsList = browserStorage.attempts;
+      const attemptIndex = attemptsList.findIndex(a => a.id === args!.input.id);
       if (attemptIndex >= 0) {
-        browserStorage.attempts[attemptIndex] = {
-          ...browserStorage.attempts[attemptIndex],
+        attemptsList[attemptIndex] = {
+          ...attemptsList[attemptIndex],
           ...args!.input,
         };
-        return browserStorage.attempts[attemptIndex];
+        browserStorage.attempts = attemptsList;
+        return attemptsList[attemptIndex];
       }
       throw new Error('Attempt not found');
 
@@ -179,7 +231,9 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
         ...args!.input,
         created_at: new Date().toISOString(),
       };
-      browserStorage.flights.push(flight);
+      const flights = browserStorage.flights;
+      flights.push(flight);
+      browserStorage.flights = flights;
       return flight;
 
     case 'get_flights':
@@ -188,13 +242,15 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
       );
 
     case 'update_flight':
-      const flightIndex = browserStorage.flights.findIndex(f => f.id === args!.id);
+      const flightsList = browserStorage.flights;
+      const flightIndex = flightsList.findIndex(f => f.id === args!.id);
       if (flightIndex >= 0) {
-        browserStorage.flights[flightIndex] = {
-          ...browserStorage.flights[flightIndex],
+        flightsList[flightIndex] = {
+          ...flightsList[flightIndex],
           ...args!.input,
         };
-        return browserStorage.flights[flightIndex];
+        browserStorage.flights = flightsList;
+        return flightsList[flightIndex];
       }
       throw new Error('Flight not found');
 
@@ -215,11 +271,12 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
 }
 
 /**
- * Réinitialise le stockage en mémoire (utile pour les tests)
+ * Réinitialise le stockage (localStorage) - utile pour les tests ou le debugging
  */
 export function resetBrowserStorage() {
   browserStorage.competitions = [];
   browserStorage.athletes = [];
   browserStorage.weighIns = [];
   browserStorage.attempts = [];
+  browserStorage.flights = [];
 }
