@@ -205,6 +205,50 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
   - Indicateurs visuels d'activité
   - Synchronisation manuelle ou automatique
 
+### ✅ Statistiques & Analytics Avancées
+- **Historique de progression des athlètes** :
+  - Suivi complet de la progression au fil des compétitions
+  - Graphiques de performance (ligne, barres, multi-lignes)
+  - Évolution des totaux, IPF Points, Wilks, DOTS
+  - Détection automatique des tendances (progression/régression)
+- **Comparaisons historiques** :
+  - Comparaison entre plusieurs compétitions
+  - Analyse des tendances de participation
+  - Statistiques de performance globales
+  - Distribution des résultats (min, max, moyenne, médiane, quartiles)
+- **Dashboard statistiques** :
+  - Vue d'ensemble avec KPIs (taux de réussite, records personnels)
+  - Graphiques interactifs de progression
+  - Tableau d'historique des compétitions
+  - Comparaison entre athlètes
+- **Statistiques détaillées** :
+  - Années d'activité, total de compétitions
+  - Moyennes de progression annuelle
+  - Meilleur mouvement (absolu et relatif)
+  - Distribution par catégorie d'âge, division, poids
+
+### ✅ Affichages Publics Améliorés
+- **Écran de classements en direct** :
+  - Optimisé pour affichage mural (projecteur, TV)
+  - Design professionnel avec dégradés
+  - Mise à jour automatique en temps réel
+  - Affichage des podiums avec couleurs or/argent/bronze
+  - Photos des athlètes et drapeaux de pays
+  - Support des logos d'équipes
+- **Overlays pour streaming OBS** :
+  - **Lower Third** : Bandeau inférieur avec infos athlète (1920x250px)
+  - **Scoreboard** : Tableau de score compact top 10 (400x600px)
+  - **Attempt Overlay** : Infos tentative en cours avec timer (800x300px)
+  - **Result Overlay** : Affichage résultat avec votes juges (600x400px)
+  - Fonds transparents pour intégration OBS
+  - Compatible green screen/chroma key
+  - Animations fluides et professionnelles
+- **Support média complet** :
+  - Drapeaux de pays (emojis Unicode)
+  - Photos des athlètes
+  - Logos des équipes
+  - Intégration dans tous les affichages existants
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
@@ -225,6 +269,7 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **Validation**: Zod
 - **PDF Generation**: jsPDF + jsPDF-AutoTable
 - **CSV Export**: PapaParse
+- **Charts**: Recharts (graphiques de performance)
 
 ### Backend
 - **Language**: Rust
@@ -526,6 +571,17 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - Système de synchronisation automatique
   - Fusion intelligente des résultats avec résolution de conflits
   - Interface de gestion avec statistiques en temps réel
+- ✅ **Phase 11**: Statistiques & Analytics Avancées
+  - Historique de progression des athlètes
+  - Comparaisons historiques entre compétitions
+  - Graphiques de performance avec Recharts
+  - Dashboard statistiques avec KPIs et tendances
+  - Calculs avancés (quartiles, médianes, distributions)
+- ✅ **Phase 12**: Affichages Publics Améliorés
+  - Écran classements en direct pour affichage mural
+  - 4 overlays streaming compatibles OBS
+  - Support complet drapeaux, logos, photos
+  - Intégration média dans tous les affichages
 - 🔄 **Évolutions futures**:
   - Interface d'administration des records
   - Statistiques avancées
