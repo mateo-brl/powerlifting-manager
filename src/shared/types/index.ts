@@ -23,6 +23,10 @@ export interface Athlete {
   bodyweight?: number;
   squat_rack_height?: number;
   bench_rack_height?: number;
+  // Média et informations visuelles
+  country?: string;         // Code pays (ex: FRA, USA, GBR)
+  team_logo?: string;       // URL ou chemin vers le logo de l'équipe
+  athlete_photo?: string;   // URL ou chemin vers la photo de l'athlète
   created_at: string;
 }
 
