@@ -20,6 +20,7 @@ const browserStorage = {
   athletes: [] as any[],
   weighIns: [] as any[],
   attempts: [] as any[],
+  flights: [] as any[],
 };
 
 // Import dynamique de Tauri seulement si disponible
@@ -169,6 +170,42 @@ function simulateCommand(cmd: string, args?: Record<string, any>): any {
 
     case 'delete_attempt':
       browserStorage.attempts = browserStorage.attempts.filter(a => a.id !== args!.id);
+      return null;
+
+    // Flights
+    case 'create_flight':
+      const flight = {
+        id: generateId(),
+        ...args!.input,
+        created_at: new Date().toISOString(),
+      };
+      browserStorage.flights.push(flight);
+      return flight;
+
+    case 'get_flights':
+      return browserStorage.flights.filter(f =>
+        !args!.competitionId || f.competition_id === args!.competitionId
+      );
+
+    case 'update_flight':
+      const flightIndex = browserStorage.flights.findIndex(f => f.id === args!.id);
+      if (flightIndex >= 0) {
+        browserStorage.flights[flightIndex] = {
+          ...browserStorage.flights[flightIndex],
+          ...args!.input,
+        };
+        return browserStorage.flights[flightIndex];
+      }
+      throw new Error('Flight not found');
+
+    case 'delete_flight':
+      browserStorage.flights = browserStorage.flights.filter(f => f.id !== args!.id);
+      return null;
+
+    case 'delete_flights_by_competition':
+      browserStorage.flights = browserStorage.flights.filter(f =>
+        f.competition_id !== args!.competitionId
+      );
       return null;
 
     default:

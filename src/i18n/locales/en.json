@@ -201,14 +201,21 @@
     },
     "validation": {
       "bodyweightAboveClass": "Bodyweight exceeds weight class limit",
-      "bodyweightBelowMinimum": "Bodyweight below minimum"
-    }
+      "bodyweightBelowMinimum": "Bodyweight below minimum",
+      "bodyweightValid": "Bodyweight valid for weight class"
+    },
+    "outOfCompetition": "Athlete out of competition",
+    "outOfCompetitionWarning": "Weight above class limit",
+    "outOfCompetitionDescription": "The athlete's weight exceeds their weight class. You can still accept the weigh-in and mark them as 'out of competition' so they can participate without being officially ranked.",
+    "markAsOutOfCompetition": "Mark as out of competition (will not be officially ranked)"
   },
   "flight": {
     "title": "Flight Management",
+    "manualManagement": "Manual Flight Management",
+    "manualDescription": "Flights must be created manually. Automatic calculation has been disabled to give you full control over flight composition.",
     "calculate": "Calculate Flights",
     "recalculate": "Recalculate Flights",
-    "noFlights": "No flights calculated yet",
+    "noFlights": "No flights created yet",
     "flight": "Flight",
     "athleteCount": "{{count}} athletes",
     "fields": {
@@ -521,14 +528,7 @@
     "ipfPoints": "IPF Points",
     "competition": "Competition",
     "date": "Date",
-    "rank": "Rank"
-  },
-  "rankings": {
-    "athlete": "Athlete",
-    "squat": "Squat",
-    "bench": "Bench",
-    "deadlift": "Deadlift",
-    "total": "Total",
+    "rank": "Rank",
     "absoluteRankings": "Overall Rankings",
     "categoryRankings": "Category Rankings",
     "lastUpdate": "Last update",

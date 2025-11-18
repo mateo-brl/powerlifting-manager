@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col, Alert } from 'antd';
+import { Form, InputNumber, Button, Card, Select, message, Descriptions, Tag, Row, Col, Alert, Checkbox } from 'antd';
 import { SaveOutlined, CheckCircleOutlined, WarningOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -16,13 +16,14 @@ interface WeighInFormData {
   squat_rack_height?: number;
   bench_rack_height?: number;
   bench_safety_height?: number;
+  out_of_competition?: boolean;
 }
 
 export const WeighInForm = () => {
   const { t } = useTranslation();
   const { competitionId } = useParams<{ competitionId: string }>();
   const navigate = useNavigate();
-  const { athletes, loadAthletes } = useAthleteStore();
+  const { athletes, loadAthletes, updateAthlete } = useAthleteStore();
   const { weighIns, loadWeighIns, createWeighIn } = useWeighInStore();
   const [form] = Form.useForm<WeighInFormData>();
   const [loading, setLoading] = useState(false);
@@ -79,13 +80,9 @@ export const WeighInForm = () => {
       return;
     }
 
-    if (weightClassValid === false) {
-      message.error(t('weighIn.validation.bodyweightAboveClass'));
-      return;
-    }
-
     setLoading(true);
     try {
+      // Créer la pesée
       await createWeighIn({
         athlete_id: values.athlete_id,
         competition_id: competitionId,
@@ -98,7 +95,21 @@ export const WeighInForm = () => {
         bench_safety_height: values.bench_safety_height,
       });
 
-      message.success(t('weighIn.messages.saved'));
+      // Mettre à jour le statut "hors match" de l'athlète si nécessaire
+      if (values.out_of_competition !== undefined && selectedAthlete) {
+        await updateAthlete(selectedAthlete.id, {
+          ...selectedAthlete,
+          out_of_competition: values.out_of_competition,
+          bodyweight: values.bodyweight,
+        });
+      }
+
+      if (values.out_of_competition) {
+        message.success(t('weighIn.messages.saved') + ' - ' + t('weighIn.outOfCompetition'));
+      } else {
+        message.success(t('weighIn.messages.saved'));
+      }
+
       form.resetFields();
       setSelectedAthlete(null);
       setWeightClassValid(null);
@@ -204,7 +215,7 @@ export const WeighInForm = () => {
               extra={
                 weightClassValid === true ? (
                   <span style={{ color: 'green' }}>
-                    <CheckCircleOutlined /> {t('weighIn.validation.bodyweightAboveClass')}
+                    <CheckCircleOutlined /> {t('weighIn.validation.bodyweightValid')}
                   </span>
                 ) : weightClassValid === false ? (
                   <span style={{ color: 'red' }}>
@@ -223,6 +234,28 @@ export const WeighInForm = () => {
                 placeholder={t('weighIn.fields.bodyweight')}
               />
             </Form.Item>
+
+            {weightClassValid === false && (
+              <Alert
+                message={t('weighIn.outOfCompetitionWarning')}
+                description={t('weighIn.outOfCompetitionDescription')}
+                type="warning"
+                showIcon
+                style={{ marginBottom: 16 }}
+              />
+            )}
+
+            {weightClassValid === false && (
+              <Form.Item
+                name="out_of_competition"
+                valuePropName="checked"
+                style={{ marginBottom: 16 }}
+              >
+                <Checkbox>
+                  {t('weighIn.markAsOutOfCompetition')}
+                </Checkbox>
+              </Form.Item>
+            )}
 
             <Card type="inner" title={t('weighIn.openingAttempts')} style={{ marginBottom: 16 }}>
               <Row gutter={16}>

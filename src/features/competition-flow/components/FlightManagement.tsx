@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Button, Card, Table, Tag, message, Alert, Space } from 'antd';
+import { useEffect } from 'react';
+import { Button, Card, Table, Tag, Alert, Space } from 'antd';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeftOutlined, ReloadOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useFlightStore } from '../stores/flightStore';
-import { calculateFlights, validateFlightBalance } from '../utils/flightCalculation';
 import { Flight } from '../../weigh-in/types';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -16,11 +15,7 @@ export const FlightManagement = () => {
   const navigate = useNavigate();
   const { athletes, loadAthletes } = useAthleteStore();
   const { weighIns, loadWeighIns } = useWeighInStore();
-  const { flights, loadFlights, createFlight, deleteFlightsByCompetition } = useFlightStore();
-  const [validation, setValidation] = useState<{ valid: boolean; warnings: string[] }>({
-    valid: true,
-    warnings: [],
-  });
+  const { flights, loadFlights } = useFlightStore();
 
   useEffect(() => {
     if (competitionId) {
@@ -33,59 +28,6 @@ export const FlightManagement = () => {
   const competitionAthletes = athletes.filter(a => a.competition_id === competitionId);
   const competitionWeighIns = weighIns.filter(w => w.competition_id === competitionId);
   const competitionFlights = flights.filter(f => f.competition_id === competitionId);
-
-  const handleCalculateFlights = async () => {
-    if (competitionWeighIns.length === 0) {
-      message.warning(t('flight.messages.tooFewAthletes'));
-      return;
-    }
-
-    if (!competitionId) {
-      message.error(t('competition.messages.error'));
-      return;
-    }
-
-    try {
-      await deleteFlightsByCompetition(competitionId);
-
-      const calculatedFlights = calculateFlights(competitionAthletes, competitionWeighIns);
-      const validation = validateFlightBalance(calculatedFlights);
-
-      for (const flight of calculatedFlights) {
-        await createFlight({
-          competition_id: competitionId,
-          name: flight.name,
-          athlete_ids: flight.athlete_ids,
-          lift_type: flight.lift_type,
-          status: flight.status,
-        });
-      }
-
-      setValidation(validation);
-
-      if (validation.valid) {
-        message.success(t('flight.messages.calculated'));
-      } else {
-        message.warning(t('flight.messages.unbalanced'));
-      }
-    } catch (error) {
-      message.error(t('flight.messages.error'));
-      console.error(error);
-    }
-  };
-
-  const handleRecalculate = async () => {
-    if (!competitionId) return;
-
-    try {
-      await deleteFlightsByCompetition(competitionId);
-      message.info(t('flight.messages.calculated'));
-      setValidation({ valid: true, warnings: [] });
-    } catch (error) {
-      message.error(t('flight.messages.error'));
-      console.error(error);
-    }
-  };
 
   const flightColumns: ColumnsType<Flight> = [
     {
@@ -127,22 +69,6 @@ export const FlightManagement = () => {
         title={t('flight.title')}
         extra={
           <Space>
-            {competitionFlights.length > 0 && (
-              <Button
-                icon={<ReloadOutlined />}
-                onClick={handleRecalculate}
-                danger
-              >
-                {t('flight.recalculate')}
-              </Button>
-            )}
-            <Button
-              type="primary"
-              onClick={handleCalculateFlights}
-              disabled={competitionWeighIns.length === 0}
-            >
-              {competitionFlights.length > 0 ? t('flight.recalculate') : t('flight.calculate')}
-            </Button>
             <Button
               icon={<ArrowLeftOutlined />}
               onClick={() => navigate(`/competitions/${competitionId}`)}
@@ -154,28 +80,20 @@ export const FlightManagement = () => {
       >
         <div style={{ marginBottom: 16 }}>
           <Alert
-            message={t('flight.title')}
-            description={`${competitionWeighIns.length} / ${competitionAthletes.length} ${t('athlete.title')}`}
+            message={t('flight.manualManagement')}
+            description={t('flight.manualDescription')}
             type="info"
             showIcon
           />
         </div>
 
-        {validation.warnings.length > 0 && (
+        <div style={{ marginBottom: 16 }}>
           <Alert
-            message={t('common.warning')}
-            description={
-              <ul style={{ margin: 0, paddingLeft: 20 }}>
-                {validation.warnings.map((warning, idx) => (
-                  <li key={idx}>{warning}</li>
-                ))}
-              </ul>
-            }
-            type="warning"
-            showIcon
-            style={{ marginBottom: 16 }}
+            message={`${competitionWeighIns.length} / ${competitionAthletes.length} ${t('athlete.title')}`}
+            type="info"
+            showIcon={false}
           />
-        )}
+        </div>
 
         {competitionFlights.length > 0 && (
           <Table

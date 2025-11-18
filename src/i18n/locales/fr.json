@@ -201,14 +201,21 @@
     },
     "validation": {
       "bodyweightAboveClass": "Le poids de corps dépasse la limite de la catégorie",
-      "bodyweightBelowMinimum": "Le poids de corps est en dessous du minimum"
-    }
+      "bodyweightBelowMinimum": "Le poids de corps est en dessous du minimum",
+      "bodyweightValid": "Poids de corps valide pour la catégorie"
+    },
+    "outOfCompetition": "Athlète hors match",
+    "outOfCompetitionWarning": "Poids au-dessus de la catégorie",
+    "outOfCompetitionDescription": "Le poids de l'athlète dépasse sa catégorie. Vous pouvez quand même accepter la pesée et le marquer comme 'hors match' pour qu'il puisse participer sans être classé officiellement.",
+    "markAsOutOfCompetition": "Marquer comme hors match (ne sera pas classé officiellement)"
   },
   "flight": {
     "title": "Gestion des Groupes",
+    "manualManagement": "Gestion Manuelle des Groupes",
+    "manualDescription": "Les groupes doivent être créés manuellement. Le calcul automatique a été désactivé pour vous permettre un contrôle total sur la composition des groupes.",
     "calculate": "Calculer les Groupes",
     "recalculate": "Recalculer les Groupes",
-    "noFlights": "Aucun groupe calculé",
+    "noFlights": "Aucun groupe créé",
     "flight": "Groupe",
     "athleteCount": "{{count}} athlètes",
     "fields": {
@@ -521,14 +528,7 @@
     "ipfPoints": "Points IPF",
     "competition": "Compétition",
     "date": "Date",
-    "rank": "Classement"
-  },
-  "rankings": {
-    "athlete": "Athlète",
-    "squat": "Squat",
-    "bench": "Bench",
-    "deadlift": "Deadlift",
-    "total": "Total",
+    "rank": "Classement",
     "absoluteRankings": "Classement Absolu",
     "categoryRankings": "Classement par Catégorie",
     "lastUpdate": "Dernière mise à jour",

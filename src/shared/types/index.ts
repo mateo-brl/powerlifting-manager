@@ -27,6 +27,8 @@ export interface Athlete {
   country?: string;         // Code pays (ex: FRA, USA, GBR)
   team_logo?: string;       // URL ou chemin vers le logo de l'équipe
   athlete_photo?: string;   // URL ou chemin vers la photo de l'athlète
+  // Statut de compétition
+  out_of_competition?: boolean;  // Hors match (poids au-dessus de la catégorie)
   created_at: string;
 }
 
