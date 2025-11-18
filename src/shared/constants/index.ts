@@ -10,6 +10,7 @@ export const FEDERATIONS = [
 ] as const;
 
 export const WEIGHT_CLASSES_MEN = [
+  { value: '53', label: 'jusqu\'à 53 kg (Sub-Junior/Junior)' },
   { value: '59', label: 'jusqu\'à 59 kg' },
   { value: '66', label: 'jusqu\'à 66 kg' },
   { value: '74', label: 'jusqu\'à 74 kg' },
@@ -21,6 +22,7 @@ export const WEIGHT_CLASSES_MEN = [
 ] as const;
 
 export const WEIGHT_CLASSES_WOMEN = [
+  { value: '43', label: 'jusqu\'à 43 kg (Sub-Junior/Junior)' },
   { value: '47', label: 'jusqu\'à 47 kg' },
   { value: '52', label: 'jusqu\'à 52 kg' },
   { value: '57', label: 'jusqu\'à 57 kg' },
@@ -35,6 +37,7 @@ export const WEIGHT_CLASSES_WOMEN = [
 export const AGE_CATEGORIES = [
   'Sub-Junior',
   'Junior',
+  'Seniors', // 24-39 ans (FFForce)
   'Sub-Master',
   'Open',
   'Master 1',
@@ -44,11 +47,17 @@ export const AGE_CATEGORIES = [
 ] as const;
 
 export const WEIGHT_CLASSES = {
-  men: ['59kg', '66kg', '74kg', '83kg', '93kg', '105kg', '120kg', '+120kg'],
-  women: ['47kg', '52kg', '57kg', '63kg', '69kg', '76kg', '84kg', '+84kg'],
+  men: ['53kg', '59kg', '66kg', '74kg', '83kg', '93kg', '105kg', '120kg', '+120kg'],
+  women: ['43kg', '47kg', '52kg', '57kg', '63kg', '69kg', '76kg', '84kg', '+84kg'],
 } as const;
 
-export const DIVISIONS = ['raw', 'equipped'] as const;
+export const DIVISIONS = [
+  'raw',
+  'wraps',        // Raw avec genouillères autorisées
+  'single-ply',   // Équipement single-ply
+  'multi-ply',    // Équipement multi-ply
+  'equipped'      // Équipé (ancien terme générique)
+] as const;
 
 export const LIFT_TYPES = [
   { value: 'squat', label: 'Squat', color: '#1890ff' },

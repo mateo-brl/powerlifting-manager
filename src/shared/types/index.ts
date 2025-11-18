@@ -17,7 +17,7 @@ export interface Athlete {
   date_of_birth: string;
   gender: 'M' | 'F';
   weight_class: string;
-  division: 'raw' | 'equipped';
+  division: 'raw' | 'wraps' | 'single-ply' | 'multi-ply' | 'equipped';
   age_category: string;
   lot_number?: number;
   bodyweight?: number;
@@ -39,8 +39,8 @@ export interface Attempt {
 
 // Catégories de poids IPF
 export const WEIGHT_CLASSES = {
-  men: [59, 66, 74, 83, 93, 105, 120, '+120'],
-  women: [47, 52, 57, 63, 69, 76, 84, '+84']
+  men: [53, 59, 66, 74, 83, 93, 105, 120, '+120'],
+  women: [43, 47, 52, 57, 63, 69, 76, 84, '+84']
 } as const;
 
 export type WeightClass = typeof WEIGHT_CLASSES.men[number] | typeof WEIGHT_CLASSES.women[number];

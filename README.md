@@ -130,6 +130,43 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - Support du clic molette pour ouverture dans un nouvel onglet
 - Interface bilingue FR/EN complète
 
+### ✅ Exports & Documents Officiels
+- **Export PDF des résultats** :
+  - Résultats complets avec classements par catégorie
+  - Feuilles imprimables individuelles format A4
+  - Mise en page professionnelle
+- **Export CSV OpenPowerlifting** :
+  - Format standard pour archivage mondial
+  - Validation automatique des données
+  - Toutes colonnes requises (SBD, équipement, points, etc.)
+- **Export FFForce (France)** :
+  - Feuille de match informatique officielle
+  - Feuille de pesée officielle
+  - Export CSV détaillé avec hauteurs de racks
+  - Conforme aux exigences FFForce
+- **Certificats & Diplômes** :
+  - Certificats de podium (Top 3) avec bordures or/argent/bronze
+  - Certificats de participation personnalisés
+  - Génération automatique en PDF
+  - Support bilingue FR/EN
+
+### ✅ Système de Gestion des Records
+- **Base de données de records** :
+  - Records mondiaux, nationaux, régionaux, personnels
+  - Historique complet des records battus
+  - Filtrage par fédération, catégorie, division
+- **Détection automatique** :
+  - Analyse en temps réel pendant les tentatives
+  - Détection des nouveaux records
+  - Détection des records approchés (< 2.5kg)
+  - Vérification multi-niveaux (personnel/régional/national/mondial)
+- **Notifications visuelles** :
+  - Alertes animées pour nouveaux records (vert avec animation pulse)
+  - Alertes pour records approchés (orange)
+  - Badges sur les tentatives
+  - Messages contextuels avec détails
+  - Affichage de l'amélioration et de la distance au record
+
 ### 🎭 Mode Démo
 - Générateur de données de démonstration
 - 3 compétitions avec athlètes et tentatives
@@ -148,6 +185,8 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **Internationalization**: react-i18next (FR/EN)
 - **Date Handling**: Day.js
 - **Validation**: Zod
+- **PDF Generation**: jsPDF + jsPDF-AutoTable
+- **CSV Export**: PapaParse
 
 ### Backend
 - **Language**: Rust
@@ -301,10 +340,17 @@ liftmanager/
 
 ## 📐 Catégories de Poids IPF
 
-**Hommes**: 59kg, 66kg, 74kg, 83kg, 93kg, 105kg, 120kg, +120kg
-**Femmes**: 47kg, 52kg, 57kg, 63kg, 69kg, 76kg, 84kg, +84kg
+**Hommes**: 53kg (Sub-Junior/Junior), 59kg, 66kg, 74kg, 83kg, 93kg, 105kg, 120kg, +120kg
+**Femmes**: 43kg (Sub-Junior/Junior), 47kg, 52kg, 57kg, 63kg, 69kg, 76kg, 84kg, +84kg
 
-**Catégories d'âge**: Sub-Junior, Junior, Open, Master 1, Master 2, Master 3, Master 4
+**Catégories d'âge**: Sub-Junior, Junior, Seniors (24-39 ans, FFForce), Sub-Master, Open, Master 1, Master 2, Master 3, Master 4
+
+**Divisions** :
+- **Raw** : Sans équipement (seule ceinture autorisée)
+- **Wraps** : Raw avec genouillères autorisées
+- **Single-Ply** : Équipement single-ply
+- **Multi-Ply** : Équipement multi-ply
+- **Equipped** : Équipé (ancien terme générique)
 
 ## 🧮 Formules de Calcul
 
@@ -417,10 +463,26 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - Contrôle manuel du flux de compétition
   - Timer avec reset automatique
   - Affichage externe WebSocket
+- ✅ **Phase 6**: Catégories & Divisions complètes
+  - Ajout catégories 43kg (F) et 53kg (M) Sub-Junior/Junior
+  - Ajout catégorie Seniors (24-39 ans) FFForce
+  - Support divisions Wraps, Single-Ply, Multi-Ply
+- ✅ **Phase 7**: Exports & Documents officiels
+  - Export PDF des résultats et feuilles imprimables
+  - Export CSV OpenPowerlifting (archivage mondial)
+  - Export FFForce (feuille de match officielle France)
+  - Génération automatique de certificats de podium
+  - Certificats de participation personnalisés
+- ✅ **Phase 8**: Système de Records
+  - Base de données de records (mondial/national/régional/personnel)
+  - Détection automatique en temps réel
+  - Notifications visuelles animées
+  - Historique des records battus
 - 🔄 **Évolutions futures**:
-  - Export PDF des résultats
+  - Interface d'administration des records
   - Statistiques avancées
   - Support multi-plateformes (Windows, macOS, Linux)
+  - Module de planification de compétitions
 
 ## 🎨 Conformité IPF
 

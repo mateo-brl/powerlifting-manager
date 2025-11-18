@@ -34,8 +34,8 @@ export function generateMockCompetition(): Competition {
 
 export function generateMockAthletes(competitionId: string, count: number = 20): Athlete[] {
   const athletes: Athlete[] = [];
-  const weightClassesM = ['59', '66', '74', '83', '93', '105', '120', '120+'];
-  const weightClassesF = ['47', '52', '57', '63', '69', '76', '84', '84+'];
+  const weightClassesM = ['53', '59', '66', '74', '83', '93', '105', '120', '120+'];
+  const weightClassesF = ['43', '47', '52', '57', '63', '69', '76', '84', '84+'];
 
   for (let i = 0; i < count; i++) {
     const gender = Math.random() > 0.3 ? 'M' : 'F';

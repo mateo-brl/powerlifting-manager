@@ -135,12 +135,17 @@
       "F": "Female"
     },
     "division": {
-      "raw": "Raw",
+      "raw": "Raw (no equipment)",
+      "wraps": "Raw with wraps",
+      "single_ply": "Single-Ply",
+      "multi_ply": "Multi-Ply",
       "equipped": "Equipped"
     },
     "ageCategory": {
       "sub_junior": "Sub-Junior",
       "junior": "Junior",
+      "seniors": "Seniors (24-39 years)",
+      "sub_master": "Sub-Master",
       "open": "Open",
       "master1": "Master 1",
       "master2": "Master 2",
@@ -400,6 +405,49 @@
       "undeclaredWarning": "{{count}} athletes have not declared their next weight yet",
       "error": "Failed to save declarations"
     }
+  },
+  "records": {
+    "title": "Records Status",
+    "newRecord": "New Record",
+    "recordApproached": "Record Approached",
+    "currentRecord": "Current record",
+    "previousRecord": "Previous record",
+    "improvement": "Improvement",
+    "distance": "Distance",
+    "world": "World",
+    "national": "National",
+    "regional": "Regional",
+    "personal": "Personal",
+    "squat": "Squat",
+    "bench": "Bench Press",
+    "deadlift": "Deadlift",
+    "total": "Total",
+    "verified": "Verified",
+    "unverified": "Unverified",
+    "athleteName": "Athlete",
+    "dateSet": "Date",
+    "competition": "Competition",
+    "weight": "Weight",
+    "notes": "Notes"
+  },
+  "export": {
+    "title": "Exports & Official Documents",
+    "language": "Export language",
+    "results": "Competition Results",
+    "official": "Official Formats",
+    "certificates": "Certificates & Awards",
+    "pdfResults": "PDF Results",
+    "printableSheets": "Printable Sheets",
+    "openPowerliftingCSV": "OpenPowerlifting CSV Export",
+    "ffforceSheet": "FFForce Match Sheet",
+    "ffforceCSV": "Detailed CSV Export",
+    "weighInSheet": "Weigh-In Sheet",
+    "podiumCertificates": "Podium Certificates (Top 3)",
+    "participationCertificates": "Participation Certificates",
+    "success": "Export successful!",
+    "error": "Export error",
+    "note": "Note",
+    "noteDescription": "Certificates are generated in PDF format with decorative gold/silver/bronze borders for the podium."
   },
   "errors": {
     "generic": "An error occurred",
