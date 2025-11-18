@@ -328,6 +328,67 @@ npm run tauri dev
 npm run tauri build
 ```
 
+### 🏗️ Build Multi-Plateforme
+
+L'application supporte nativement **Linux** et **Windows** grâce à Tauri.
+
+#### Build pour Linux
+
+Sur une machine Linux :
+```bash
+# Build pour Linux (génère .deb et .appimage)
+npm run tauri:build:linux
+```
+
+**Formats générés** :
+- `.deb` : Package Debian/Ubuntu
+- `.appimage` : Application portable Linux
+
+**Localisation** : `src-tauri/target/release/bundle/`
+
+#### Build pour Windows
+
+Sur une machine Windows :
+```bash
+# Build pour Windows (génère installeur NSIS)
+npm run tauri:build:windows
+```
+
+**Format généré** :
+- `.exe` : Installeur NSIS pour Windows
+
+**Localisation** : `src-tauri/target/release/bundle/nsis/`
+
+#### Prérequis Windows
+
+Sur Windows, vous aurez besoin de :
+- **Visual Studio Build Tools** 2019 ou plus récent
+- **WebView2** (généralement déjà installé sur Windows 10/11)
+
+Installation rapide :
+```powershell
+# Installer Rust
+winget install Rustlang.Rust.MSVC
+
+# Installer Node.js
+winget install OpenJS.NodeJS
+
+# Cloner et construire
+git clone https://github.com/mateo-brl/powerlifting-manager.git
+cd powerlifting-manager
+npm install
+npm run tauri:build:windows
+```
+
+#### Build universel
+
+Pour construire sur la plateforme actuelle :
+```bash
+npm run tauri:build:all
+```
+
+**Note** : Le cross-compilation (build Windows depuis Linux ou inversement) n'est pas supporté nativement par Tauri. Il est recommandé de builder sur chaque plateforme cible.
+
 ## 📁 Structure du Projet
 
 ```
@@ -582,11 +643,16 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - 4 overlays streaming compatibles OBS
   - Support complet drapeaux, logos, photos
   - Intégration média dans tous les affichages
+- ✅ **Phase 13**: Support Multi-Plateformes
+  - Build Linux (.deb, .appimage) ✅
+  - Build Windows (NSIS installer) ✅
+  - Scripts de build automatisés
+  - Documentation complète pour chaque plateforme
 - 🔄 **Évolutions futures**:
   - Interface d'administration des records
-  - Statistiques avancées
-  - Support multi-plateformes (Windows, macOS, Linux)
+  - Support macOS (.dmg, .app)
   - Module de planification de compétitions
+  - API REST pour intégrations tierces
 
 ## 🎨 Conformité IPF
 
