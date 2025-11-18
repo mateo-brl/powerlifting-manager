@@ -8,7 +8,6 @@ import {
   FilePdfOutlined,
   FileExcelOutlined,
   TrophyOutlined,
-  DownloadOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';

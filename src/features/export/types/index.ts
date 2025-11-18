@@ -3,7 +3,7 @@
  */
 
 import { Athlete } from '../../athlete/types';
-import { Attempt } from '../../attempt/types';
+import { Attempt } from '../../../shared/types';
 
 export interface AthleteResult extends Athlete {
   squat_1?: number;

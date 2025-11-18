@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { RecordCheck, RecordType } from '../types';
-import { getRecordNotificationColor, generateRecordMessage } from '../services/recordDetection';
+import { generateRecordMessage } from '../services/recordDetection';
 
 interface RecordNotificationProps {
   recordCheck: RecordCheck;

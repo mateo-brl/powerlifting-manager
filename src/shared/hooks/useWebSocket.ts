@@ -93,7 +93,7 @@ export const useWebSocket = (url: string | null, options: UseWebSocketOptions = 
 
           reconnectTimeoutRef.current = setTimeout(() => {
             connect();
-          }, reconnectInterval);
+          }, reconnectInterval) as any;
         }
       };
 

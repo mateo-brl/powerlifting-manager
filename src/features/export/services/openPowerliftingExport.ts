@@ -4,7 +4,7 @@
  */
 
 import Papa from 'papaparse';
-import { CompetitionResults, AthleteResult, OpenPowerliftingRecord } from '../types';
+import { CompetitionResults, OpenPowerliftingRecord } from '../types';
 import { calculateIPFGLPoints } from '../../../shared/utils/calculations';
 
 /**
@@ -70,20 +70,12 @@ function getBirthYearClass(dateOfBirth: string): string {
 }
 
 /**
- * Formatte un poids pour OpenPowerlifting (vide si 0 ou négatif, sinon valeur)
- */
-function formatWeight(weight: number | undefined): string {
-  if (!weight || weight <= 0) return '';
-  return weight.toString();
-}
-
-/**
  * Convertit les résultats en format OpenPowerlifting
  */
 export function convertToOpenPowerliftingFormat(
   results: CompetitionResults
 ): OpenPowerliftingRecord[] {
-  return results.results.map((athlete, index) => {
+  return results.results.map((athlete) => {
     const age = calculateAge(athlete.date_of_birth, results.competition_date);
     const equipment = convertDivisionToEquipment(athlete.division);
     const ageClass = convertAgeCategory(athlete.age_category);
@@ -93,7 +85,7 @@ export function convertToOpenPowerliftingFormat(
     const glPoints = calculateIPFGLPoints(
       athlete.total,
       athlete.bodyweight || parseFloat(athlete.weight_class),
-      athlete.gender
+      athlete.gender as 'M' | 'F'
     );
 
     // Déterminer l'événement (SBD = Squat+Bench+Deadlift)
@@ -113,7 +105,7 @@ export function convertToOpenPowerliftingFormat(
 
     const record: OpenPowerliftingRecord = {
       Name: `${athlete.first_name} ${athlete.last_name}`,
-      Sex: athlete.gender,
+      Sex: athlete.gender as 'M' | 'F',
       Event: event,
       Equipment: equipment,
       Age: age,

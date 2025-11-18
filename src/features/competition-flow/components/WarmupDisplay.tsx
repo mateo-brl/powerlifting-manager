@@ -7,7 +7,7 @@ import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
-import type { LiftType, Attempt, AttemptResult } from '../types';
+import type { LiftType, AttemptResult } from '../types';
 
 const { Title, Text } = Typography;
 

@@ -6,7 +6,7 @@
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import Papa from 'papaparse';
-import { CompetitionResults, AthleteResult, FFForceExportData } from '../types';
+import { CompetitionResults, AthleteResult } from '../types';
 import { formatDate } from '../../../shared/utils/formatters';
 
 /**

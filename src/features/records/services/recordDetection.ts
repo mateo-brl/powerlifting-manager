@@ -4,7 +4,7 @@
 
 import { Record, RecordCheck, RecordType, LiftType } from '../types';
 import { Athlete } from '../../athlete/types';
-import { Attempt } from '../../attempt/types';
+import { Attempt } from '../../../shared/types';
 
 // Seuil pour considérer qu'un record est "approché" (en kg)
 const APPROACH_THRESHOLD = 2.5;
@@ -221,9 +221,9 @@ export function createRecordFromAttempt(
   return {
     record_type: recordType,
     federation: competition.federation,
-    gender: athlete.gender,
+    gender: athlete.gender as 'M' | 'F',
     weight_class: athlete.weight_class,
-    division: athlete.division,
+    division: athlete.division as 'raw' | 'wraps' | 'single-ply' | 'multi-ply' | 'equipped',
     age_category: athlete.age_category,
     lift_type: attempt.lift_type as LiftType,
     weight_kg: attempt.weight_kg,
