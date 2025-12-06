@@ -10,6 +10,8 @@ use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_ath
 use commands::weigh_in::{create_weigh_in, get_weigh_ins, delete_weigh_in};
 use commands::attempt::{create_attempt, update_attempt, get_attempts, get_athlete_attempts, delete_attempt};
 use commands::flight::{create_flight, get_flights, update_flight, delete_flight, delete_flights_by_competition};
+use commands::protest::{create_protest, get_pending_protests, resolve_protest, get_protest_history};
+use commands::equipment::{update_athlete_equipment, validate_equipment, get_non_validated_equipment, get_all_equipment};
 use std::sync::Mutex;
 use tokio::sync::broadcast;
 use serde_json::Value;
@@ -83,6 +85,14 @@ async fn main() {
             update_flight,
             delete_flight,
             delete_flights_by_competition,
+            create_protest,
+            get_pending_protests,
+            resolve_protest,
+            get_protest_history,
+            update_athlete_equipment,
+            validate_equipment,
+            get_non_validated_equipment,
+            get_all_equipment,
             broadcast_websocket_event,
         ])
         .run(tauri::generate_context!())

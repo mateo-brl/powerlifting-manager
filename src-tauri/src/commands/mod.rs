@@ -3,3 +3,5 @@ pub mod athlete;
 pub mod weigh_in;
 pub mod attempt;
 pub mod flight;
+pub mod protest;
+pub mod equipment;
