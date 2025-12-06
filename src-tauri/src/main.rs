@@ -5,14 +5,15 @@ mod commands;
 mod database;
 mod websocket;
 
-use commands::competition::{create_competition, get_competitions, update_competition, delete_competition, CompetitionState};
-use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_athlete, AthleteState};
-use commands::weigh_in::{create_weigh_in, get_weigh_ins, delete_weigh_in, WeighInState};
-use commands::attempt::{create_attempt, update_attempt, get_attempts, get_athlete_attempts, delete_attempt, AttemptState};
-use commands::flight::{create_flight, get_flights, update_flight, delete_flight, delete_flights_by_competition, FlightState};
+use commands::competition::{create_competition, get_competitions, update_competition, delete_competition};
+use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_athlete};
+use commands::weigh_in::{create_weigh_in, get_weigh_ins, delete_weigh_in};
+use commands::attempt::{create_attempt, update_attempt, get_attempts, get_athlete_attempts, delete_attempt};
+use commands::flight::{create_flight, get_flights, update_flight, delete_flight, delete_flights_by_competition};
 use std::sync::Mutex;
 use tokio::sync::broadcast;
 use serde_json::Value;
+use tauri::Manager;
 
 // WebSocket broadcast state
 pub struct WebSocketState {
@@ -47,20 +48,15 @@ async fn main() {
     });
 
     tauri::Builder::default()
-        .manage(CompetitionState {
-            competitions: Mutex::new(Vec::new()),
-        })
-        .manage(AthleteState {
-            athletes: Mutex::new(Vec::new()),
-        })
-        .manage(WeighInState {
-            weigh_ins: Mutex::new(Vec::new()),
-        })
-        .manage(AttemptState {
-            attempts: Mutex::new(Vec::new()),
-        })
-        .manage(FlightState {
-            flights: Mutex::new(Vec::new()),
+        .setup(|app| {
+            // Initialize database
+            let db_path = database::get_db_path(app.handle());
+            let pool = database::init_db(db_path)
+                .expect("Failed to initialize database");
+
+            app.manage(pool);
+
+            Ok(())
         })
         .manage(WebSocketState {
             sender: Mutex::new(Some(tx)),
