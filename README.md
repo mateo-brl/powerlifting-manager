@@ -298,6 +298,118 @@ L'application utilise **SQLite** pour la persistance complète des données avec
 - ✅ Colonnes d'équipement dans `weigh_ins` pour validation IPF
 - ✅ Toutes les données sont maintenant persistées dans `powerlifting.db`
 
+**Backend Rust - Commandes Tauri (Phase 1)** :
+- ✅ **Protestations** : `protest.rs` avec 4 commandes
+  - `create_protest` : Création avec validation délai 60s et raison min 20 chars
+  - `get_pending_protests` : Liste des protestations en attente
+  - `resolve_protest` : Résolution par le jury (accepté/rejeté)
+  - `get_protest_history` : Historique complet pour rapports
+- ✅ **Validation Équipement** : `equipment.rs` avec 4 commandes
+  - `update_athlete_equipment` : Enregistrement équipement complet (singlet, belt, sleeves, wraps, shoes)
+  - `validate_equipment` : Validation officielle avec nom validateur + timestamp
+  - `get_non_validated_equipment` : Liste équipements non validés
+  - `get_all_equipment` : Vue complète pour exports
+
+## 🚧 Travail en Cours & Roadmap
+
+### 📋 Phase 2 : Types TypeScript & Constantes (À FAIRE)
+**Fichiers à créer** :
+- `src/features/competition-flow/types/protest.ts`
+  - Interface `Protest` avec tous les champs (id, competition_id, athlete_id, attempt_id, protest_type, reason, timestamp, deadline, status, jury_decision, jury_notes)
+  - Interface `ProtestFormValues` pour le formulaire
+  - Type `ProtestType` : 'referee_decision' | 'equipment' | 'procedure'
+  - Type `ProtestStatus` : 'pending' | 'accepted' | 'rejected'
+
+- `src/features/weigh-in/types/equipment.ts`
+  - Interface `AthleteEquipment` complète
+  - Interface `EquipmentFormValues` pour le formulaire
+  - Type `EquipmentCategory` pour les catégories IPF
+
+- `src/shared/constants/ipfEquipment.ts`
+  - Constante `IPF_APPROVED_EQUIPMENT` avec toutes les marques approuvées :
+    - `singlets`: SBD, Titan, Inzer, Metal, A7, Strengthshop, Eleiko, Wahlanders
+    - `belts`: SBD, Inzer, Pioneer, Eleiko, Wahlanders, Titan, Strengthshop
+    - `knee_sleeves`: SBD, Titan, Rehband, Strengthshop, Eleiko, Metal
+    - `wrist_wraps`: SBD, Titan, Inzer, Strengthshop, Metal, Gangsta Wraps
+    - `shoes`: Adidas, Nike, Reebok, ASICS, Sabo, VS Athletics, Notorious Lift
+
+- **Schémas Zod de validation** :
+  - `protestSchema` : validation formulaire protestation (raison min 20 chars)
+  - `equipmentSchema` : validation formulaire équipement
+
+### 🎨 Phase 3 : Composants React (À FAIRE)
+**Composants Protestations** :
+- `src/features/competition-flow/components/ProtestModal.tsx`
+  - Formulaire avec select type protestation
+  - Textarea raison (min 20 chars)
+  - Timer countdown 60s avec badge
+  - Désactivation si délai dépassé
+  - Bilingue FR/EN
+
+- `src/features/competition-flow/components/JuryPanel.tsx`
+  - Tableau protestations en attente (colonnes : Athlète, Tentative, Type, Raison, Heure)
+  - Détail protestation sélectionnée
+  - Boutons Accepter/Rejeter avec confirmation
+  - Textarea notes du jury
+  - Filtre par statut (pending/accepted/rejected)
+  - Historique complet
+  - Export PDF des protestations
+  - Auto-refresh toutes les 5s si protestations en attente
+
+**Composants Validation Équipement** :
+- `src/features/weigh-in/components/EquipmentValidator.tsx`
+  - Checklist pour chaque catégorie équipement
+  - Select avec autocomplete marques approuvées IPF
+  - Badge vert/rouge selon conformité IPF
+  - Champ texte libre si équipement non listé (avec warning)
+  - Bouton "Valider l'équipement" avec nom validateur
+  - Timestamp validation
+  - Alerte si équipement non-conforme IPF
+
+- `src/features/weigh-in/components/EquipmentValidationList.tsx`
+  - Tableau filtrable par statut (validé/non-validé)
+  - Colonnes : Athlète, Catégorie, Division, Équipements, Statut, Validateur
+  - Badge conformité IPF
+  - Bouton "Valider" ouvrant le modal
+  - Export CSV équipements validés
+
+**Intégrations** :
+- Modifier `src/features/competition-flow/components/LiveCompetition.tsx` :
+  - Ajouter bouton "Protest" visible après validation tentative
+  - Badge timer countdown 60s
+  - Désactivation automatique après 60s
+  - Ouverture ProtestModal au clic
+
+- Modifier `src/features/weigh-in/components/WeighInForm.tsx` :
+  - Ajouter onglet "Équipement" après pesée
+  - Intégrer EquipmentValidator
+  - Indicateur visuel si équipement non validé
+  - Warning si athlète participe sans validation
+
+**Traductions i18n** :
+- Ajouter dans `public/locales/fr/translation.json` et `en/translation.json` :
+  - Toutes les clés pour protestations (types, statuts, messages)
+  - Toutes les clés pour validation équipement (catégories, marques, messages)
+
+### 📄 Phase 4 : Exports & Rapports (À FAIRE)
+- Modifier exports PDF pour inclure :
+  - Section protestations dans les résultats
+  - Tableau équipements validés
+  - Nom validateur et timestamp
+
+- Modifier exports CSV OpenPowerlifting :
+  - Ajouter colonnes marques équipement
+  - Ajouter statut validation équipement
+
+### ✅ Phase 5 : Tests & Production (À FAIRE)
+- Tests manuels de tous les flows utilisateur
+- Vérifier traductions FR/EN complètes
+- Tester timer 60s des protestations
+- Tester validation équipement avec marques IPF
+- Vérifier exports PDF/CSV
+- Build production : `npm run tauri build`
+- Tests sur Windows/Linux/macOS
+
 ### Calculs et Algorithmes
 - IPF GL Points calculation
 - Wilks & DOTS formulas
