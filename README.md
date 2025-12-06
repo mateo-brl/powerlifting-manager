@@ -273,9 +273,30 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 
 ### Backend
 - **Language**: Rust
-- **Database**: SQLite (via tauri-plugin-sql)
+- **Database**: SQLite (rusqlite + r2d2 connection pooling)
 - **Real-time**: WebSocket server (tokio-tungstenite)
 - **Architecture**: Feature-based structure
+- **Persistance**: Système de migrations versionné avec auto-application au démarrage
+
+### Architecture Base de Données
+L'application utilise **SQLite** pour la persistance complète des données avec un système de migrations versionné.
+
+**Tables principales** :
+- `competitions` - Compétitions avec configuration (federation, format, statut)
+- `athletes` - Athlètes avec informations complètes (catégorie, équipe, photos)
+- `weigh_ins` - Données de pesée (poids corporel, tentatives d'ouverture, racks)
+- `attempts` - Tentatives de levée avec votes des arbitres (JSON)
+- `flights` - Organisation des flights avec liste d'athlètes (JSON)
+- `protests` - **[NEW]** Système de protestations conforme IPF/FFForce (délai 60s)
+- `_migrations` - Tracking des versions de schema
+
+**Nouvelles fonctionnalités (Phase 0)** :
+- ✅ Migration complète du stockage en mémoire vers SQLite persistant
+- ✅ Connection pooling avec r2d2 pour performances optimales
+- ✅ Système de migrations automatique avec versioning
+- ✅ Table `protests` pour gestion des protestations IPF (60s deadline)
+- ✅ Colonnes d'équipement dans `weigh_ins` pour validation IPF
+- ✅ Toutes les données sont maintenant persistées dans `powerlifting.db`
 
 ### Calculs et Algorithmes
 - IPF GL Points calculation
