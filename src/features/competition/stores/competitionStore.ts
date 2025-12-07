@@ -12,6 +12,7 @@ interface CompetitionStore {
     date: string;
     location?: string;
     federation: string;
+    format?: 'full_power' | 'bench_only';
   }) => Promise<Competition>;
   updateCompetition: (id: string, data: Partial<Competition>) => Promise<Competition>;
   deleteCompetition: (id: string) => Promise<void>;
@@ -29,7 +30,11 @@ export const useCompetitionStore = create<CompetitionStore>((set) => ({
   },
 
   createCompetition: async (data) => {
-    const input = { ...data, location: data.location || null };
+    const input = {
+      ...data,
+      location: data.location || null,
+      format: data.format || 'full_power',
+    };
     const competition = await invoke<Competition>('create_competition', { input });
     set((state) => ({
       competitions: [...state.competitions, competition]

@@ -135,6 +135,7 @@ export async function initializeMockCompetition(
     date: competitionData.date,
     location: competitionData.location,
     federation: competitionData.federation,
+    format: competitionData.format,
   });
 
   // Create athletes
