@@ -62,24 +62,48 @@ const browserStorage = {
 };
 
 // Import dynamique de Tauri seulement si disponible
-let tauriInvoke: any = null;
+let tauriInvoke: ((cmd: string, args?: Record<string, any>) => Promise<any>) | null = null;
+let tauriLoaded = false;
+
+async function loadTauriInvoke() {
+  if (isTauri && !tauriLoaded) {
+    try {
+      const { invoke: tauriInvokeFunc } = await import('@tauri-apps/api/core');
+      tauriInvoke = tauriInvokeFunc;
+      tauriLoaded = true;
+      console.log('[Tauri] API loaded successfully');
+    } catch (e) {
+      console.warn('[Tauri] Failed to load API:', e);
+    }
+  }
+}
+
+// Charger Tauri immédiatement
 if (isTauri) {
-  import('@tauri-apps/api/core').then((module) => {
-    tauriInvoke = module.invoke;
-  });
+  loadTauriInvoke();
 }
 
 /**
  * Wrapper pour invoke qui fonctionne en mode navigateur et Tauri
  */
 export async function invoke<T>(cmd: string, args?: Record<string, any>): Promise<T> {
+  // Si Tauri n'est pas encore chargé, attendre
+  if (isTauri && !tauriLoaded) {
+    await loadTauriInvoke();
+  }
+
   // Mode Tauri
   if (isTauri && tauriInvoke) {
-    return tauriInvoke(cmd, args);
+    try {
+      return await tauriInvoke(cmd, args);
+    } catch (e) {
+      console.error(`[Tauri] Command failed: ${cmd}`, e);
+      throw e;
+    }
   }
 
   // Mode navigateur - simulation avec stockage en mémoire
-  // console.debug(`[Browser Mode] ${cmd}`, args); // Uncomment for debugging
+  console.debug(`[Browser Mode] ${cmd}`, args);
 
   return new Promise((resolve) => {
     setTimeout(() => {

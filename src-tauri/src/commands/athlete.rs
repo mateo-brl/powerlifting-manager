@@ -37,6 +37,11 @@ pub struct CreateAthleteInput {
     pub weight_class: String,
     pub division: String,
     pub age_category: String,
+    pub lot_number: Option<i32>,
+    pub bodyweight: Option<f64>,
+    pub squat_rack_height: Option<i32>,
+    pub bench_rack_height: Option<i32>,
+    pub team: Option<String>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -72,11 +77,11 @@ pub async fn create_athlete(
         weight_class: input.weight_class,
         division: input.division,
         age_category: input.age_category,
-        lot_number: None,
-        bodyweight: None,
-        squat_rack_height: None,
-        bench_rack_height: None,
-        team: None,
+        lot_number: input.lot_number,
+        bodyweight: input.bodyweight,
+        squat_rack_height: input.squat_rack_height,
+        bench_rack_height: input.bench_rack_height,
+        team: input.team,
         country: Some("FRA".to_string()),
         team_logo: None,
         athlete_photo: None,
@@ -85,8 +90,8 @@ pub async fn create_athlete(
     };
 
     conn.execute(
-        "INSERT INTO athletes (id, competition_id, first_name, last_name, date_of_birth, gender, weight_class, division, age_category, country, out_of_competition, created_at)
-         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12)",
+        "INSERT INTO athletes (id, competition_id, first_name, last_name, date_of_birth, gender, weight_class, division, age_category, lot_number, bodyweight, squat_rack_height, bench_rack_height, team, country, out_of_competition, created_at)
+         VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?17)",
         params![
             &athlete.id,
             &athlete.competition_id,
@@ -97,6 +102,11 @@ pub async fn create_athlete(
             &athlete.weight_class,
             &athlete.division,
             &athlete.age_category,
+            &athlete.lot_number,
+            &athlete.bodyweight,
+            &athlete.squat_rack_height,
+            &athlete.bench_rack_height,
+            &athlete.team,
             &athlete.country,
             &athlete.out_of_competition.unwrap_or(false),
             &athlete.created_at,
