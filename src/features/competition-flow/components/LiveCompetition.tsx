@@ -259,110 +259,86 @@ export const LiveCompetition = () => {
   const currentAttempt = attemptOrder[currentIndex];
   const hasAttempts = attemptOrder.length > 0;
 
+  const openDisplayWindow = (url: string, name: string) => {
+    // Try to open as popup first, fallback to new tab
+    const popup = window.open(url, name, 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      // Popup blocked, open in new tab
+      window.open(url, '_blank');
+    }
+    return popup;
+  };
+
+  const broadcastCurrentState = () => {
+    const comp = competitions.find(c => c.id === competitionId);
+    if (!comp) return;
+
+    // Broadcast competition started
+    broadcast({
+      type: 'competition_started',
+      data: {
+        competition_id: competitionId || '',
+        competition_name: comp.name,
+        lift_type: currentLift,
+      },
+    });
+
+    // Broadcast current athlete if available
+    if (currentAttempt) {
+      broadcast({
+        type: 'athlete_up',
+        data: {
+          athlete_id: currentAttempt.athlete_id,
+          athlete_name: currentAttempt.athlete_name,
+          weight_kg: currentAttempt.weight_kg,
+          attempt_number: currentAttempt.attempt_number,
+          lift_type: currentLift,
+          lot_number: currentAttempt.lot_number,
+          rack_height: currentAttempt.rack_height,
+          safety_height: currentAttempt.safety_height,
+        },
+      });
+    }
+
+    // Broadcast attempt order
+    if (attemptOrder.length > 0) {
+      broadcast({
+        type: 'attempt_order_update',
+        data: {
+          attempt_order: attemptOrder.map(a => ({
+            athlete_id: a.athlete_id,
+            athlete_name: a.athlete_name,
+            weight_kg: a.weight_kg,
+            attempt_number: a.attempt_number,
+            lot_number: a.lot_number,
+          })),
+          current_index: currentIndex,
+        },
+      });
+    }
+  };
+
   const handleOpenExternalDisplay = () => {
     const displayUrl = `${window.location.origin}/display`;
-    window.open(displayUrl, 'ExternalDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
+    openDisplayWindow(displayUrl, 'ExternalDisplay');
+    // Re-broadcast current state after a delay
+    setTimeout(broadcastCurrentState, 500);
     message.success(t('live.display.opened'));
   };
 
   const handleOpenSpottersDisplay = () => {
     const spottersUrl = `${window.location.origin}/spotters`;
-    window.open(spottersUrl, 'SpottersDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
-
-    // Re-broadcast current state for the new window
-    setTimeout(() => {
-      const competition = competitions.find(c => c.id === competitionId);
-      if (competition) {
-        console.log('[LiveCompetition] Re-broadcasting state for spotters display');
-        console.log('[LiveCompetition] isCompetitionActive:', isCompetitionActive);
-        console.log('[LiveCompetition] currentAttempt:', currentAttempt);
-
-        // Always broadcast competition started if we have a competition
-        broadcast({
-          type: 'competition_started',
-          data: {
-            competition_id: competitionId || '',
-            competition_name: competition.name,
-            lift_type: currentLift,
-          },
-        });
-
-        // Broadcast current athlete if available (regardless of competition status)
-        if (currentAttempt) {
-          broadcast({
-            type: 'athlete_up',
-            data: {
-              athlete_id: currentAttempt.athlete_id,
-              athlete_name: currentAttempt.athlete_name,
-              weight_kg: currentAttempt.weight_kg,
-              attempt_number: currentAttempt.attempt_number,
-              lift_type: currentLift,
-              lot_number: currentAttempt.lot_number,
-              rack_height: currentAttempt.rack_height,
-              safety_height: currentAttempt.safety_height,
-            },
-          });
-        }
-      }
-    }, 500); // Small delay to ensure new window is ready
-
+    openDisplayWindow(spottersUrl, 'SpottersDisplay');
+    // Re-broadcast current state after a delay
+    setTimeout(broadcastCurrentState, 500);
     message.success(t('live.display.opened'));
   };
 
   const handleOpenWarmupDisplay = () => {
     const warmupUrl = `${window.location.origin}/warmup`;
-    window.open(warmupUrl, 'WarmupDisplay', 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
-
-    // Re-broadcast current state for the new window
-    setTimeout(() => {
-      const competition = competitions.find(c => c.id === competitionId);
-      if (competition) {
-        console.log('[LiveCompetition] Re-broadcasting state for warmup display');
-
-        // Broadcast competition started
-        broadcast({
-          type: 'competition_started',
-          data: {
-            competition_id: competitionId || '',
-            competition_name: competition.name,
-            lift_type: currentLift,
-          },
-        });
-
-        // Broadcast current athlete if available
-        if (currentAttempt) {
-          broadcast({
-            type: 'athlete_up',
-            data: {
-              athlete_id: currentAttempt.athlete_id,
-              athlete_name: currentAttempt.athlete_name,
-              weight_kg: currentAttempt.weight_kg,
-              attempt_number: currentAttempt.attempt_number,
-              lift_type: currentLift,
-              lot_number: currentAttempt.lot_number,
-              rack_height: currentAttempt.rack_height,
-              safety_height: currentAttempt.safety_height,
-            },
-          });
-        }
-
-        // Broadcast attempt order for warmup display
-        broadcast({
-          type: 'attempt_order_update',
-          data: {
-            attempt_order: attemptOrder.map(a => ({
-              athlete_id: a.athlete_id,
-              athlete_name: a.athlete_name,
-              weight_kg: a.weight_kg,
-              attempt_number: a.attempt_number,
-              lot_number: a.lot_number,
-            })),
-            current_index: currentIndex,
-          },
-        });
-      }
-    }, 500); // Small delay to ensure new window is ready
-
+    openDisplayWindow(warmupUrl, 'WarmupDisplay');
+    // Re-broadcast current state after a delay
+    setTimeout(broadcastCurrentState, 500);
     message.success(t('live.display.opened'));
   };
 

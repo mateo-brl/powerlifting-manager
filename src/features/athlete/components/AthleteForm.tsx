@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
-import { Form, Input, DatePicker, Select, Button, Card, message, Row, Col, InputNumber } from 'antd';
+import { Form, Input, DatePicker, Select, Button, Card, message, Row, Col, InputNumber, AutoComplete } from 'antd';
 import { SaveOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useAthleteStore } from '../stores/athleteStore';
+import { useCompetitionStore } from '../../competition/stores/competitionStore';
 import { WEIGHT_CLASSES, AGE_CATEGORIES } from '../../../shared/constants';
 import { calculateAgeCategory } from '../../../shared/utils/calculations';
+
+dayjs.extend(customParseFormat);
 
 interface AthleteFormData {
   first_name: string;
@@ -17,8 +21,6 @@ interface AthleteFormData {
   division: string;
   age_category: string;
   lot_number?: number;
-  bodyweight?: number;
-  squat_rack_height?: number;
   bench_rack_height?: number;
 }
 
@@ -27,10 +29,15 @@ export const AthleteForm = () => {
   const navigate = useNavigate();
   const { competitionId, athleteId } = useParams<{ competitionId: string; athleteId?: string }>();
   const { athletes, createAthlete, updateAthlete } = useAthleteStore();
+  const { competitions } = useCompetitionStore();
   const [form] = Form.useForm<AthleteFormData>();
   const [loading, setLoading] = useState(false);
   const [selectedGender, setSelectedGender] = useState<'M' | 'F'>('M');
   const isEditMode = Boolean(athleteId);
+
+  // Get competition format (kept for future use)
+  const _competition = competitions.find(c => c.id === competitionId);
+  void _competition; // Competition data available for future enhancements
 
   useEffect(() => {
     if (isEditMode && athleteId) {
@@ -45,14 +52,37 @@ export const AthleteForm = () => {
           division: athlete.division,
           age_category: athlete.age_category,
           lot_number: athlete.lot_number || undefined,
-          bodyweight: athlete.bodyweight || undefined,
-          squat_rack_height: athlete.squat_rack_height || undefined,
           bench_rack_height: athlete.bench_rack_height || undefined,
         });
         setSelectedGender(athlete.gender as 'M' | 'F');
       }
     }
   }, [athleteId, athletes, form, isEditMode]);
+
+  // Parse flexible date formats (DD/MM/YYYY, DD-MM-YYYY, etc.)
+  const parseFlexibleDate = (value: string): dayjs.Dayjs | null => {
+    const formats = ['DD/MM/YYYY', 'DD-MM-YYYY', 'D/M/YYYY', 'D-M-YYYY', 'YYYY-MM-DD'];
+    for (const fmt of formats) {
+      const parsed = dayjs(value, fmt, true);
+      if (parsed.isValid()) {
+        return parsed;
+      }
+    }
+    return null;
+  };
+
+  // Handle weight class input with auto-selection
+  const handleWeightClassSearch = (value: string) => {
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue)) {
+      const options = selectedGender === 'M' ? WEIGHT_CLASSES.men : WEIGHT_CLASSES.women;
+      // Find exact match or closest match
+      const exactMatch = options.find(wc => wc === `${numValue}` || wc === `${numValue}+`);
+      if (exactMatch) {
+        form.setFieldValue('weight_class', exactMatch);
+      }
+    }
+  };
 
   const handleGenderChange = (gender: 'M' | 'F') => {
     setSelectedGender(gender);
@@ -85,8 +115,6 @@ export const AthleteForm = () => {
         division: values.division,
         age_category: values.age_category,
         lot_number: values.lot_number,
-        bodyweight: values.bodyweight,
-        squat_rack_height: values.squat_rack_height,
         bench_rack_height: values.bench_rack_height,
       };
 
@@ -189,11 +217,22 @@ export const AthleteForm = () => {
                   },
                 },
               ]}
+              getValueFromEvent={(date, dateString) => {
+                // If date is already a dayjs object, use it
+                if (dayjs.isDayjs(date)) return date;
+                // Try to parse flexible format from string input
+                if (typeof dateString === 'string' && dateString) {
+                  const parsed = parseFlexibleDate(dateString);
+                  if (parsed) return parsed;
+                }
+                return date;
+              }}
             >
               <DatePicker
                 style={{ width: '100%' }}
-                format="YYYY-MM-DD"
+                format={['DD/MM/YYYY', 'DD-MM-YYYY', 'YYYY-MM-DD']}
                 onChange={handleDateChange}
+                placeholder="JJ/MM/AAAA"
                 disabledDate={(current) => {
                   return current && current > dayjs().endOf('day');
                 }}
@@ -225,12 +264,16 @@ export const AthleteForm = () => {
               label={t('athlete.fields.weightClass')}
               rules={[{ required: true, message: t('athlete.form.weightClassRequired') }]}
             >
-              <Select
+              <AutoComplete
                 options={weightClassOptions.map((wc) => ({
                   label: wc,
                   value: wc,
                 }))}
                 placeholder={t('athlete.form.weightClassRequired')}
+                onSearch={handleWeightClassSearch}
+                filterOption={(inputValue, option) =>
+                  option?.value.toString().includes(inputValue) || false
+                }
               />
             </Form.Item>
           </Col>
@@ -275,50 +318,6 @@ export const AthleteForm = () => {
                 min={1}
                 style={{ width: '100%' }}
                 placeholder={t('athlete.fields.lotNumber')}
-              />
-            </Form.Item>
-          </Col>
-        </Row>
-
-        <Row gutter={16}>
-          <Col span={8}>
-            <Form.Item
-              name="bodyweight"
-              label={t('athlete.fields.bodyweight')}
-            >
-              <InputNumber
-                min={0}
-                step={0.1}
-                style={{ width: '100%' }}
-                placeholder={t('athlete.fields.bodyweight')}
-              />
-            </Form.Item>
-          </Col>
-
-          <Col span={8}>
-            <Form.Item
-              name="squat_rack_height"
-              label={t('athlete.fields.squatRackHeight')}
-            >
-              <InputNumber
-                min={1}
-                max={20}
-                style={{ width: '100%' }}
-                placeholder="1-20"
-              />
-            </Form.Item>
-          </Col>
-
-          <Col span={8}>
-            <Form.Item
-              name="bench_rack_height"
-              label={t('athlete.fields.benchRackHeight')}
-            >
-              <InputNumber
-                min={1}
-                max={20}
-                style={{ width: '100%' }}
-                placeholder="1-20"
               />
             </Form.Item>
           </Col>

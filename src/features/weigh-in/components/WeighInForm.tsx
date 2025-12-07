@@ -5,14 +5,15 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../stores/weighInStore';
+import { useCompetitionStore } from '../../competition/stores/competitionStore';
 import { isWeightClassValid } from '../../../shared/utils/calculations';
 
 interface WeighInFormData {
   athlete_id: string;
   bodyweight: number;
-  opening_squat: number;
+  opening_squat?: number;
   opening_bench: number;
-  opening_deadlift: number;
+  opening_deadlift?: number;
   squat_rack_height?: number;
   bench_rack_height?: number;
   bench_safety_height?: number;
@@ -25,10 +26,15 @@ export const WeighInForm = () => {
   const navigate = useNavigate();
   const { athletes, loadAthletes, updateAthlete } = useAthleteStore();
   const { weighIns, loadWeighIns, createWeighIn } = useWeighInStore();
+  const { competitions } = useCompetitionStore();
   const [form] = Form.useForm<WeighInFormData>();
   const [loading, setLoading] = useState(false);
   const [selectedAthlete, setSelectedAthlete] = useState<any>(null);
   const [weightClassValid, setWeightClassValid] = useState<boolean | null>(null);
+
+  // Get competition format
+  const competition = competitions.find(c => c.id === competitionId);
+  const isBenchOnly = competition?.format === 'bench_only';
 
   useEffect(() => {
     if (competitionId) {
@@ -64,6 +70,11 @@ export const WeighInForm = () => {
         selectedAthlete.gender
       );
       setWeightClassValid(isValid);
+
+      // Auto-check out_of_competition if weight is above class
+      if (!isValid) {
+        form.setFieldValue('out_of_competition', true);
+      }
     }
   };
 
@@ -82,15 +93,15 @@ export const WeighInForm = () => {
 
     setLoading(true);
     try {
-      // Créer la pesée
+      // Créer la pesée - adapter selon le format de compétition
       await createWeighIn({
         athlete_id: values.athlete_id,
         competition_id: competitionId,
         bodyweight: values.bodyweight,
-        opening_squat: values.opening_squat,
+        opening_squat: isBenchOnly ? 0 : (values.opening_squat || 0),
         opening_bench: values.opening_bench,
-        opening_deadlift: values.opening_deadlift,
-        squat_rack_height: values.squat_rack_height,
+        opening_deadlift: isBenchOnly ? 0 : (values.opening_deadlift || 0),
+        squat_rack_height: isBenchOnly ? undefined : values.squat_rack_height,
         bench_rack_height: values.bench_rack_height,
         bench_safety_height: values.bench_safety_height,
       });
@@ -259,24 +270,26 @@ export const WeighInForm = () => {
 
             <Card type="inner" title={t('weighIn.openingAttempts')} style={{ marginBottom: 16 }}>
               <Row gutter={16}>
-                <Col span={8}>
-                  <Form.Item
-                    name="opening_squat"
-                    label={t('weighIn.fields.openingSquat')}
-                    rules={[
-                      { required: true, message: t('weighIn.form.squatRequired') },
-                      { validator: (_, value) => validateOpeningAttempt(value, 20) },
-                    ]}
-                  >
-                    <InputNumber
-                      min={20}
-                      step={2.5}
-                      style={{ width: '100%' }}
-                      placeholder={t('weighIn.fields.openingSquat')}
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
+                {!isBenchOnly && (
+                  <Col span={8}>
+                    <Form.Item
+                      name="opening_squat"
+                      label={t('weighIn.fields.openingSquat')}
+                      rules={[
+                        { required: !isBenchOnly, message: t('weighIn.form.squatRequired') },
+                        { validator: (_, value) => isBenchOnly ? Promise.resolve() : validateOpeningAttempt(value, 20) },
+                      ]}
+                    >
+                      <InputNumber
+                        min={20}
+                        step={2.5}
+                        style={{ width: '100%' }}
+                        placeholder={t('weighIn.fields.openingSquat')}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col span={isBenchOnly ? 24 : 8}>
                   <Form.Item
                     name="opening_bench"
                     label={t('weighIn.fields.openingBench')}
@@ -293,42 +306,46 @@ export const WeighInForm = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={8}>
-                  <Form.Item
-                    name="opening_deadlift"
-                    label={t('weighIn.fields.openingDeadlift')}
-                    rules={[
-                      { required: true, message: t('weighIn.form.deadliftRequired') },
-                      { validator: (_, value) => validateOpeningAttempt(value, 20) },
-                    ]}
-                  >
-                    <InputNumber
-                      min={20}
-                      step={2.5}
-                      style={{ width: '100%' }}
-                      placeholder={t('weighIn.fields.openingDeadlift')}
-                    />
-                  </Form.Item>
-                </Col>
+                {!isBenchOnly && (
+                  <Col span={8}>
+                    <Form.Item
+                      name="opening_deadlift"
+                      label={t('weighIn.fields.openingDeadlift')}
+                      rules={[
+                        { required: !isBenchOnly, message: t('weighIn.form.deadliftRequired') },
+                        { validator: (_, value) => isBenchOnly ? Promise.resolve() : validateOpeningAttempt(value, 20) },
+                      ]}
+                    >
+                      <InputNumber
+                        min={20}
+                        step={2.5}
+                        style={{ width: '100%' }}
+                        placeholder={t('weighIn.fields.openingDeadlift')}
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
               </Row>
             </Card>
 
             <Card type="inner" title={t('weighIn.rackHeights')}>
               <Row gutter={16}>
-                <Col span={8}>
-                  <Form.Item
-                    name="squat_rack_height"
-                    label={t('weighIn.fields.squatRackHeight')}
-                  >
-                    <InputNumber
-                      min={1}
-                      max={20}
-                      style={{ width: '100%' }}
-                      placeholder="1-20"
-                    />
-                  </Form.Item>
-                </Col>
-                <Col span={8}>
+                {!isBenchOnly && (
+                  <Col span={8}>
+                    <Form.Item
+                      name="squat_rack_height"
+                      label={t('weighIn.fields.squatRackHeight')}
+                    >
+                      <InputNumber
+                        min={1}
+                        max={20}
+                        style={{ width: '100%' }}
+                        placeholder="1-20"
+                      />
+                    </Form.Item>
+                  </Col>
+                )}
+                <Col span={isBenchOnly ? 12 : 8}>
                   <Form.Item
                     name="bench_rack_height"
                     label={t('weighIn.fields.benchRackHeight')}
@@ -341,7 +358,7 @@ export const WeighInForm = () => {
                     />
                   </Form.Item>
                 </Col>
-                <Col span={8}>
+                <Col span={isBenchOnly ? 12 : 8}>
                   <Form.Item
                     name="bench_safety_height"
                     label={t('weighIn.fields.benchSafetyHeight')}
