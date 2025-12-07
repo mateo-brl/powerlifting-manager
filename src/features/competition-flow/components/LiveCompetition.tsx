@@ -525,7 +525,7 @@ export const LiveCompetition = () => {
 
         {hasAttempts && (
           <Row gutter={24}>
-            <Col span={16}>
+            <Col span={17}>
               <Tabs
                 defaultActiveKey="tracker"
                 items={[
@@ -562,8 +562,8 @@ export const LiveCompetition = () => {
               />
             </Col>
 
-            <Col span={8}>
-              <Space direction="vertical" style={{ width: '100%' }} size="large">
+            <Col span={7}>
+              <Space direction="vertical" style={{ width: '100%' }} size="middle">
                 {/* Timer - resets when athlete changes */}
                 <Timer
                   key={currentAttempt ? `${currentAttempt.athlete_id}-${currentAttempt.attempt_number}` : 'no-attempt'}

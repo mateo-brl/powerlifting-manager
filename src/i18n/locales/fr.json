@@ -431,7 +431,8 @@
       "undeclaredWarning": "{{count}} athlètes n'ont pas encore déclaré leur prochain poids",
       "error": "Échec de l'enregistrement des déclarations",
       "weightUpdated": "Poids déclaré mis à jour",
-      "invalidWeight": "Veuillez entrer un poids valide"
+      "invalidWeight": "Veuillez entrer un poids valide",
+      "weightBelowPrevious": "Le poids doit être supérieur ou égal à {{minWeight}} kg"
     }
   },
   "records": {

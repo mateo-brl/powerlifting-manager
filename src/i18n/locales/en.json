@@ -431,7 +431,8 @@
       "undeclaredWarning": "{{count}} athletes have not declared their next weight yet",
       "error": "Failed to save declarations",
       "weightUpdated": "Declared weight updated",
-      "invalidWeight": "Please enter a valid weight"
+      "invalidWeight": "Please enter a valid weight",
+      "weightBelowPrevious": "Weight must be greater than or equal to {{minWeight}} kg"
     }
   },
   "records": {

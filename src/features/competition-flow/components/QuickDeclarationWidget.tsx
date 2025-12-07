@@ -117,6 +117,13 @@ export const QuickDeclarationWidget = ({
       return;
     }
 
+    // Validate that weight is >= last attempt weight
+    const item = athletesList.find(a => a.athlete_id === athleteId);
+    if (item?.last_weight && editWeight < item.last_weight) {
+      message.warning(t('declarations.messages.weightBelowPrevious', { minWeight: item.last_weight }));
+      return;
+    }
+
     // Save to declaration store
     setDeclaration(athleteId, currentLift, attemptNumber, editWeight);
 
@@ -187,7 +194,7 @@ export const QuickDeclarationWidget = ({
       ) : (
         <List
           size="small"
-          dataSource={filteredAthletes.slice(0, 6)} // Show max 6 athletes
+          dataSource={filteredAthletes.slice(0, 4)} // Show max 4 athletes for compact view
           renderItem={(item) => (
             <List.Item style={{ padding: '8px 12px' }}>
               <div style={{ width: '100%' }}>
@@ -229,7 +236,7 @@ export const QuickDeclarationWidget = ({
                         <InputNumber
                           value={editWeight}
                           onChange={setEditWeight}
-                          min={20}
+                          min={item.last_weight || 20}
                           max={500}
                           step={2.5}
                           size="small"
@@ -274,10 +281,10 @@ export const QuickDeclarationWidget = ({
         />
       )}
 
-      {filteredAthletes.length > 6 && (
+      {filteredAthletes.length > 4 && (
         <div style={{ textAlign: 'center', marginTop: 8 }}>
           <Text type="secondary" style={{ fontSize: 12 }}>
-            +{filteredAthletes.length - 6} {t('live.declarations.moreAthletes')}
+            +{filteredAthletes.length - 4} {t('live.declarations.moreAthletes')}
           </Text>
         </div>
       )}

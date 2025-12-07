@@ -16,6 +16,7 @@ interface DeclarationRow {
   last_attempt: number;
   next_attempt_number: 1 | 2 | 3;
   last_result: 'success' | 'failure' | 'none';
+  last_weight: number | null;
   suggested_weight: number;
   declared_weight?: number;
   status: 'pending' | 'declared';
@@ -64,6 +65,7 @@ export const WeightDeclarations = () => {
           last_attempt: athleteAttempts.length,
           next_attempt_number: nextAttemptNumber,
           last_result: lastAttempt.result as 'success' | 'failure',
+          last_weight: lastAttempt.weight_kg,
           suggested_weight: suggestedWeight,
           declared_weight: undefined,
           status: 'pending',
@@ -81,6 +83,7 @@ export const WeightDeclarations = () => {
             last_attempt: 0,
             next_attempt_number: 1,
             last_result: 'none',
+            last_weight: null,
             suggested_weight: openingWeight,
             declared_weight: openingWeight,
             status: 'declared',
@@ -94,6 +97,13 @@ export const WeightDeclarations = () => {
 
   const handleWeightChange = (athleteId: string, weight: number | null) => {
     if (weight === null) return;
+
+    // Validate that weight is >= last attempt weight
+    const row = declarations.find(d => d.athlete_id === athleteId);
+    if (row?.last_weight && weight < row.last_weight) {
+      message.warning(t('declarations.messages.weightBelowPrevious', { minWeight: row.last_weight }));
+      return;
+    }
 
     setDeclarations(prev =>
       prev.map(row =>
@@ -161,7 +171,7 @@ export const WeightDeclarations = () => {
         <InputNumber
           value={record.declared_weight}
           onChange={(value) => handleWeightChange(record.athlete_id, value)}
-          min={20}
+          min={record.last_weight || 20}
           max={500}
           step={2.5}
           addonAfter="kg"
