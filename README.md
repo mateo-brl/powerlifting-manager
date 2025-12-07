@@ -124,6 +124,10 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **Calcul automatique des poids suggérés** selon les règles IPF :
   - +2,5kg minimum après une tentative réussie
   - Même poids après un échec
+- **Validation stricte des poids** :
+  - Impossible de déclarer un poids inférieur au dernier essai
+  - Message d'erreur explicite si tentative de poids invalide
+  - Minimum automatique dans les champs de saisie
 - **Widget de déclarations rapides** intégré à la compétition en direct :
   - Affichage des 4 prochains athlètes avec leur barre actuelle
   - Modification rapide du poids de la **prochaine tentative** en un clic
@@ -869,6 +873,10 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - Composants React : ProtestModal, JuryPanel, EquipmentValidator (Phase 3)
   - Exports PDF/CSV des protestations et équipements (Phase 4)
   - Traductions i18n complètes FR/EN (Phase 5)
+- ✅ **Phase 15**: Optimisations UX/UI
+  - Interface optimisée pour écrans 1920x1080 (sans scroll)
+  - Validation stricte des poids de déclaration
+  - Layout responsive amélioré
 - 🔄 **Évolutions futures**:
   - Interface d'administration des records
   - Support macOS (.dmg, .app)

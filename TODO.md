@@ -1,339 +1,276 @@
-# TODO - Powerlifting Manager
+# Powerlifting Manager - Roadmap vers la Commercialisation
 
-## 🔥 Urgent - Setup Initial
-
-- [x] **Installer Rust** ✅
-  - `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
-  - Vérifier : `cargo --version`
-
-- [x] **Installer dépendances système Tauri** ✅
-  - Ubuntu/Debian : `sudo apt install libwebkit2gtk-4.1-dev ...`
-
-- [x] **Compiler le projet Rust** ✅
-  - `cd src-tauri && cargo build`
-
-- [x] **Créer repository GitHub** ✅
-  - Nom : powerlifting-manager
-  - Visibilité : Public
-  - URL : https://github.com/mateobrl/powerlifting-manager
-  - `git push -u origin main`
-
-- [x] **Tester le lancement** ✅
-  - Mode navigateur fonctionnel avec `npm run dev`
-  - Wrapper Tauri créé pour compatibilité navigateur/natif
+> **Objectif** : Transformer Powerlifting Manager en un produit commercial prêt à être vendu aux fédérations, clubs et organisateurs de compétitions.
 
 ---
 
-## 📦 Phase 1 - CRUD de Base ✅ COMPLÉTÉ
+## 📊 État Actuel du Projet
 
-### Backend - Connexion SQLite
+### ✅ Fonctionnalités Complétées (v0.1.0)
 
-- [x] Implémenter stockage en mémoire pour développement ✅
-- [x] Implémenter `create_competition` ✅
-- [x] Implémenter `get_competitions` ✅
-- [x] Implémenter `update_competition` ✅
-- [x] Implémenter `delete_competition` ✅
-- [x] Implémenter les fonctions CRUD Athlete ✅
-- [x] Mode navigateur avec tauriWrapper.ts ✅
+**Core Features :**
+- [x] Gestion complète des compétitions (CRUD)
+- [x] Gestion des athlètes (CRUD + Import/Export CSV)
+- [x] Module de pesée avec validation IPF
+- [x] Système de flights automatique
+- [x] Compétition en direct avec timer 60s
+- [x] Système d'arbitrage IPF (3 juges, lumières blanc/rouge)
+- [x] Déclarations de poids avec validation (>= dernier essai)
+- [x] Calculs de scores (IPF GL, DOTS, Wilks)
+- [x] Coefficient McCulloch pour Masters
+- [x] Support Full Power (SBD) et Bench Only
 
-### Frontend - UI Compétitions
+**Affichages :**
+- [x] Affichage externe temps réel (WebSocket)
+- [x] Écran Spotters (chargement de barre IPF)
+- [x] Écran Salle de Chauffe
+- [x] Overlays OBS pour streaming
+- [x] Écran de classements en direct
 
-- [x] Créer `CompetitionList.tsx` ✅
-  - Table Ant Design avec colonnes : nom, date, lieu, fédération, statut
-  - Boutons : Nouveau, Éditer, Supprimer, Voir détails
-  - Filtres et recherche
+**Exports :**
+- [x] Export PDF résultats
+- [x] Export CSV OpenPowerlifting
+- [x] Export FFForce officiel
+- [x] Certificats de podium et participation
 
-- [x] Créer `CompetitionForm.tsx` ✅
-  - Champs : nom, date (DatePicker), lieu, fédération (Select)
-  - Validation Zod
-  - Appel à `create_competition` ou `update_competition`
-
-- [x] Créer `CompetitionDetail.tsx` ✅
-  - Vue détaillée d'une compétition
-  - Liste des athlètes inscrits
-  - Actions : Démarrer pesée, Gérer tentatives
-
-- [x] Intégrer avec le store Zustand ✅
-  - Charger les compétitions au mount
-  - Mettre à jour après création/modification
-
-### Frontend - UI Athlètes
-
-- [x] Créer `AthleteList.tsx` ✅
-  - Table avec colonnes : nom, prénom, catégorie, poids, lot
-  - Filtres par catégorie, sexe
-
-- [x] Créer `AthleteForm.tsx` ✅
-  - Champs : nom, prénom, date de naissance, sexe
-  - Sélection catégorie de poids (dynamique selon sexe)
-  - Division (raw/equipped)
-  - Validation selon règles IPF
-
-- [x] Créer `AthleteImport.tsx` ✅
-  - Upload CSV
-  - Preview des données
-  - Validation et import en masse
-  - Format : nom, prénom, date_naissance, sexe, catégorie
-
-### Routing et Navigation
-
-- [x] Installer React Router ✅
-- [x] Créer routes ✅
-  - `/` - Dashboard
-  - `/competitions` - Liste des compétitions
-  - `/competitions/:id` - Détails compétition
-  - `/competitions/:id/athletes` - Athlètes d'une compétition
-  - `/athletes/new` - Formulaire athlète
-  - `/weigh-in` - Module de pesée
-  - `/live` - Compétition en direct
-
-- [x] Créer Layout avec menu de navigation ✅
-- [x] Ajouter onglet "Competition Actions" avec cartes cliquables ✅
-- [x] Ajouter boutons "Back" dans toutes les pages de gestion ✅
+**Conformité :**
+- [x] Système de protestations IPF (60s)
+- [x] Validation équipement avec marques approuvées IPF
+- [x] Gestion multi-plateformes
+- [x] Interface bilingue FR/EN
 
 ---
 
-## 🎯 Phase 2 - Logique Métier ✅ COMPLÉTÉ
+## 🎯 Phase 1 : Stabilisation et Tests (Priorité Haute)
 
-### Module de Pesée (Weigh-in)
+### Tests et Qualité
+- [ ] Configurer Vitest pour tests unitaires
+- [ ] Tests unitaires des calculs (IPF GL, DOTS, Wilks, McCulloch)
+- [ ] Tests unitaires de la validation de poids
+- [ ] Tests unitaires de l'algorithme d'ordre de passage
+- [ ] Configurer Playwright pour tests E2E
+- [ ] Tests E2E du flow complet de compétition
+- [ ] Tests de régression automatisés
+- [ ] Coverage > 80% sur les fonctions critiques
 
-- [x] Créer `src/features/weigh-in/components/WeighInForm.tsx` ✅
-  - Sélection athlète
-  - Input poids corporel
-  - Validation catégorie de poids
-  - Inputs tentatives d'ouverture (squat, bench, deadlift)
-  - Hauteurs de racks
+### Bug Fixes et Stabilité
+- [ ] Audit complet des bugs existants
+- [ ] Gestion des cas limites (0 athlètes, compétition vide, etc.)
+- [ ] Amélioration de la gestion des erreurs
+- [ ] Logs structurés pour le debugging
+- [ ] Mode recovery en cas de crash
 
-- [x] Créer store Zustand pour weigh-in ✅
-- [x] Créer commands Rust pour enregistrer weigh-in ✅
-- [x] Validation des tentatives selon règles IPF ✅
-
-### Calcul des Flights (Groupes)
-
-- [x] Créer algorithme de répartition en flights ✅
-  - Par catégorie de poids
-  - Par nombre d'athlètes (max 14 par flight recommandé)
-  - Équilibrer les groupes
-
-- [x] UI pour visualiser et ajuster les flights ✅
-- [x] Stocker les flights en DB ✅
-  - Table flights avec migration SQL
-  - Commandes Rust CRUD complètes
-  - Store Zustand pour la persistance
-  - FlightManagement migré vers DB
-
-### Ordre de Passage
-
-- [x] Implémenter logique d'ordre de passage IPF ✅
-  1. Par poids demandé (croissant)
-  2. À poids égal : par numéro de lot
-  3. Permettre changements jusqu'à 3 athlètes avant
-
-- [x] Créer `AttemptOrderList.tsx` ✅
-  - Liste ordonnée des tentatives
-  - Highlight athlète actuel
-  - 3 prochains athlètes
-
-### Timer de Compétition
-
-- [x] Créer composant Timer ✅
-  - Countdown 60 secondes
-  - Start/Pause/Reset
-  - Alerte visuelle avec changement de couleur
-  - Intégration dans LiveCompetition
-
-- [x] Synchroniser avec tentatives ✅
+### Performance
+- [ ] Optimisation des requêtes SQLite
+- [ ] Lazy loading des composants lourds
+- [ ] Optimisation mémoire pour grosses compétitions (100+ athlètes)
+- [ ] Tests de charge
 
 ---
 
-## ⚡ Phase 3 - Temps Réel ✅ 100% COMPLÉTÉ
+## 🎨 Phase 2 : Polish UX/UI (Priorité Haute)
 
-### Gestion des Tentatives
-
-- [x] Créer `AttemptTracker.tsx` ✅
-  - Athlète actuel
-  - Poids demandé
-  - 3 boutons lumières (arbitres)
-  - Valider tentative (réussie si 2/3 ou 3/3)
-  - Auto-calcul du résultat basé sur les votes
-
-- [x] Stocker tentatives en DB ✅
-- [x] Calculer prochaine tentative automatiquement ✅
-
-### Interface de Compétition Live
-
-- [x] Créer `LiveCompetition.tsx` ✅
-  - Sélection du mouvement (Squat/Bench/Deadlift)
-  - Affichage de l'ordre de passage
-  - Intégration Timer
-  - Suivi des tentatives en temps réel
-
-- [x] Créer `Rankings.tsx` ✅
-  - Classement live par catégorie
-  - Classement absolu
-  - Tous les scores (Total, DOTS, Wilks, IPF GL)
-
-### WebSocket pour Affichage
-
-- [x] Implémenter WebSocket serveur en Rust ✅
-  - Serveur sur port 9001
-  - Broadcast channel avec tokio
-  - Commande Tauri pour broadcaster
-- [x] Créer events : athlete_up, attempt_result, rankings_update ✅
-  - 7 types d'événements définis
-  - Types TypeScript complets
-  - Intégration avec broadcastStore
-- [x] Créer pages d'affichage (fullscreen) ✅
-  - ExternalDisplay component
-  - Affichage en temps réel
-  - Design professionnel
-
-### Calcul des Scores
-
-- [x] Implémenter formule DOTS complète ✅
-- [x] Implémenter formule Wilks complète ✅
-- [x] Calculer total (meilleur squat + bench + deadlift) ✅
-- [x] Calculer IPF GL Points ✅
-- [x] Classement par catégorie ✅
-- [x] Classement absolu ✅
-
-### Démo et Tests
-
-- [x] Créer `DemoDataInitializer.tsx` ✅
-  - Génération automatique de compétition de test
-  - 20+ athlètes avec données réalistes
-  - Pesées et tentatives pré-remplies
-  - Documentation complète (DEMO.md) ✅
-
-- [x] Créer `mockData.ts` ✅
-  - Générateur de données factices
-  - Noms français réalistes
-  - Poids et catégories cohérents
-
----
-
-## 📄 Phase 4 - Documents (Semaine 4)
-
-### Génération PDF
-
-- [ ] Installer Puppeteer ou alternative Tauri
-- [ ] Template Scoresheet (feuille de route)
-  - Informations athlète
-  - Grille des tentatives
-  - Signatures arbitres
-
-- [ ] Template Résultats
-  - Classement par catégorie
-  - Top performers
-  - Records
-
-### Export Excel
-
-- [x] Implémenter export CSV complet ✅
-- [x] Export des classements avec tous les scores ✅
-  - Rank, Name, Gender, Weight Class, Bodyweight
-  - Best Squat, Bench, Deadlift, Total
-  - IPF GL Points, DOTS, Wilks
-
-### Export OpenPowerlifting
-
-- [x] Créer CSV format OpenPowerlifting ✅
-- [x] Colonnes conformes au format officiel ✅
-  - Name, Sex, Event, Equipment, Age, Division
-  - BodyweightKg, WeightClassKg
-  - Squat1Kg, Squat2Kg, Squat3Kg, Best3SquatKg
-  - Bench1Kg, Bench2Kg, Bench3Kg, Best3BenchKg
-  - Deadlift1Kg, Deadlift2Kg, Deadlift3Kg, Best3DeadliftKg
-  - TotalKg, Place, Dots, Wilks, Goodlift
-
----
-
-## 🧪 Tests et Qualité
-
-- [ ] Setup Vitest
-- [ ] Tests unitaires :
-  - Fonctions de calcul (IPF GL, DOTS, Wilks)
-  - Validation de catégorie de poids
-  - Algorithme d'ordre de passage
-
-- [ ] Setup Playwright pour tests E2E
-- [ ] Tests E2E :
-  - Créer compétition
-  - Ajouter athlètes
-  - Simuler pesée
-  - Enregistrer tentatives
-
----
-
-## 🎨 Polish et UX
-
+### Design Professionnel
 - [ ] Thème personnalisé Ant Design (couleurs powerlifting)
-- [ ] Dark mode
-- [ ] Internationalisation (i18n) FR/EN
-- [ ] Raccourcis clavier
-- [ ] Mode hors ligne complet
-- [ ] Sauvegarde automatique
-- [ ] Confirmation avant suppressions
+- [ ] Dark mode complet
+- [ ] Icônes et logo personnalisés
+- [ ] Animations fluides (transitions, feedbacks)
+- [ ] Design responsive (tablettes)
+
+### Ergonomie
+- [ ] Raccourcis clavier pour toutes les actions critiques
+- [ ] Tutoriel intégré (onboarding)
+- [ ] Tooltips contextuels
+- [ ] Messages d'erreur utilisateur-friendly
+- [ ] Confirmation avant actions destructives
+- [ ] Undo/Redo pour les actions importantes
+
+### Accessibilité
+- [ ] Support lecteur d'écran
+- [ ] Navigation clavier complète
+- [ ] Contraste WCAG AA minimum
+- [ ] Tailles de police ajustables
 
 ---
 
-## 📦 Build et Distribution
+## 📦 Phase 3 : Build et Distribution (Priorité Haute)
 
-- [ ] Icons application (générer toutes tailles)
-- [ ] Configurer code signing (optionnel)
-- [ ] Build Windows : `npm run tauri:build`
-- [ ] Build Linux : `npm run tauri:build`
-- [ ] Tester les installateurs
-- [ ] Créer releases GitHub
+### Installateurs
+- [ ] Build Windows signé (certificat code signing)
+- [ ] Build Linux (.deb, .appimage, .rpm)
+- [ ] Build macOS (.dmg, .app) avec notarization Apple
+- [ ] Auto-updater intégré (Tauri updater)
+- [ ] Versioning sémantique automatisé
 
----
+### Distribution
+- [ ] GitHub Releases avec assets automatiques
+- [ ] Site web de téléchargement
+- [ ] Page de téléchargement avec détection OS
+- [ ] Hash SHA256 pour vérification d'intégrité
 
-## 📝 Documentation
-
-- [ ] Guide utilisateur (markdown)
-- [ ] Vidéo démo
-- [ ] Screenshots
-- [ ] Documentation API Tauri commands
-- [ ] Guide de contribution
-- [ ] Changelog
-
----
-
-## 📊 Résumé des Progrès
-
-**Phases complétées** :
-- ✅ Phase 0 - Setup Initial (100%)
-- ✅ Phase 1 - CRUD de Base (100% - import CSV complété)
-- ✅ Phase 2 - Logique Métier (100% - flights persistés en DB)
-- ✅ Phase 3 - Temps Réel (100% - WebSocket serveur Rust opérationnel)
-- 🔄 Phase 4 - Documents (40% - exports CSV/OpenPowerlifting complétés, manque PDF)
-
-**Fonctionnalités clés implémentées** :
-- ✅ Gestion complète des compétitions et athlètes
-- ✅ Import/Export CSV des athlètes
-- ✅ Module de pesée fonctionnel
-- ✅ Système de tentatives avec votes d'arbitres (3 lumières)
-- ✅ Calculs de scores (DOTS, Wilks, IPF GL)
-- ✅ Classements live (catégorie + absolu)
-- ✅ Export Excel des classements complets
-- ✅ Export format OpenPowerlifting officiel
-- ✅ Timer de compétition
-- ✅ Gestion des flights automatique avec persistance DB
-- ✅ Navigation améliorée avec onglet "Competition Actions"
-- ✅ Boutons de retour dans toutes les pages
-- ✅ Mode démo avec données factices
-- ✅ Compatible navigateur ET application native Tauri
-- ✅ WebSocket serveur Rust pour affichage externe temps réel
-- ✅ Système de broadcast dual (local + WebSocket)
-
-**Prochaines étapes prioritaires** :
-1. Export PDF (feuilles de route, résultats)
-2. Tests unitaires et E2E
-3. Polish UX (dark mode, i18n, thème personnalisé)
-4. Build et distribution (Windows, Linux)
-5. Documentation utilisateur complète
-6. Vidéo de démonstration
+### CI/CD
+- [ ] Pipeline GitHub Actions pour build multi-plateforme
+- [ ] Tests automatiques avant chaque release
+- [ ] Génération automatique du changelog
+- [ ] Déploiement automatique des releases
 
 ---
 
-**Dernière mise à jour** : 2025-11-17 - Phase 3 complétée à 100% (WebSocket + Flights DB) ✅
+## 🔐 Phase 4 : Licensing et Protection (Priorité Moyenne)
+
+### Système de Licences
+- [ ] Génération de clés de licence uniques
+- [ ] Validation de licence offline
+- [ ] Types de licences :
+  - [ ] Version d'essai (14 jours)
+  - [ ] Licence annuelle par club
+  - [ ] Licence à vie
+  - [ ] Licence fédération (illimitée)
+- [ ] Tableau de bord admin pour gérer les licences
+
+### Protection du Code
+- [ ] Obfuscation du code JavaScript
+- [ ] Protection anti-tampering
+- [ ] Telemetry anonyme (opt-in) pour analytics
+
+---
+
+## 💰 Phase 5 : Monétisation (Priorité Moyenne)
+
+### Modèle de Prix
+- [ ] Définir les tarifs :
+  - [ ] Version Essai : Gratuit (14 jours)
+  - [ ] Licence Club : ~200€/an
+  - [ ] Licence Fédération : ~1000€/an
+  - [ ] Licence Perpétuelle : ~500€ one-time
+- [ ] Système de réductions (early bird, volume)
+
+### Plateforme de Vente
+- [ ] Intégration Stripe ou Paddle
+- [ ] Page de paiement sécurisée
+- [ ] Facturation automatique
+- [ ] Gestion des abonnements
+- [ ] Portail client (téléchargements, factures, licence)
+
+### Modèle Freemium (Alternative)
+- [ ] Version gratuite limitée (1 compétition, 20 athlètes max)
+- [ ] Fonctionnalités premium :
+  - [ ] Multi-plateformes
+  - [ ] Exports officiels (FFForce, OpenPowerlifting)
+  - [ ] Overlays streaming
+  - [ ] Support prioritaire
+
+---
+
+## 📚 Phase 6 : Documentation et Support (Priorité Moyenne)
+
+### Documentation Utilisateur
+- [ ] Guide utilisateur complet (PDF + Web)
+- [ ] Tutoriels vidéo (YouTube)
+  - [ ] Installation
+  - [ ] Première compétition
+  - [ ] Gestion en direct
+  - [ ] Exports et rapports
+- [ ] FAQ détaillée
+- [ ] Base de connaissances searchable
+
+### Documentation Technique
+- [ ] Guide d'installation détaillé par OS
+- [ ] API documentation (pour intégrations futures)
+- [ ] Guide de contribution (open source partiel ?)
+- [ ] Changelog maintenu
+
+### Support Client
+- [ ] Système de tickets (Freshdesk, Zendesk, ou Discord)
+- [ ] Email de support dédié
+- [ ] Temps de réponse défini par niveau de licence
+- [ ] Base de bugs publique (GitHub Issues)
+
+---
+
+## 🚀 Phase 7 : Marketing et Lancement (Priorité Basse)
+
+### Présence en Ligne
+- [ ] Site web vitrine (landing page)
+- [ ] SEO optimisé (powerlifting, competition, management)
+- [ ] Blog avec articles sur le powerlifting
+- [ ] Présence réseaux sociaux (Instagram, Facebook)
+
+### Marketing
+- [ ] Partenariats avec fédérations (FFForce, FFHMFAC)
+- [ ] Programme d'ambassadeurs (clubs partenaires)
+- [ ] Démos gratuites pour les fédérations
+- [ ] Présence aux compétitions majeures
+- [ ] Témoignages clients
+
+### Lancement
+- [ ] Beta fermée avec clubs sélectionnés
+- [ ] Période de feedback (1-2 mois)
+- [ ] Corrections post-beta
+- [ ] Lancement officiel avec communiqué
+
+---
+
+## 🔄 Phase 8 : Évolutions Futures (Post-Launch)
+
+### Fonctionnalités Avancées
+- [ ] Mode cloud (synchronisation entre appareils)
+- [ ] Application mobile companion (iOS/Android)
+- [ ] API REST pour intégrations tierces
+- [ ] Intégration livestream (OBS WebSocket)
+- [ ] Statistiques avancées et analytics
+
+### Intégrations
+- [ ] Import depuis autres logiciels (Meet Manager, etc.)
+- [ ] Export vers bases de données fédérales
+- [ ] Intégration calendrier Google/Outlook
+- [ ] Notifications push
+
+### Internationalisation
+- [ ] Traductions supplémentaires (ES, DE, IT, PT)
+- [ ] Support des règles spécifiques par fédération
+- [ ] Devises multiples pour les licences
+
+---
+
+## 📅 Planning Prévisionnel
+
+| Phase | Durée estimée | Priorité |
+|-------|---------------|----------|
+| Phase 1 : Tests & Stabilité | 2-3 semaines | Haute |
+| Phase 2 : Polish UX/UI | 2 semaines | Haute |
+| Phase 3 : Build & Distribution | 1-2 semaines | Haute |
+| Phase 4 : Licensing | 1-2 semaines | Moyenne |
+| Phase 5 : Monétisation | 1 semaine | Moyenne |
+| Phase 6 : Documentation | 2 semaines | Moyenne |
+| Phase 7 : Marketing & Lancement | Continu | Basse |
+| Phase 8 : Évolutions | Post-launch | Basse |
+
+**Estimation totale avant lancement : 2-3 mois**
+
+---
+
+## 📈 Métriques de Succès
+
+### Technique
+- [ ] 0 bugs critiques en production
+- [ ] Temps de démarrage < 3 secondes
+- [ ] Support compétitions 200+ athlètes sans lag
+
+### Business
+- [ ] 10 clubs beta testeurs
+- [ ] 100 téléchargements premier mois
+- [ ] 5 licences vendues premier trimestre
+- [ ] NPS (Net Promoter Score) > 50
+
+---
+
+## 📝 Notes
+
+- **Contact** : mateobaril.pro@gmail.com
+- **Repository** : https://github.com/mateo-brl/powerlifting-manager
+- **Version actuelle** : 0.1.0
+
+---
+
+**Dernière mise à jour** : 2025-12-07
