@@ -162,6 +162,31 @@ function Install-BuildTools {
     Write-Warn "Select 'Desktop development with C++' workload."
 }
 
+# Install Windows SDK (required for linking)
+function Install-WindowsSDK {
+    Write-Info "Checking Windows SDK..."
+
+    $sdkPath = "${env:ProgramFiles(x86)}\Windows Kits\10\Lib"
+
+    if (Test-Path $sdkPath) {
+        $sdkVersions = Get-ChildItem $sdkPath -Directory -ErrorAction SilentlyContinue
+        if ($sdkVersions) {
+            Write-Info "Windows SDK is already installed."
+            return
+        }
+    }
+
+    Write-Info "Installing Windows SDK..."
+
+    if (Test-Winget) {
+        winget install Microsoft.WindowsSDK.10.0.22621 -e --silent --accept-package-agreements --accept-source-agreements
+        Write-Info "Windows SDK installed successfully!"
+    } else {
+        Write-Warn "winget not available. Please install Windows SDK manually from:"
+        Write-Warn "https://developer.microsoft.com/en-us/windows/downloads/windows-sdk/"
+    }
+}
+
 # Check WebView2
 function Test-WebView2 {
     Write-Info "Checking WebView2 runtime..."
@@ -202,19 +227,22 @@ function Main {
         Write-Host ""
     }
 
-    Write-Step "1/5" "Installation de Visual Studio Build Tools..."
+    Write-Step "1/6" "Installation de Visual Studio Build Tools..."
     Install-BuildTools
 
-    Write-Step "2/5" "Installation de Rust..."
+    Write-Step "2/6" "Installation du Windows SDK..."
+    Install-WindowsSDK
+
+    Write-Step "3/6" "Installation de Rust..."
     Install-Rust
 
-    Write-Step "3/5" "Installation de Node.js..."
+    Write-Step "4/6" "Installation de Node.js..."
     Install-Node
 
-    Write-Step "4/5" "Verification de WebView2..."
+    Write-Step "5/6" "Verification de WebView2..."
     Test-WebView2
 
-    Write-Step "5/5" "Installation des dependances npm..."
+    Write-Step "6/6" "Installation des dependances npm..."
     Install-NpmDeps
 
     Write-Host ""
