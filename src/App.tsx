@@ -1,8 +1,9 @@
-import { ConfigProvider } from 'antd';
+import { ConfigProvider, Card, Button } from 'antd';
 import frFR from 'antd/locale/fr_FR';
 import enUS from 'antd/locale/en_US';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { CompetitionList } from './features/competition/components/CompetitionList';
@@ -18,7 +19,56 @@ import { WeightDeclarations } from './features/competition-flow/components/Weigh
 import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
 import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
 import { WarmupDisplay } from './features/competition-flow/components/WarmupDisplay';
+import { JuryPanel } from './features/competition-flow/components/JuryPanel';
+import { EquipmentValidationList } from './features/weigh-in/components/EquipmentValidationList';
 import './i18n/config';
+
+// Wrapper components for routes that need competitionId from params
+const EquipmentValidationWrapper = () => {
+  const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  if (!competitionId) return null;
+
+  return (
+    <Card
+      extra={
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(`/competitions/${competitionId}`)}
+        >
+          {t('common.back')}
+        </Button>
+      }
+    >
+      <EquipmentValidationList competitionId={competitionId} />
+    </Card>
+  );
+};
+
+const JuryPanelWrapper = () => {
+  const { competitionId } = useParams<{ competitionId: string }>();
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  if (!competitionId) return null;
+
+  return (
+    <Card
+      extra={
+        <Button
+          icon={<ArrowLeftOutlined />}
+          onClick={() => navigate(`/competitions/${competitionId}`)}
+        >
+          {t('common.back')}
+        </Button>
+      }
+    >
+      <JuryPanel competitionId={competitionId} />
+    </Card>
+  );
+};
 
 function App() {
   const { i18n } = useTranslation();
@@ -59,6 +109,10 @@ function App() {
               <Route path=":competitionId/live" element={<LiveCompetition />} />
               <Route path=":competitionId/declarations" element={<WeightDeclarations />} />
               <Route path=":competitionId/rankings" element={<Rankings />} />
+
+              {/* Phase 4: Equipment & Protests Routes */}
+              <Route path=":competitionId/equipment" element={<EquipmentValidationWrapper />} />
+              <Route path=":competitionId/jury" element={<JuryPanelWrapper />} />
             </Route>
 
             {/* Catch-all redirect */}

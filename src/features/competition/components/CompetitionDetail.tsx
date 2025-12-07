@@ -7,7 +7,9 @@ import {
   TeamOutlined,
   TrophyOutlined,
   BarChartOutlined,
-  ImportOutlined
+  ImportOutlined,
+  SafetyOutlined,
+  AuditOutlined
 } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -132,6 +134,30 @@ export const CompetitionDetail = () => {
                 <ImportOutlined style={{ fontSize: 48, color: '#722ed1', marginBottom: 16 }} />
                 <h3>{t('athlete.import')}</h3>
                 <p>{t('athlete.import')}</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/equipment`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <SafetyOutlined style={{ fontSize: 48, color: '#13c2c2', marginBottom: 16 }} />
+                <h3>{t('equipment.validationList')}</h3>
+                <p>{t('equipment.validationTitle')}</p>
+              </Card>
+            </Col>
+
+            <Col xs={24} sm={12} lg={8}>
+              <Card
+                hoverable
+                onClick={() => navigate(`/competitions/${competition.id}/jury`)}
+                style={{ textAlign: 'center', cursor: 'pointer' }}
+              >
+                <AuditOutlined style={{ fontSize: 48, color: '#eb2f96', marginBottom: 16 }} />
+                <h3>{t('protest.juryPanel')}</h3>
+                <p>{t('protest.pendingProtests')}</p>
               </Card>
             </Col>
           </Row>

@@ -86,4 +86,10 @@ export const ERROR_MESSAGES = {
   COMPETITION_NOT_FOUND: 'Compétition introuvable',
   ATHLETE_NOT_FOUND: 'Athlète introuvable',
   DATABASE_ERROR: 'Erreur de base de données',
+  PROTEST_DEADLINE_EXPIRED: 'Le délai de protestation de 60 secondes est dépassé',
+  PROTEST_REASON_TOO_SHORT: 'La raison de la protestation doit contenir au moins 20 caractères',
+  EQUIPMENT_NOT_VALIDATED: 'L\'équipement de l\'athlète n\'a pas été validé',
 } as const;
+
+// Re-export IPF Equipment constants
+export * from './ipfEquipment';

@@ -1,10 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Card, Button, InputNumber, message, Space, Typography, Tag } from 'antd';
+import { Card, Button, InputNumber, message, Space, Typography, Tag, Badge } from 'antd';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { AttemptOrder } from '../../weigh-in/types';
 import { LiftType } from '../types';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useBroadcastStore } from '../stores/broadcastStore';
+import { ProtestModal } from './ProtestModal';
+import { PROTEST_DEADLINE_SECONDS } from '../types/protest';
 
 const { Title, Text } = Typography;
 
@@ -34,6 +37,9 @@ export const AttemptTracker = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAttemptCompleted, setIsAttemptCompleted] = useState(false);
   const [attemptResult, setAttemptResult] = useState<'success' | 'failure' | null>(null);
+  const [protestModalVisible, setProtestModalVisible] = useState(false);
+  const [attemptCompletedTimestamp, setAttemptCompletedTimestamp] = useState<number | null>(null);
+  const [protestTimeRemaining, setProtestTimeRemaining] = useState(PROTEST_DEADLINE_SECONDS);
 
   // Get previous attempts for this athlete and lift type
   const previousAttempts = attempts.filter(
@@ -52,7 +58,25 @@ export const AttemptTracker = ({
     setAttemptId(null);
     setIsAttemptCompleted(false);
     setAttemptResult(null);
+    setAttemptCompletedTimestamp(null);
+    setProtestTimeRemaining(PROTEST_DEADLINE_SECONDS);
   }, [attemptKey, currentAttempt.weight_kg]);
+
+  // Protest timer countdown
+  useEffect(() => {
+    if (!attemptCompletedTimestamp) return;
+
+    const updateTimer = () => {
+      const now = Math.floor(Date.now() / 1000);
+      const remaining = Math.max(0, attemptCompletedTimestamp + PROTEST_DEADLINE_SECONDS - now);
+      setProtestTimeRemaining(remaining);
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+
+    return () => clearInterval(interval);
+  }, [attemptCompletedTimestamp]);
 
   const handleRefereeVote = useCallback((refereeIndex: 0 | 1 | 2, decision: boolean) => {
     console.log('[AttemptTracker] Referee', refereeIndex + 1, 'voted:', decision ? 'Good Lift' : 'No Lift');
@@ -122,6 +146,7 @@ export const AttemptTracker = ({
       // Mark attempt as completed but don't move to next automatically
       setIsAttemptCompleted(true);
       setAttemptResult(success ? 'success' : 'failure');
+      setAttemptCompletedTimestamp(Math.floor(Date.now() / 1000));
     } catch (error) {
       message.error(t('live.messages.attemptSaved'));
       console.error(error);
@@ -317,6 +342,33 @@ export const AttemptTracker = ({
               {attemptResult === 'success' ? '✓ ' + t('externalDisplay.goodLift') : '✗ ' + t('externalDisplay.noLift')}
             </Title>
           </div>
+
+          {/* Protest Button with Timer */}
+          {protestTimeRemaining > 0 && attemptId && (
+            <Button
+              type="default"
+              size="middle"
+              block
+              icon={<ExclamationCircleOutlined />}
+              onClick={() => setProtestModalVisible(true)}
+              style={{
+                marginBottom: 8,
+                borderColor: '#faad14',
+                color: '#faad14',
+              }}
+            >
+              <Space>
+                {t('protest.fileProtest')}
+                <Badge
+                  count={`${protestTimeRemaining}s`}
+                  style={{
+                    backgroundColor: protestTimeRemaining <= 10 ? '#ff4d4f' : protestTimeRemaining <= 30 ? '#faad14' : '#1890ff',
+                  }}
+                />
+              </Space>
+            </Button>
+          )}
+
           <Button
             type="primary"
             size="middle"
@@ -327,6 +379,20 @@ export const AttemptTracker = ({
             {t('live.nextAthlete')} →
           </Button>
         </div>
+      )}
+
+      {/* Protest Modal */}
+      {attemptId && attemptCompletedTimestamp && (
+        <ProtestModal
+          visible={protestModalVisible}
+          onClose={() => setProtestModalVisible(false)}
+          onSuccess={() => message.success(t('protest.acceptedSuccess'))}
+          competitionId={competitionId}
+          athleteId={currentAttempt.athlete_id}
+          athleteName={currentAttempt.athlete_name}
+          attemptId={attemptId}
+          attemptTimestamp={attemptCompletedTimestamp}
+        />
       )}
     </Card>
   );
