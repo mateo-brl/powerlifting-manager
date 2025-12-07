@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
-import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, FileTextOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { useParams, useNavigate } from 'react-router-dom';
+import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert, Modal } from 'antd';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useBroadcastStore } from '../stores/broadcastStore';
+import { useLiveCompetitionStore } from '../stores/liveCompetitionStore';
 import { calculateAttemptOrder } from '../utils/attemptOrdering';
 import { AttemptOrderList } from './AttemptOrderList';
 import { AttemptTracker } from './AttemptTracker';
 import { Timer } from './Timer';
+import { QuickDeclarationWidget } from './QuickDeclarationWidget';
+import { WeightDeclarationsInline } from './WeightDeclarationsInline';
 import { LiftType } from '../types';
 import { AttemptOrder } from '../../weigh-in/types';
 import { useCompetitionStore } from '../../competition/stores/competitionStore';
+import { openDisplayWindow } from '../../../shared/utils/tauriWrapper';
 
 const { Title, Text } = Typography;
 
@@ -27,6 +31,18 @@ export const LiveCompetition = () => {
   const { broadcast } = useBroadcastStore();
   const { competitions } = useCompetitionStore();
 
+  // Live competition store for persistence
+  const {
+    activeCompetitionId,
+    currentLift: storedLift,
+    currentIndex: storedIndex,
+    isCompetitionActive: storedIsActive,
+    setActiveCompetition,
+    setCurrentLift: setStoredLift,
+    setCurrentIndex: setStoredIndex,
+    setIsCompetitionActive: setStoredIsActive,
+  } = useLiveCompetitionStore();
+
   // Get competition and its format
   const competition = competitions.find(c => c.id === competitionId);
   const competitionFormat = competition?.format || 'full_power';
@@ -37,10 +53,37 @@ export const LiveCompetition = () => {
     return 'squat';
   };
 
-  const [currentLift, setCurrentLift] = useState<LiftType>(getInitialLift());
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
+  // Initialize or restore competition state
+  useEffect(() => {
+    if (competitionId) {
+      if (activeCompetitionId !== competitionId) {
+        // New competition, initialize with default values
+        setActiveCompetition(competitionId, getInitialLift());
+      }
+    }
+  }, [competitionId, activeCompetitionId]);
+
+  // Use stored values if this is the active competition, otherwise use defaults
+  const isThisCompetitionActive = activeCompetitionId === competitionId;
+  const currentLift = isThisCompetitionActive ? storedLift : getInitialLift();
+  const currentIndex = isThisCompetitionActive ? storedIndex : 0;
+  const isCompetitionActive = isThisCompetitionActive ? storedIsActive : false;
+
+  // Wrapper functions to update both local and stored state
+  const setCurrentLift = (lift: LiftType) => {
+    setStoredLift(lift);
+  };
+
+  const setCurrentIndex = (index: number) => {
+    setStoredIndex(index);
+  };
+
+  const setIsCompetitionActive = (active: boolean) => {
+    setStoredIsActive(active);
+  };
+
   const [attemptOrder, setAttemptOrder] = useState<AttemptOrder[]>([]);
-  const [isCompetitionActive, setIsCompetitionActive] = useState(false);
+  const [declarationsModalVisible, setDeclarationsModalVisible] = useState(false);
 
   useEffect(() => {
     if (competitionId) {
@@ -259,16 +302,6 @@ export const LiveCompetition = () => {
   const currentAttempt = attemptOrder[currentIndex];
   const hasAttempts = attemptOrder.length > 0;
 
-  const openDisplayWindow = (url: string, name: string) => {
-    // Try to open as popup first, fallback to new tab
-    const popup = window.open(url, name, 'width=1920,height=1080,menubar=no,toolbar=no,location=no,status=no');
-    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
-      // Popup blocked, open in new tab
-      window.open(url, '_blank');
-    }
-    return popup;
-  };
-
   const broadcastCurrentState = () => {
     const comp = competitions.find(c => c.id === competitionId);
     if (!comp) return;
@@ -318,28 +351,51 @@ export const LiveCompetition = () => {
     }
   };
 
-  const handleOpenExternalDisplay = () => {
-    const displayUrl = `${window.location.origin}/display`;
-    openDisplayWindow(displayUrl, 'ExternalDisplay');
-    // Re-broadcast current state after a delay
-    setTimeout(broadcastCurrentState, 500);
-    message.success(t('live.display.opened'));
+  const handleOpenExternalDisplay = async () => {
+    try {
+      await openDisplayWindow('/display', 'external-display', {
+        title: t('live.display.external'),
+        fullscreen: true,
+      });
+      // Re-broadcast current state after a delay
+      setTimeout(broadcastCurrentState, 500);
+      message.success(t('live.display.opened'));
+    } catch (e) {
+      console.error('Failed to open external display:', e);
+      message.error(t('live.display.error'));
+    }
   };
 
-  const handleOpenSpottersDisplay = () => {
-    const spottersUrl = `${window.location.origin}/spotters`;
-    openDisplayWindow(spottersUrl, 'SpottersDisplay');
-    // Re-broadcast current state after a delay
-    setTimeout(broadcastCurrentState, 500);
-    message.success(t('live.display.opened'));
+  const handleOpenSpottersDisplay = async () => {
+    try {
+      await openDisplayWindow('/spotters', 'spotters-display', {
+        title: t('live.display.spotters'),
+        width: 1280,
+        height: 800,
+      });
+      // Re-broadcast current state after a delay
+      setTimeout(broadcastCurrentState, 500);
+      message.success(t('live.display.opened'));
+    } catch (e) {
+      console.error('Failed to open spotters display:', e);
+      message.error(t('live.display.error'));
+    }
   };
 
-  const handleOpenWarmupDisplay = () => {
-    const warmupUrl = `${window.location.origin}/warmup`;
-    openDisplayWindow(warmupUrl, 'WarmupDisplay');
-    // Re-broadcast current state after a delay
-    setTimeout(broadcastCurrentState, 500);
-    message.success(t('live.display.opened'));
+  const handleOpenWarmupDisplay = async () => {
+    try {
+      await openDisplayWindow('/warmup', 'warmup-display', {
+        title: t('live.display.warmup'),
+        width: 1280,
+        height: 800,
+      });
+      // Re-broadcast current state after a delay
+      setTimeout(broadcastCurrentState, 500);
+      message.success(t('live.display.opened'));
+    } catch (e) {
+      console.error('Failed to open warmup display:', e);
+      message.error(t('live.display.error'));
+    }
   };
 
   // Broadcast attempt order updates to warmup display
@@ -507,6 +563,17 @@ export const LiveCompetition = () => {
                   </p>
                 </Card>
 
+                {/* Quick Declarations Widget */}
+                {competitionId && (
+                  <QuickDeclarationWidget
+                    competitionId={competitionId}
+                    currentLift={currentLift}
+                    attemptOrder={attemptOrder}
+                    currentIndex={currentIndex}
+                    onOpenFullDeclarations={() => setDeclarationsModalVisible(true)}
+                  />
+                )}
+
                 {/* Quick Actions */}
                 <Card title={t('live.quickActions.title')} size="small">
                   <Space direction="vertical" style={{ width: '100%' }}>
@@ -537,16 +604,6 @@ export const LiveCompetition = () => {
                     >
                       {t('live.display.warmup')}
                     </Button>
-                    <Link to={`/competitions/${competitionId}/declarations`} style={{ display: 'block' }}>
-                      <Button
-                        type="default"
-                        icon={<FileTextOutlined />}
-                        block
-                        style={{ borderColor: '#1890ff', color: '#1890ff' }}
-                      >
-                        {t('declarations.title')}
-                      </Button>
-                    </Link>
                     <Button
                       icon={<ReloadOutlined />}
                       onClick={() => {
@@ -580,6 +637,21 @@ export const LiveCompetition = () => {
           />
         )}
       </Card>
+
+      {/* Full Declarations Modal */}
+      <Modal
+        title={t('declarations.title')}
+        open={declarationsModalVisible}
+        onCancel={() => setDeclarationsModalVisible(false)}
+        footer={null}
+        width={1000}
+        destroyOnClose
+      >
+        <WeightDeclarationsInline
+          competitionId={competitionId || ''}
+          currentLift={currentLift}
+        />
+      </Modal>
     </div>
   );
 };

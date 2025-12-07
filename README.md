@@ -77,7 +77,10 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **Modes de communication**:
   - **BroadcastChannel** en mode navigateur (développement)
   - **WebSocket** en mode Tauri (production)
-- Ouverture dans une nouvelle fenêtre depuis l'interface de gestion
+- **Fenêtres natives Tauri** :
+  - Ouverture via API WebviewWindow pour vraies fenêtres
+  - Gestion automatique des fenêtres existantes (focus)
+  - Fallback sur window.open en mode navigateur
 - Design professionnel adapté aux projecteurs
 
 ### ✅ Affichage Spotters
@@ -121,14 +124,27 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
 - **Calcul automatique des poids suggérés** selon les règles IPF :
   - +2,5kg minimum après une tentative réussie
   - Même poids après un échec
-- **Interface de déclaration** :
+- **Widget de déclarations rapides** intégré à la compétition en direct :
+  - Affichage des 4 prochains athlètes (actuel + 3 suivants)
+  - Modification rapide du poids déclaré sans quitter la page
+  - Indicateurs visuels de position et de résultats
+  - Bouton pour ouvrir le modal complet des déclarations
+- **Interface de déclaration complète** (modal) :
   - Tableau récapitulatif de tous les athlètes
   - Affichage du résultat de la dernière tentative (Bon/Mauvais Mouvement)
   - Poids suggéré et champ de saisie pour le poids déclaré
   - Statut de déclaration (En Attente/Déclaré)
-- Accessible depuis les Actions Rapides de la compétition en direct
-- Support du clic molette pour ouverture dans un nouvel onglet
+  - Sélecteur de mouvement (squat/bench/deadlift)
 - Interface bilingue FR/EN complète
+
+### ✅ Persistance de l'État de Compétition
+- **L'état de la compétition en direct est persisté** entre les navigations
+- Changement de page sans perdre la progression :
+  - Mouvement actuel (squat/bench/deadlift)
+  - Index de l'athlète en cours
+  - Statut de la compétition (actif/pause)
+- Permet de consulter d'autres sections sans relancer la compétition
+- Stockage local via Zustand persist
 
 ### ✅ Exports & Documents Officiels
 - **Export PDF des résultats** :

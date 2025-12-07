@@ -64,12 +64,18 @@ const browserStorage = {
 // Import dynamique de Tauri seulement si disponible
 let tauriInvoke: ((cmd: string, args?: Record<string, any>) => Promise<any>) | null = null;
 let tauriLoaded = false;
+let WebviewWindowClass: any = null;
 
 async function loadTauriInvoke() {
   if (isTauri && !tauriLoaded) {
     try {
       const { invoke: tauriInvokeFunc } = await import('@tauri-apps/api/core');
       tauriInvoke = tauriInvokeFunc;
+
+      // Load WebviewWindow for creating new windows
+      const { WebviewWindow } = await import('@tauri-apps/api/webviewWindow');
+      WebviewWindowClass = WebviewWindow;
+
       tauriLoaded = true;
       console.log('[Tauri] API loaded successfully');
     } catch (e) {
@@ -303,4 +309,81 @@ export function resetBrowserStorage() {
   browserStorage.weighIns = [];
   browserStorage.attempts = [];
   browserStorage.flights = [];
+}
+
+/**
+ * Ouvre une nouvelle fenêtre d'affichage (display window)
+ * En mode Tauri: utilise WebviewWindow pour créer une vraie fenêtre
+ * En mode navigateur: utilise window.open() comme fallback
+ */
+export async function openDisplayWindow(
+  url: string,
+  label: string,
+  options?: {
+    title?: string;
+    width?: number;
+    height?: number;
+    fullscreen?: boolean;
+  }
+): Promise<boolean> {
+  const { title = label, width = 1920, height = 1080, fullscreen = false } = options || {};
+
+  // Ensure Tauri is loaded
+  if (isTauri && !tauriLoaded) {
+    await loadTauriInvoke();
+  }
+
+  // Mode Tauri - use WebviewWindow
+  if (isTauri && WebviewWindowClass) {
+    try {
+      // Check if window already exists
+      const existingWindow = await WebviewWindowClass.getByLabel(label);
+      if (existingWindow) {
+        // Focus the existing window
+        await existingWindow.setFocus();
+        console.log(`[Tauri] Focused existing window: ${label}`);
+        return true;
+      }
+
+      // Create new window
+      const webview = new WebviewWindowClass(label, {
+        url,
+        title,
+        width,
+        height,
+        fullscreen,
+        resizable: true,
+        center: true,
+      });
+
+      // Wait for window to be created
+      await webview.once('tauri://created', () => {
+        console.log(`[Tauri] Window created: ${label}`);
+      });
+
+      webview.once('tauri://error', (e: any) => {
+        console.error(`[Tauri] Window error: ${label}`, e);
+      });
+
+      return true;
+    } catch (e) {
+      console.error(`[Tauri] Failed to create window: ${label}`, e);
+      // Fall through to browser mode
+    }
+  }
+
+  // Mode navigateur - use window.open
+  console.log(`[Browser Mode] Opening window: ${url}`);
+  const popup = window.open(
+    url,
+    label,
+    `width=${width},height=${height},menubar=no,toolbar=no,location=no,status=no`
+  );
+
+  if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+    // Popup blocked, open in new tab
+    window.open(url, '_blank');
+  }
+
+  return true;
 }

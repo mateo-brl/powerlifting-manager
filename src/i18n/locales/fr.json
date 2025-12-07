@@ -289,7 +289,14 @@
       "external": "Ouvrir Affichage Externe",
       "spotters": "Ouvrir Affichage Spotters",
       "warmup": "Ouvrir Salle de Chauffe",
-      "opened": "Affichage ouvert dans une nouvelle fenêtre"
+      "opened": "Affichage ouvert dans une nouvelle fenêtre",
+      "error": "Erreur lors de l'ouverture de l'affichage"
+    },
+    "declarations": {
+      "title": "Déclarations Rapides",
+      "viewAll": "Voir tout",
+      "current": "Actuel",
+      "noUpcoming": "Aucun athlète à venir"
     },
     "quickActions": {
       "title": "Actions Rapides",
@@ -413,7 +420,8 @@
     "messages": {
       "saved": "Toutes les déclarations enregistrées avec succès",
       "undeclaredWarning": "{{count}} athlètes n'ont pas encore déclaré leur prochain poids",
-      "error": "Échec de l'enregistrement des déclarations"
+      "error": "Échec de l'enregistrement des déclarations",
+      "weightUpdated": "Poids déclaré mis à jour"
     }
   },
   "records": {

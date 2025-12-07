@@ -289,7 +289,14 @@
       "external": "Open External Display",
       "spotters": "Open Spotters Display",
       "warmup": "Open Warmup Room",
-      "opened": "Display opened in new window"
+      "opened": "Display opened in new window",
+      "error": "Failed to open display"
+    },
+    "declarations": {
+      "title": "Quick Declarations",
+      "viewAll": "View all",
+      "current": "Current",
+      "noUpcoming": "No upcoming athletes"
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -413,7 +420,8 @@
     "messages": {
       "saved": "All declarations saved successfully",
       "undeclaredWarning": "{{count}} athletes have not declared their next weight yet",
-      "error": "Failed to save declarations"
+      "error": "Failed to save declarations",
+      "weightUpdated": "Declared weight updated"
     }
   },
   "records": {
