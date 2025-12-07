@@ -373,13 +373,40 @@ L'application utilise **SQLite** pour la persistance complète des données avec
 - **Rust** 1.70+
 - **Tauri CLI**
 
-#### Installation des prérequis Linux
+### 🚀 Installation rapide (Linux)
+
+Un script automatique est fourni pour installer toutes les dépendances :
+
+```bash
+# Cloner le repository
+git clone https://github.com/mateo-brl/powerlifting-manager.git
+cd powerlifting-manager
+
+# Lancer le script d'installation (installe Rust, Node.js et toutes les dépendances)
+chmod +x scripts/setup-linux.sh
+./scripts/setup-linux.sh
+
+# Lancer l'application
+npm run tauri dev
+```
+
+Le script supporte automatiquement :
+- **Debian/Ubuntu** (apt)
+- **Fedora** (dnf)
+- **Arch Linux** (pacman)
+- **openSUSE** (zypper)
+
+### Installation manuelle Linux
+
+<details>
+<summary>Cliquer pour voir les instructions manuelles</summary>
+
 ```bash
 # Installer Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 
-# Installer les dépendances système
+# Installer les dépendances système (Debian/Ubuntu)
 sudo apt update
 sudo apt install -y libwebkit2gtk-4.1-dev \
   build-essential \
@@ -390,7 +417,15 @@ sudo apt install -y libwebkit2gtk-4.1-dev \
   libssl-dev \
   libayatana-appindicator3-dev \
   librsvg2-dev
+
+# Installer les dépendances npm
+npm install
+
+# Lancer en mode développement
+npm run tauri dev
 ```
+
+</details>
 
 ### Installation du projet
 
@@ -399,7 +434,7 @@ sudo apt install -y libwebkit2gtk-4.1-dev \
 git clone https://github.com/mateo-brl/powerlifting-manager.git
 cd powerlifting-manager
 
-# Installer les dépendances
+# Installer les dépendances (si installation manuelle)
 npm install
 
 # Lancer en mode développement
