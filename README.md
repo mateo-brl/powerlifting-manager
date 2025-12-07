@@ -396,9 +396,81 @@ L'application utilise **SQLite** pour la persistance complète des données avec
 ## 🛠️ Installation
 
 ### Prérequis
+- **Windows 10/11** (64-bit)
 - **Node.js** 18+ et npm
 - **Rust** 1.70+
-- **Tauri CLI**
+- **Visual Studio Build Tools** avec C++ workload
+
+---
+
+### 🚀 Installation rapide (Windows) - Recommandée pour débutants
+
+#### Étape 1 : Cloner le projet
+
+Ouvrez **PowerShell** (pas Git Bash!) et exécutez :
+
+```powershell
+git clone https://github.com/mateo-brl/powerlifting-manager.git
+cd powerlifting-manager
+```
+
+#### Étape 2 : Installer les dépendances
+
+Lancez le script d'installation automatique (en tant qu'Administrateur recommandé) :
+
+```powershell
+.\scripts\setup-windows.ps1
+```
+
+Ce script installe automatiquement :
+- **Visual Studio Build Tools** (C++ workload)
+- **Rust** via winget ou rustup-init
+- **Node.js LTS** via winget
+- **Dépendances npm** du projet
+- Vérifie **WebView2** (généralement pré-installé sur Windows 10/11)
+
+#### Étape 3 : Lancer l'application
+
+**Option A (Recommandée)** - Double-cliquez sur :
+```
+scripts\dev.bat
+```
+
+**Option B** - Depuis PowerShell ou CMD :
+```powershell
+npm run tauri dev
+```
+
+> ⚠️ **IMPORTANT** : N'utilisez PAS Git Bash pour lancer l'application!
+> Git Bash contient un utilitaire `link` qui entre en conflit avec le linker Visual Studio.
+> Utilisez toujours **PowerShell**, **CMD** ou le script `dev.bat`.
+
+#### Résolution de problèmes Windows
+
+<details>
+<summary>Erreur "link.exe" ou "linking failed"</summary>
+
+Ce problème survient si vous lancez depuis Git Bash. Solutions :
+1. Utilisez le script `scripts\dev.bat` (double-clic)
+2. Ou lancez depuis PowerShell/CMD au lieu de Git Bash
+</details>
+
+<details>
+<summary>Erreur "kernel32.lib not found"</summary>
+
+Visual Studio Build Tools n'est pas correctement installé :
+1. Téléchargez [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/)
+2. Installez le workload "Développement Desktop en C++"
+3. Redémarrez votre PC
+</details>
+
+<details>
+<summary>Erreur "cargo not found"</summary>
+
+Rust n'est pas dans le PATH :
+1. Fermez et rouvrez votre terminal
+2. Ou ajoutez manuellement `%USERPROFILE%\.cargo\bin` au PATH
+</details>
 
 ### 🚀 Installation rapide (Linux)
 
