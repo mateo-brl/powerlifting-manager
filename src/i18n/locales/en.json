@@ -293,13 +293,16 @@
       "error": "Failed to open display"
     },
     "declarations": {
-      "title": "Quick Declarations",
+      "title": "Bar Declarations",
       "viewAll": "View all",
-      "current": "Current",
-      "noUpcoming": "No upcoming athletes",
-      "currentBar": "Current bar",
-      "nextBar": "Next bar",
-      "lastAttempt": "Last attempt"
+      "searchAthlete": "Search by name or lot number...",
+      "noDeclarationsNeeded": "No declarations pending",
+      "noResults": "No results found",
+      "completed": "Attempt",
+      "lastBar": "Last bar",
+      "declareAttempt": "Declare attempt",
+      "declare": "Declare",
+      "moreAthletes": "more athletes"
     },
     "quickActions": {
       "title": "Quick Actions",

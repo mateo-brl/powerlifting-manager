@@ -293,13 +293,16 @@
       "error": "Erreur lors de l'ouverture de l'affichage"
     },
     "declarations": {
-      "title": "Déclarations Rapides",
+      "title": "Déclarations de Barres",
       "viewAll": "Voir tout",
-      "current": "Actuel",
-      "noUpcoming": "Aucun athlète à venir",
-      "currentBar": "Barre actuelle",
-      "nextBar": "Prochaine barre",
-      "lastAttempt": "Dernière tentative"
+      "searchAthlete": "Rechercher par nom ou n° de lot...",
+      "noDeclarationsNeeded": "Aucune déclaration en attente",
+      "noResults": "Aucun résultat trouvé",
+      "completed": "Essai",
+      "lastBar": "Dernière barre",
+      "declareAttempt": "Déclarer essai",
+      "declare": "Déclarer",
+      "moreAthletes": "athlètes de plus"
     },
     "quickActions": {
       "title": "Actions Rapides",

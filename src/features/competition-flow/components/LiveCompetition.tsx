@@ -599,8 +599,6 @@ export const LiveCompetition = () => {
                   <QuickDeclarationWidget
                     competitionId={competitionId}
                     currentLift={currentLift}
-                    attemptOrder={attemptOrder}
-                    currentIndex={currentIndex}
                     onOpenFullDeclarations={() => setDeclarationsModalVisible(true)}
                     onDeclarationChange={handleDeclarationChange}
                   />
