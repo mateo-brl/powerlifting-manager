@@ -125,11 +125,9 @@ export const EquipmentValidator = ({
     return checks.some(({ brand, category }) => brand && !isIPFApproved(category, brand));
   };
 
+  // Equipment validation is now optional - no required fields
   const getMissingRequired = (): EquipmentCategory[] => {
-    const missing: EquipmentCategory[] = [];
-    if (!equipment.singlet_brand) missing.push('singlet');
-    if (!equipment.shoes_brand) missing.push('shoes');
-    return missing;
+    return []; // All equipment is optional
   };
 
   const handleSaveEquipment = async () => {
@@ -216,13 +214,19 @@ export const EquipmentValidator = ({
         style={{ marginBottom: 16 }}
       />
 
-      {/* Required Equipment */}
-      <Title level={5}>{t('equipment.requiredEquipment')}</Title>
+      {/* All Equipment is Optional */}
+      <Title level={5}>{t('equipment.equipmentList')}</Title>
+      <Alert
+        message={t('equipment.allOptional')}
+        type="info"
+        showIcon
+        style={{ marginBottom: 16 }}
+      />
 
       <EquipmentField
         category="singlet"
         label={EQUIPMENT_CATEGORY_LABELS.singlet[currentLang]}
-        required={true}
+        required={false}
         brandValue={equipment.singlet_brand}
         descriptionValue={equipment.singlet}
         onBrandChange={(value) => updateEquipment('singlet_brand', value)}
@@ -232,17 +236,12 @@ export const EquipmentValidator = ({
       <EquipmentField
         category="shoes"
         label={EQUIPMENT_CATEGORY_LABELS.shoes[currentLang]}
-        required={true}
+        required={false}
         brandValue={equipment.shoes_brand}
         descriptionValue={equipment.shoes}
         onBrandChange={(value) => updateEquipment('shoes_brand', value)}
         onDescriptionChange={(value) => updateEquipment('shoes', value)}
       />
-
-      <Divider />
-
-      {/* Optional Equipment */}
-      <Title level={5}>{t('equipment.optionalEquipment')}</Title>
 
       <EquipmentField
         category="belt"

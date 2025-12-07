@@ -605,6 +605,8 @@
     "athleteEquipment": "Equipment for athlete: {{name}}",
     "requiredEquipment": "Required Equipment",
     "optionalEquipment": "Optional Equipment",
+    "equipmentList": "Equipment List",
+    "allOptional": "All equipment is optional. Only fill in what the athlete is using.",
     "required": "Required",
     "ipfApproved": "IPF Approved",
     "notIPFApproved": "Not IPF Approved",
