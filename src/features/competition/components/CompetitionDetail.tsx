@@ -3,7 +3,6 @@ import { Card, Descriptions, Button, Space, Tag, message, Tabs, Row, Col } from 
 import {
   ArrowLeftOutlined,
   EditOutlined,
-  UserAddOutlined,
   TeamOutlined,
   TrophyOutlined,
   BarChartOutlined,
@@ -191,12 +190,6 @@ export const CompetitionDetail = () => {
         title={competition.name}
         extra={
           <Space>
-            <Button
-              icon={<UserAddOutlined />}
-              onClick={() => navigate(`/competitions/${competition.id}/athletes/new`)}
-            >
-              {t('athlete.new')}
-            </Button>
             <Button
               icon={<EditOutlined />}
               onClick={() => navigate(`/competitions/${competition.id}/edit`)}

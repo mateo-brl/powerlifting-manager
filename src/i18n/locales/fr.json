@@ -114,6 +114,9 @@
     "edit": "Modifier l'Athlète",
     "list": "Liste des Athlètes",
     "import": "Importer des Athlètes",
+    "importCSV": "Importer depuis CSV",
+    "importCSVDesc": "Importer plusieurs athlètes depuis un fichier CSV",
+    "addManually": "Ajouter un athlète manuellement",
     "export": "Exporter les Athlètes",
     "total": "Total Athlètes",
     "fields": {

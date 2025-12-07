@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { Card, Upload, Button, message, Table, Alert, Space } from 'antd';
-import { UploadOutlined, ArrowLeftOutlined, SaveOutlined } from '@ant-design/icons';
+import { Card, Upload, Button, message, Table, Alert, Space, Divider, Row, Col } from 'antd';
+import { UploadOutlined, ArrowLeftOutlined, SaveOutlined, UserAddOutlined, FileTextOutlined } from '@ant-design/icons';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import type { UploadProps } from 'antd';
@@ -136,6 +136,30 @@ export const AthleteImport = () => {
       }
     >
       <Space direction="vertical" style={{ width: '100%' }} size="large">
+        {/* Option 1: Ajouter manuellement */}
+        <Row gutter={[16, 16]}>
+          <Col xs={24} md={12}>
+            <Card
+              hoverable
+              onClick={() => navigate(`/competitions/${competitionId}/athletes/new`)}
+              style={{ textAlign: 'center', cursor: 'pointer', height: '100%' }}
+            >
+              <UserAddOutlined style={{ fontSize: 48, color: '#1890ff', marginBottom: 16 }} />
+              <h3>{t('athlete.new')}</h3>
+              <p style={{ color: '#666' }}>{t('athlete.addManually') || 'Ajouter un athlète manuellement'}</p>
+            </Card>
+          </Col>
+          <Col xs={24} md={12}>
+            <Card style={{ textAlign: 'center', height: '100%', background: '#fafafa' }}>
+              <FileTextOutlined style={{ fontSize: 48, color: '#722ed1', marginBottom: 16 }} />
+              <h3>{t('athlete.importCSV') || 'Importer depuis CSV'}</h3>
+              <p style={{ color: '#666' }}>{t('athlete.importCSVDesc') || 'Importer plusieurs athlètes depuis un fichier'}</p>
+            </Card>
+          </Col>
+        </Row>
+
+        <Divider>{t('athlete.importCSV') || 'Import CSV'}</Divider>
+
         <Alert
           message={t('athlete.import')}
           description={
@@ -143,7 +167,7 @@ export const AthleteImport = () => {
               <p>CSV format:</p>
               <code>first_name, last_name, date_of_birth, gender, weight_class, division, age_category</code>
               <p style={{ marginTop: 8 }}>Example:</p>
-              <code>John,Doe,1990-05-15,M,83kg,raw,Open</code>
+              <code>John,Doe,1990-05-15,M,83,raw,Open</code>
             </div>
           }
           type="info"
@@ -151,7 +175,7 @@ export const AthleteImport = () => {
         />
 
         <Upload {...uploadProps}>
-          <Button icon={<UploadOutlined />}>{t('common.import')}</Button>
+          <Button icon={<UploadOutlined />} size="large">{t('common.import')} CSV</Button>
         </Upload>
 
         {parsedData.length > 0 && (
@@ -176,7 +200,7 @@ export const AthleteImport = () => {
               loading={loading}
               size="large"
             >
-              {t('athlete.import')} {parsedData.length}
+              {t('athlete.import')} {parsedData.length} {t('athlete.title')}
             </Button>
           </>
         )}
