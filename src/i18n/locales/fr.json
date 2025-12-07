@@ -296,12 +296,16 @@
       "title": "Déclarations Rapides",
       "viewAll": "Voir tout",
       "current": "Actuel",
-      "noUpcoming": "Aucun athlète à venir"
+      "noUpcoming": "Aucun athlète à venir",
+      "currentBar": "Barre actuelle",
+      "nextBar": "Prochaine barre",
+      "lastAttempt": "Dernière tentative"
     },
     "quickActions": {
       "title": "Actions Rapides",
       "resetToStart": "Réinitialiser au Début",
-      "skipAttempt": "Passer à la Tentative Suivante"
+      "skipAttempt": "Passer à la Tentative Suivante",
+      "endCompetition": "Terminer la Compétition"
     },
     "competitionInfo": {
       "title": "Statut de la Compétition",
@@ -320,7 +324,9 @@
       "switchLift": "Passage à {{lift}}",
       "noWeighIns": "Aucun athlète n'a été pesé",
       "completeWeighIns": "Veuillez compléter les pesées avant de démarrer la compétition",
-      "reset": "Réinitialisation à la première tentative"
+      "reset": "Réinitialisation à la première tentative",
+      "liftCompleted": "{{lift}} terminé ! Passez au mouvement suivant ou terminez la compétition.",
+      "competitionEnded": "Compétition terminée !"
     }
   },
   "externalDisplay": {
@@ -421,7 +427,8 @@
       "saved": "Toutes les déclarations enregistrées avec succès",
       "undeclaredWarning": "{{count}} athlètes n'ont pas encore déclaré leur prochain poids",
       "error": "Échec de l'enregistrement des déclarations",
-      "weightUpdated": "Poids déclaré mis à jour"
+      "weightUpdated": "Poids déclaré mis à jour",
+      "invalidWeight": "Veuillez entrer un poids valide"
     }
   },
   "records": {

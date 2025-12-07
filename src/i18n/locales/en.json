@@ -296,12 +296,16 @@
       "title": "Quick Declarations",
       "viewAll": "View all",
       "current": "Current",
-      "noUpcoming": "No upcoming athletes"
+      "noUpcoming": "No upcoming athletes",
+      "currentBar": "Current bar",
+      "nextBar": "Next bar",
+      "lastAttempt": "Last attempt"
     },
     "quickActions": {
       "title": "Quick Actions",
       "resetToStart": "Reset to Start",
-      "skipAttempt": "Skip to Next Attempt"
+      "skipAttempt": "Skip to Next Attempt",
+      "endCompetition": "End Competition"
     },
     "competitionInfo": {
       "title": "Competition Status",
@@ -320,7 +324,9 @@
       "switchLift": "Switched to {{lift}}",
       "noWeighIns": "No athletes have been weighed in yet",
       "completeWeighIns": "Please complete weigh-ins before starting the competition",
-      "reset": "Reset to first attempt"
+      "reset": "Reset to first attempt",
+      "liftCompleted": "{{lift}} completed! Switch to next lift or end the competition.",
+      "competitionEnded": "Competition ended!"
     }
   },
   "externalDisplay": {
@@ -421,7 +427,8 @@
       "saved": "All declarations saved successfully",
       "undeclaredWarning": "{{count}} athletes have not declared their next weight yet",
       "error": "Failed to save declarations",
-      "weightUpdated": "Declared weight updated"
+      "weightUpdated": "Declared weight updated",
+      "invalidWeight": "Please enter a valid weight"
     }
   },
   "records": {

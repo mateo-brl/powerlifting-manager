@@ -125,16 +125,18 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
   - +2,5kg minimum après une tentative réussie
   - Même poids après un échec
 - **Widget de déclarations rapides** intégré à la compétition en direct :
-  - Affichage des 4 prochains athlètes (actuel + 3 suivants)
-  - Modification rapide du poids déclaré sans quitter la page
-  - Indicateurs visuels de position et de résultats
-  - Bouton pour ouvrir le modal complet des déclarations
+  - Affichage des 4 prochains athlètes avec leur barre actuelle
+  - Modification rapide du poids de la **prochaine tentative** en un clic
+  - L'athlète vous donne son ticket, vous tapez la nouvelle barre
+  - L'ordre de passage se recalcule automatiquement
+  - Bouton pour ouvrir le modal complet si besoin
 - **Interface de déclaration complète** (modal) :
   - Tableau récapitulatif de tous les athlètes
   - Affichage du résultat de la dernière tentative (Bon/Mauvais Mouvement)
   - Poids suggéré et champ de saisie pour le poids déclaré
   - Statut de déclaration (En Attente/Déclaré)
   - Sélecteur de mouvement (squat/bench/deadlift)
+- **Stockage persistant des déclarations** (localStorage)
 - Interface bilingue FR/EN complète
 
 ### ✅ Persistance de l'État de Compétition
@@ -145,6 +147,15 @@ Powerlifting Manager est une solution complète pour organiser et gérer des com
   - Statut de la compétition (actif/pause)
 - Permet de consulter d'autres sections sans relancer la compétition
 - Stockage local via Zustand persist
+
+### ✅ Fin de Compétition
+- **Bouton "Terminer la Compétition"** dans les Actions Rapides
+- Quand un mouvement est terminé :
+  - La compétition se met en pause automatiquement
+  - Message indiquant de passer au mouvement suivant
+  - Pas de confusion avec la fin de la compétition
+- Terminer la compétition redirige vers les résultats
+- Broadcast d'événement "competition_ended" pour les affichages externes
 
 ### ✅ Exports & Documents Officiels
 - **Export PDF des résultats** :

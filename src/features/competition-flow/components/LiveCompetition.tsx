@@ -1,13 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert, Modal } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, UsergroupAddOutlined } from '@ant-design/icons';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, UsergroupAddOutlined, CheckCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useBroadcastStore } from '../stores/broadcastStore';
 import { useLiveCompetitionStore } from '../stores/liveCompetitionStore';
+import { useDeclarationStore } from '../stores/declarationStore';
 import { calculateAttemptOrder } from '../utils/attemptOrdering';
 import { AttemptOrderList } from './AttemptOrderList';
 import { AttemptTracker } from './AttemptTracker';
@@ -84,6 +85,15 @@ export const LiveCompetition = () => {
 
   const [attemptOrder, setAttemptOrder] = useState<AttemptOrder[]>([]);
   const [declarationsModalVisible, setDeclarationsModalVisible] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Declaration store for weight declarations
+  const { getDeclaration } = useDeclarationStore();
+
+  // Force refresh of attempt order when declarations change
+  const handleDeclarationChange = useCallback(() => {
+    setRefreshKey(prev => prev + 1);
+  }, []);
 
   useEffect(() => {
     if (competitionId) {
@@ -119,7 +129,14 @@ export const LiveCompetition = () => {
 
       // Determine weight for next attempt
       let weight: number;
-      if (attemptNumber === 1) {
+
+      // First check if there's a declaration for this attempt
+      const declaredWeight = getDeclaration(athlete.id, currentLift, attemptNumber);
+
+      if (declaredWeight) {
+        // Use declared weight
+        weight = declaredWeight;
+      } else if (attemptNumber === 1) {
         // Opening attempt
         weight = weighIn?.[`opening_${currentLift}` as keyof typeof weighIn] as number || 40;
       } else {
@@ -163,7 +180,7 @@ export const LiveCompetition = () => {
     if (currentIndex >= ordered.length) {
       setCurrentIndex(0);
     }
-  }, [currentLift, attempts, competitionAthletes, competitionWeighIns, currentIndex]);
+  }, [currentLift, attempts, competitionAthletes, competitionWeighIns, currentIndex, getDeclaration, refreshKey]);
 
   const handleStartCompetition = () => {
     if (attemptOrder.length === 0) {
@@ -271,17 +288,31 @@ export const LiveCompetition = () => {
         });
       }
     } else {
-      message.info(t('live.messages.allAttemptsCompleted'));
+      // All attempts for this lift are completed
+      message.success(t('live.messages.liftCompleted', { lift: t(`live.lifts.${currentLift}`) }));
       setIsCompetitionActive(false);
 
-      // Broadcast competition ended
-      broadcast({
-        type: 'competition_ended',
-        data: {
-          competition_id: competitionId || '',
-        },
-      });
+      // Don't broadcast competition_ended, just pause
+      // The user can then switch to the next lift or end the competition
     }
+  };
+
+  // End competition completely
+  const handleEndCompetition = () => {
+    setIsCompetitionActive(false);
+
+    // Broadcast competition ended
+    broadcast({
+      type: 'competition_ended',
+      data: {
+        competition_id: competitionId || '',
+      },
+    });
+
+    message.success(t('live.messages.competitionEnded'));
+
+    // Navigate to results
+    navigate(`/competitions/${competitionId}/results`);
   };
 
   const handleChangeLift = (newLift: LiftType) => {
@@ -571,6 +602,7 @@ export const LiveCompetition = () => {
                     attemptOrder={attemptOrder}
                     currentIndex={currentIndex}
                     onOpenFullDeclarations={() => setDeclarationsModalVisible(true)}
+                    onDeclarationChange={handleDeclarationChange}
                   />
                 )}
 
@@ -620,6 +652,16 @@ export const LiveCompetition = () => {
                       block
                     >
                       {t('live.quickActions.skipAttempt')}
+                    </Button>
+                    <Button
+                      type="primary"
+                      icon={<CheckCircleOutlined />}
+                      onClick={handleEndCompetition}
+                      block
+                      danger
+                      style={{ marginTop: 16 }}
+                    >
+                      {t('live.quickActions.endCompetition')}
                     </Button>
                   </Space>
                 </Card>

@@ -3,7 +3,7 @@ import { Card, InputNumber, Button, List, Tag, Space, Typography, message } from
 import { EditOutlined, CheckOutlined, ExpandOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
-import { useAttemptStore } from '../stores/attemptStore';
+import { useDeclarationStore } from '../stores/declarationStore';
 import type { LiftType } from '../types';
 import type { AttemptOrder } from '../../weigh-in/types';
 
@@ -15,15 +15,17 @@ interface QuickDeclarationWidgetProps {
   attemptOrder: AttemptOrder[];
   currentIndex: number;
   onOpenFullDeclarations: () => void;
+  onDeclarationChange?: () => void; // Callback to refresh attempt order
 }
 
 interface DeclarationItem {
   athlete_id: string;
   athlete_name: string;
-  next_attempt_number: 1 | 2 | 3;
+  current_attempt_number: 1 | 2 | 3;
   current_weight: number;
-  declared_weight?: number;
-  last_result?: 'success' | 'failure' | 'pending';
+  next_attempt_number: 2 | 3 | null; // null if no more attempts
+  next_weight: number | null;
+  declared_weight: number | null;
   position: number;
 }
 
@@ -32,10 +34,11 @@ export const QuickDeclarationWidget = ({
   attemptOrder,
   currentIndex,
   onOpenFullDeclarations,
+  onDeclarationChange,
 }: QuickDeclarationWidgetProps) => {
   const { t } = useTranslation();
   const { athletes } = useAthleteStore();
-  const { attempts, updateAttempt } = useAttemptStore();
+  const { setDeclaration, getDeclaration } = useDeclarationStore();
   const [declarations, setDeclarations] = useState<DeclarationItem[]>([]);
   const [editingAthlete, setEditingAthlete] = useState<string | null>(null);
   const [editWeight, setEditWeight] = useState<number | null>(null);
@@ -46,59 +49,66 @@ export const QuickDeclarationWidget = ({
 
     const items: DeclarationItem[] = upcomingAthletes.map((attempt, idx) => {
       const athlete = athletes.find(a => a.id === attempt.athlete_id);
-      const athleteAttempts = attempts.filter(
-        a => a.athlete_id === attempt.athlete_id && a.lift_type === currentLift
-      );
-      const lastAttempt = athleteAttempts[athleteAttempts.length - 1];
+
+      // Current attempt info
+      const currentAttemptNumber = attempt.attempt_number;
+      const currentWeight = attempt.weight_kg;
+
+      // Next attempt info (for declaration)
+      const nextAttemptNumber = currentAttemptNumber < 3 ? (currentAttemptNumber + 1) as 2 | 3 : null;
+
+      // Calculate suggested next weight based on current weight
+      const suggestedNextWeight = nextAttemptNumber ? currentWeight + 2.5 : null;
+
+      // Check if there's already a declaration for next attempt
+      const existingDeclaration = nextAttemptNumber
+        ? getDeclaration(attempt.athlete_id, currentLift, nextAttemptNumber)
+        : null;
 
       return {
         athlete_id: attempt.athlete_id,
         athlete_name: attempt.athlete_name || `${athlete?.first_name} ${athlete?.last_name}`,
-        next_attempt_number: attempt.attempt_number,
-        current_weight: attempt.weight_kg,
-        declared_weight: attempt.weight_kg,
-        last_result: lastAttempt?.result as 'success' | 'failure' | 'pending' | undefined,
+        current_attempt_number: currentAttemptNumber,
+        current_weight: currentWeight,
+        next_attempt_number: nextAttemptNumber,
+        next_weight: suggestedNextWeight,
+        declared_weight: existingDeclaration || null,
         position: idx,
       };
     });
 
     setDeclarations(items);
-  }, [attemptOrder, currentIndex, athletes, attempts, currentLift]);
+  }, [attemptOrder, currentIndex, athletes, currentLift, getDeclaration]);
 
-  const handleStartEdit = (athleteId: string, currentWeight: number) => {
+  const handleStartEdit = (athleteId: string, suggestedWeight: number | null) => {
     setEditingAthlete(athleteId);
-    setEditWeight(currentWeight);
+    setEditWeight(suggestedWeight || 0);
   };
 
-  const handleSaveWeight = async (athleteId: string) => {
-    if (editWeight === null) return;
-
-    // Find the pending attempt for this athlete
-    const pendingAttempt = attempts.find(
-      a => a.athlete_id === athleteId && a.lift_type === currentLift && a.result === 'pending'
-    );
-
-    if (pendingAttempt) {
-      try {
-        await updateAttempt({
-          ...pendingAttempt,
-          weight_kg: editWeight,
-        });
-        message.success(t('declarations.messages.weightUpdated'));
-      } catch {
-        message.error(t('common.error'));
-      }
+  const handleSaveWeight = (athleteId: string, nextAttemptNumber: 2 | 3) => {
+    if (editWeight === null || editWeight <= 0) {
+      message.warning(t('declarations.messages.invalidWeight'));
+      return;
     }
+
+    // Save to declaration store
+    setDeclaration(athleteId, currentLift, nextAttemptNumber, editWeight);
 
     // Update local state
     setDeclarations(prev =>
       prev.map(d =>
-        d.athlete_id === athleteId ? { ...d, declared_weight: editWeight, current_weight: editWeight } : d
+        d.athlete_id === athleteId
+          ? { ...d, declared_weight: editWeight }
+          : d
       )
     );
 
+    message.success(t('declarations.messages.weightUpdated'));
     setEditingAthlete(null);
     setEditWeight(null);
+
+    // Notify parent to refresh if needed
+    onDeclarationChange?.();
   };
 
   const handleCancelEdit = () => {
@@ -142,75 +152,94 @@ export const QuickDeclarationWidget = ({
           renderItem={(item) => (
             <List.Item
               style={{ ...getPositionStyle(item.position), padding: '8px 12px' }}
-              actions={
-                editingAthlete === item.athlete_id
-                  ? [
-                      <Button
-                        key="save"
-                        type="primary"
-                        size="small"
-                        icon={<CheckOutlined />}
-                        onClick={() => handleSaveWeight(item.athlete_id)}
-                      />,
-                      <Button
-                        key="cancel"
-                        size="small"
-                        onClick={handleCancelEdit}
-                      >
-                        {t('common.cancel')}
-                      </Button>,
-                    ]
-                  : [
-                      <Button
-                        key="edit"
-                        type="text"
-                        size="small"
-                        icon={<EditOutlined />}
-                        onClick={() => handleStartEdit(item.athlete_id, item.current_weight)}
-                      />,
-                    ]
-              }
             >
-              <List.Item.Meta
-                title={
+              <div style={{ width: '100%' }}>
+                {/* Athlete name and current attempt */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
                   <Space>
                     <Tag color={item.position === 0 ? 'blue' : 'default'}>
                       {getPositionLabel(item.position)}
                     </Tag>
                     <Text strong={item.position === 0}>{item.athlete_name}</Text>
                   </Space>
-                }
-                description={
-                  <Space>
-                    <Text type="secondary">#{item.next_attempt_number}</Text>
+                  <Text type="secondary">#{item.current_attempt_number}</Text>
+                </div>
+
+                {/* Current weight */}
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                  <Text type="secondary" style={{ fontSize: 12 }}>{t('live.declarations.currentBar')}:</Text>
+                  <Text strong style={{ fontSize: 16, color: '#1890ff' }}>
+                    {item.current_weight} kg
+                  </Text>
+                </div>
+
+                {/* Next attempt declaration (if applicable) */}
+                {item.next_attempt_number && (
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    background: '#fafafa',
+                    padding: '4px 8px',
+                    borderRadius: 4,
+                    marginTop: 4
+                  }}>
+                    <Text type="secondary" style={{ fontSize: 12 }}>
+                      {t('live.declarations.nextBar')} #{item.next_attempt_number}:
+                    </Text>
+
                     {editingAthlete === item.athlete_id ? (
-                      <InputNumber
-                        value={editWeight}
-                        onChange={setEditWeight}
-                        min={20}
-                        max={500}
-                        step={2.5}
-                        size="small"
-                        style={{ width: 100 }}
-                        addonAfter="kg"
-                        autoFocus
-                      />
+                      <Space size="small">
+                        <InputNumber
+                          value={editWeight}
+                          onChange={setEditWeight}
+                          min={item.current_weight}
+                          max={500}
+                          step={2.5}
+                          size="small"
+                          style={{ width: 80 }}
+                          autoFocus
+                        />
+                        <Button
+                          type="primary"
+                          size="small"
+                          icon={<CheckOutlined />}
+                          onClick={() => handleSaveWeight(item.athlete_id, item.next_attempt_number!)}
+                        />
+                        <Button
+                          size="small"
+                          onClick={handleCancelEdit}
+                        >
+                          ✕
+                        </Button>
+                      </Space>
                     ) : (
-                      <Text
-                        strong
-                        style={{ fontSize: 16, color: item.position === 0 ? '#1890ff' : undefined }}
-                      >
-                        {item.current_weight} kg
-                      </Text>
+                      <Space size="small">
+                        {item.declared_weight ? (
+                          <Tag color="green">{item.declared_weight} kg</Tag>
+                        ) : (
+                          <Text type="secondary" style={{ fontSize: 12 }}>
+                            ({item.next_weight} kg)
+                          </Text>
+                        )}
+                        <Button
+                          type="text"
+                          size="small"
+                          icon={<EditOutlined />}
+                          onClick={() => handleStartEdit(item.athlete_id, item.declared_weight || item.next_weight)}
+                        />
+                      </Space>
                     )}
-                    {item.last_result && item.last_result !== 'pending' && (
-                      <Tag color={item.last_result === 'success' ? 'green' : 'red'} style={{ marginLeft: 8 }}>
-                        {item.last_result === 'success' ? '✓' : '✗'}
-                      </Tag>
-                    )}
-                  </Space>
-                }
-              />
+                  </div>
+                )}
+
+                {/* No more attempts */}
+                {!item.next_attempt_number && item.current_attempt_number === 3 && (
+                  <Text type="secondary" style={{ fontSize: 11 }}>
+                    {t('live.declarations.lastAttempt')}
+                  </Text>
+                )}
+              </div>
             </List.Item>
           )}
         />
