@@ -1,8 +1,8 @@
+use crate::database::DbPool;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
-use crate::database::DbPool;
-use rusqlite::params;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Competition {

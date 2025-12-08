@@ -5,17 +5,27 @@ mod commands;
 mod database;
 mod websocket;
 
-use commands::competition::{create_competition, get_competitions, update_competition, delete_competition};
-use commands::athlete::{create_athlete, get_athletes, update_athlete, delete_athlete};
-use commands::weigh_in::{create_weigh_in, get_weigh_ins, delete_weigh_in};
-use commands::attempt::{create_attempt, update_attempt, get_attempts, get_athlete_attempts, delete_attempt};
-use commands::flight::{create_flight, get_flights, update_flight, delete_flight, delete_flights_by_competition};
-use commands::protest::{create_protest, get_pending_protests, resolve_protest, get_protest_history};
-use commands::equipment::{update_athlete_equipment, validate_equipment, get_non_validated_equipment, get_all_equipment};
-use std::sync::Mutex;
-use tokio::sync::broadcast;
+use commands::athlete::{create_athlete, delete_athlete, get_athletes, update_athlete};
+use commands::attempt::{
+    create_attempt, delete_attempt, get_athlete_attempts, get_attempts, update_attempt,
+};
+use commands::competition::{
+    create_competition, delete_competition, get_competitions, update_competition,
+};
+use commands::equipment::{
+    get_all_equipment, get_non_validated_equipment, update_athlete_equipment, validate_equipment,
+};
+use commands::flight::{
+    create_flight, delete_flight, delete_flights_by_competition, get_flights, update_flight,
+};
+use commands::protest::{
+    create_protest, get_pending_protests, get_protest_history, resolve_protest,
+};
+use commands::weigh_in::{create_weigh_in, delete_weigh_in, get_weigh_ins};
 use serde_json::Value;
+use std::sync::Mutex;
 use tauri::Manager;
+use tokio::sync::broadcast;
 
 // WebSocket broadcast state
 pub struct WebSocketState {
@@ -56,8 +66,7 @@ async fn main() {
         .setup(|app| {
             // Initialize database
             let db_path = database::get_db_path(app.handle());
-            let pool = database::init_db(db_path)
-                .expect("Failed to initialize database");
+            let pool = database::init_db(db_path).expect("Failed to initialize database");
 
             app.manage(pool);
 

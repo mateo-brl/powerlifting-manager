@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
-use tauri::State;
 use crate::database::DbPool;
 use rusqlite::params;
+use serde::{Deserialize, Serialize};
+use tauri::State;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct AthleteEquipment {
@@ -157,7 +157,10 @@ pub async fn get_non_validated_equipment(
                 equipment_wrist_wraps_brand: row.get(10)?,
                 equipment_shoes: row.get(11)?,
                 equipment_shoes_brand: row.get(12)?,
-                equipment_validated: row.get::<_, Option<i32>>(13)?.map(|v| v != 0).unwrap_or(false),
+                equipment_validated: row
+                    .get::<_, Option<i32>>(13)?
+                    .map(|v| v != 0)
+                    .unwrap_or(false),
                 equipment_validator_name: row.get(14)?,
                 equipment_validation_timestamp: row.get(15)?,
             })
@@ -199,7 +202,7 @@ pub async fn get_all_equipment(
              FROM weigh_ins w
              JOIN athletes a ON w.athlete_id = a.id
              WHERE w.competition_id = ?
-             ORDER BY a.last_name, a.first_name"
+             ORDER BY a.last_name, a.first_name",
         )
         .map_err(|e| e.to_string())?;
 
@@ -219,7 +222,10 @@ pub async fn get_all_equipment(
                 equipment_wrist_wraps_brand: row.get(10)?,
                 equipment_shoes: row.get(11)?,
                 equipment_shoes_brand: row.get(12)?,
-                equipment_validated: row.get::<_, Option<i32>>(13)?.map(|v| v != 0).unwrap_or(false),
+                equipment_validated: row
+                    .get::<_, Option<i32>>(13)?
+                    .map(|v| v != 0)
+                    .unwrap_or(false),
                 equipment_validator_name: row.get(14)?,
                 equipment_validation_timestamp: row.get(15)?,
             })

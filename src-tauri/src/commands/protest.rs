@@ -1,8 +1,8 @@
+use crate::database::DbPool;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
-use crate::database::DbPool;
-use rusqlite::params;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Protest {
@@ -12,9 +12,9 @@ pub struct Protest {
     pub attempt_id: String,
     pub protest_type: String, // 'referee_decision' | 'equipment' | 'procedure'
     pub reason: String,
-    pub timestamp: i64, // Unix timestamp when protest was filed
+    pub timestamp: i64,        // Unix timestamp when protest was filed
     pub protest_deadline: i64, // Unix timestamp (timestamp + 60 seconds)
-    pub status: String, // 'pending' | 'accepted' | 'rejected'
+    pub status: String,        // 'pending' | 'accepted' | 'rejected'
     pub jury_decision: Option<String>,
     pub jury_notes: Option<String>,
     pub created_at: i64,
@@ -147,7 +147,12 @@ pub async fn resolve_protest(
 
     conn.execute(
         "UPDATE protests SET status = ?, jury_decision = ?, jury_notes = ? WHERE id = ?",
-        params![&input.decision, &input.decision, &input.jury_notes, &input.protest_id],
+        params![
+            &input.decision,
+            &input.decision,
+            &input.jury_notes,
+            &input.protest_id
+        ],
     )
     .map_err(|e| e.to_string())?;
 

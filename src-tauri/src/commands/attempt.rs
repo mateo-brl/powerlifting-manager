@@ -1,8 +1,8 @@
+use crate::database::DbPool;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
-use crate::database::DbPool;
-use rusqlite::params;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(rename_all = "lowercase")]
@@ -245,7 +245,8 @@ pub async fn get_attempts(
                 lift_type: LiftType::from_str(&row.get::<_, String>(3)?).unwrap_or(LiftType::Squat),
                 attempt_number: row.get(4)?,
                 weight_kg: row.get(5)?,
-                result: AttemptResult::from_str(&row.get::<_, String>(6)?).unwrap_or(AttemptResult::Pending),
+                result: AttemptResult::from_str(&row.get::<_, String>(6)?)
+                    .unwrap_or(AttemptResult::Pending),
                 referee_votes: votes,
                 timestamp: row.get(8)?,
                 rack_height: row.get(9)?,
@@ -286,7 +287,8 @@ pub async fn get_athlete_attempts(
                 lift_type: LiftType::from_str(&row.get::<_, String>(3)?).unwrap_or(LiftType::Squat),
                 attempt_number: row.get(4)?,
                 weight_kg: row.get(5)?,
-                result: AttemptResult::from_str(&row.get::<_, String>(6)?).unwrap_or(AttemptResult::Pending),
+                result: AttemptResult::from_str(&row.get::<_, String>(6)?)
+                    .unwrap_or(AttemptResult::Pending),
                 referee_votes: votes,
                 timestamp: row.get(8)?,
                 rack_height: row.get(9)?,

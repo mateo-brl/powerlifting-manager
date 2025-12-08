@@ -1,8 +1,8 @@
+use crate::database::DbPool;
+use rusqlite::params;
 use serde::{Deserialize, Serialize};
 use tauri::State;
 use uuid::Uuid;
-use crate::database::DbPool;
-use rusqlite::params;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Flight {
@@ -82,14 +82,15 @@ pub async fn get_flights(
             "SELECT id, competition_id, name, athlete_ids, lift_type, status, created_at
              FROM flights
              WHERE competition_id = ?
-             ORDER BY created_at"
+             ORDER BY created_at",
         )
         .map_err(|e| e.to_string())?;
 
     let flights = stmt
         .query_map([&competition_id], |row| {
             let athlete_ids_str: String = row.get(3)?;
-            let athlete_ids: Vec<String> = serde_json::from_str(&athlete_ids_str).unwrap_or_default();
+            let athlete_ids: Vec<String> =
+                serde_json::from_str(&athlete_ids_str).unwrap_or_default();
 
             Ok(Flight {
                 id: row.get(0)?,
@@ -170,10 +171,7 @@ pub async fn update_flight(
 }
 
 #[tauri::command]
-pub async fn delete_flight(
-    id: String,
-    pool: State<'_, DbPool>,
-) -> Result<(), String> {
+pub async fn delete_flight(id: String, pool: State<'_, DbPool>) -> Result<(), String> {
     let conn = pool.get().map_err(|e| e.to_string())?;
 
     conn.execute("DELETE FROM flights WHERE id = ?", [&id])
@@ -189,8 +187,11 @@ pub async fn delete_flights_by_competition(
 ) -> Result<(), String> {
     let conn = pool.get().map_err(|e| e.to_string())?;
 
-    conn.execute("DELETE FROM flights WHERE competition_id = ?", [&competition_id])
-        .map_err(|e| e.to_string())?;
+    conn.execute(
+        "DELETE FROM flights WHERE competition_id = ?",
+        [&competition_id],
+    )
+    .map_err(|e| e.to_string())?;
 
     Ok(())
 }
