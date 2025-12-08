@@ -49,7 +49,7 @@
         "displayLanguageSelector": true
       }
     },
-    "createUpdaterArtifacts": true
+    "createUpdaterArtifacts": false
   },
   "app": {
     "windows": [
