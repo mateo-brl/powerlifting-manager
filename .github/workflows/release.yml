@@ -178,35 +178,21 @@ jobs:
           path: checksums-*.txt
           if-no-files-found: ignore
 
-  # Combine checksums and finalize release
+  # Publish the draft release created by tauri-action
   finalize:
     name: Finalize Release
     needs: [build, changelog]
     runs-on: ubuntu-latest
     steps:
-      - name: Download all checksums
-        uses: actions/download-artifact@v4
-        with:
-          pattern: checksums-*
-          merge-multiple: true
-
-      - name: Combine checksums
-        run: |
-          echo "# SHA256 Checksums for ${{ github.ref_name }}" > checksums.txt
-          echo "" >> checksums.txt
-          echo "## Windows" >> checksums.txt
-          cat checksums-windows.txt >> checksums.txt 2>/dev/null || echo "No Windows checksums" >> checksums.txt
-          echo "" >> checksums.txt
-          echo "## macOS" >> checksums.txt
-          cat checksums-macos.txt >> checksums.txt 2>/dev/null || echo "No macOS checksums" >> checksums.txt
-          echo "" >> checksums.txt
-          echo "## Linux" >> checksums.txt
-          cat checksums-linux.txt >> checksums.txt 2>/dev/null || echo "No Linux checksums" >> checksums.txt
-
-      - name: Upload checksums to release
-        uses: softprops/action-gh-release@v1
-        with:
-          files: checksums.txt
-          tag_name: ${{ github.ref_name }}
+      - name: Publish draft release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the draft release for this tag and publish it
+          RELEASE_ID=$(gh api repos/${{ github.repository }}/releases --jq '.[] | select(.draft == true and .tag_name == "${{ github.ref_name }}") | .id' | head -1)
+          if [ -n "$RELEASE_ID" ]; then
+            echo "Publishing release ID: $RELEASE_ID"
+            gh api -X PATCH repos/${{ github.repository }}/releases/$RELEASE_ID -f draft=false
+          else
+            echo "No draft release found for tag ${{ github.ref_name }}"
+          fi
