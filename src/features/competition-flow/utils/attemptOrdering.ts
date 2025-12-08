@@ -8,10 +8,16 @@ interface AttemptData {
 }
 
 /**
- * Calcule l'ordre de passage selon les r�gles IPF:
- * 1. Tri par poids demand� (croissant)
- * 2. � poids �gal: tri par num�ro de lot (croissant)
- * 3. � lot �gal: ordre de d�claration
+ * Calcule l'ordre de passage selon les règles IPF:
+ *
+ * IMPORTANT: Round-robin par essai
+ * - Tous les 1ers essais d'abord (triés par poids, puis lot)
+ * - Puis tous les 2èmes essais (triés par poids, puis lot)
+ * - Puis tous les 3èmes essais (triés par poids, puis lot)
+ *
+ * Dans chaque round:
+ * 1. Tri par poids demandé (croissant)
+ * 2. À poids égal: tri par numéro de lot (croissant)
  */
 export function calculateAttemptOrder(
   attempts: AttemptData[],
@@ -35,14 +41,18 @@ export function calculateAttemptOrder(
     })
     .filter((item): item is AttemptOrder => item !== null);
 
+  // Tri IPF: d'abord par numéro d'essai (round-robin), puis par poids, puis par lot
   const orderedAttempts = mappedAttempts.sort((a, b) => {
+    // 1. D'abord par numéro d'essai (tous les 1ers, puis 2èmes, puis 3èmes)
+    if (a.attempt_number !== b.attempt_number) {
+      return a.attempt_number - b.attempt_number;
+    }
+    // 2. Dans le même essai, tri par poids croissant
     if (a.weight_kg !== b.weight_kg) {
       return a.weight_kg - b.weight_kg;
     }
-    if (a.lot_number !== b.lot_number) {
-      return a.lot_number - b.lot_number;
-    }
-    return a.attempt_number - b.attempt_number;
+    // 3. À poids égal, tri par numéro de lot
+    return a.lot_number - b.lot_number;
   });
 
   return orderedAttempts;

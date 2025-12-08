@@ -64,22 +64,28 @@ describe('calculateAttemptOrder', () => {
     expect(order[2].lot_number).toBe(3);
   });
 
-  it('should sort by attempt number when weight and lot are equal', () => {
+  it('should sort by attempt number first (round-robin style)', () => {
     const sameAthletes: Athlete[] = [
       createAthlete('athlete-1', 'John', 'Doe', 1),
+      createAthlete('athlete-2', 'Jane', 'Smith', 2),
     ];
 
+    // Mix of attempt 1 and attempt 2
     const attempts = [
-      { athlete_id: 'athlete-1', attempt_number: 3 as const, weight_kg: 100 },
-      { athlete_id: 'athlete-1', attempt_number: 1 as const, weight_kg: 100 },
       { athlete_id: 'athlete-1', attempt_number: 2 as const, weight_kg: 100 },
+      { athlete_id: 'athlete-2', attempt_number: 1 as const, weight_kg: 150 },
+      { athlete_id: 'athlete-1', attempt_number: 1 as const, weight_kg: 100 },
     ];
 
     const order = calculateAttemptOrder(attempts, sameAthletes);
 
+    // All attempt 1s first, then attempt 2s
     expect(order[0].attempt_number).toBe(1);
-    expect(order[1].attempt_number).toBe(2);
-    expect(order[2].attempt_number).toBe(3);
+    expect(order[0].athlete_id).toBe('athlete-1'); // 100kg < 150kg
+    expect(order[1].attempt_number).toBe(1);
+    expect(order[1].athlete_id).toBe('athlete-2'); // 150kg
+    expect(order[2].attempt_number).toBe(2);
+    expect(order[2].athlete_id).toBe('athlete-1'); // Only one attempt 2
   });
 
   it('should include athlete name in format "LastName, FirstName"', () => {

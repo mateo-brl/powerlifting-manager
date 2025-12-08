@@ -2,16 +2,16 @@ import type { ThemeConfig } from 'antd';
 
 /**
  * Powerlifting Manager Theme
- * Red, black, and white color scheme inspired by powerlifting aesthetics
+ * Light blue and clean color scheme for a professional look
  */
 
 // Color palette
 export const colors = {
-  // Primary - Powerlifting Red
-  primary: '#D32F2F',
-  primaryHover: '#B71C1C',
-  primaryActive: '#C62828',
-  primaryLight: '#FFCDD2',
+  // Primary - Light Blue
+  primary: '#1890FF',
+  primaryHover: '#40A9FF',
+  primaryActive: '#096DD9',
+  primaryLight: '#E6F7FF',
 
   // Secondary - Dark Gray/Black
   secondary: '#212121',
@@ -116,7 +116,7 @@ export const lightTheme: ThemeConfig = {
   },
   components: {
     Button: {
-      primaryShadow: '0 2px 4px rgba(211, 47, 47, 0.3)',
+      primaryShadow: '0 2px 4px rgba(24, 144, 255, 0.3)',
       defaultBorderColor: colors.border,
     },
     Card: {
@@ -157,18 +157,20 @@ export const darkTheme: ThemeConfig = {
     colorInfo: colors.info,
 
     // Background - Dark
-    colorBgContainer: colors.bgDarkSecondary,
-    colorBgLayout: colors.bgDark,
-    colorBgElevated: colors.bgDarkSecondary,
+    colorBgContainer: '#1F1F1F',
+    colorBgLayout: '#141414',
+    colorBgElevated: '#262626',
+    colorBgSpotlight: '#1F1F1F',
 
     // Text - Light
-    colorText: colors.textLight,
-    colorTextSecondary: '#B0B0B0',
-    colorTextDisabled: '#666666',
+    colorText: 'rgba(255, 255, 255, 0.88)',
+    colorTextSecondary: 'rgba(255, 255, 255, 0.65)',
+    colorTextTertiary: 'rgba(255, 255, 255, 0.45)',
+    colorTextDisabled: 'rgba(255, 255, 255, 0.25)',
 
     // Border
-    colorBorder: colors.borderDark,
-    colorBorderSecondary: colors.borderDark,
+    colorBorder: '#434343',
+    colorBorderSecondary: '#303030',
 
     // Border radius
     borderRadius: 6,
@@ -178,28 +180,58 @@ export const darkTheme: ThemeConfig = {
     // Font
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
     fontSize: 14,
+
+    // Links
+    colorLink: colors.primary,
+    colorLinkHover: colors.primaryHover,
+    colorLinkActive: colors.primaryActive,
   },
   components: {
     Button: {
-      primaryShadow: '0 2px 4px rgba(211, 47, 47, 0.4)',
+      primaryShadow: '0 2px 4px rgba(24, 144, 255, 0.4)',
+      colorBgContainer: '#1F1F1F',
     },
     Card: {
-      colorBgContainer: colors.bgDarkSecondary,
-      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+      colorBgContainer: '#1F1F1F',
+      boxShadow: '0 1px 3px rgba(0, 0, 0, 0.5)',
     },
     Table: {
-      headerBg: colors.bgDark,
-      rowHoverBg: 'rgba(211, 47, 47, 0.1)',
+      headerBg: '#262626',
+      rowHoverBg: 'rgba(24, 144, 255, 0.08)',
+      colorBgContainer: '#1F1F1F',
     },
     Menu: {
-      itemSelectedBg: 'rgba(211, 47, 47, 0.2)',
+      itemSelectedBg: 'rgba(24, 144, 255, 0.15)',
       itemSelectedColor: colors.primary,
-      itemBg: colors.bgDarkSecondary,
+      itemBg: 'transparent',
+      darkItemBg: '#1F1F1F',
+      darkSubMenuItemBg: '#141414',
     },
     Layout: {
-      headerBg: colors.bgDark,
-      siderBg: colors.bgDark,
-      bodyBg: colors.bgDark,
+      headerBg: '#141414',
+      siderBg: '#141414',
+      bodyBg: '#141414',
+    },
+    Input: {
+      colorBgContainer: '#1F1F1F',
+      colorBorder: '#434343',
+    },
+    Select: {
+      colorBgContainer: '#1F1F1F',
+      colorBgElevated: '#262626',
+    },
+    Modal: {
+      contentBg: '#1F1F1F',
+      headerBg: '#1F1F1F',
+    },
+    Tabs: {
+      colorBgContainer: '#1F1F1F',
+    },
+    Alert: {
+      colorInfoBg: 'rgba(24, 144, 255, 0.1)',
+      colorSuccessBg: 'rgba(82, 196, 26, 0.1)',
+      colorWarningBg: 'rgba(250, 173, 20, 0.1)',
+      colorErrorBg: 'rgba(255, 77, 79, 0.1)',
     },
   },
 };
