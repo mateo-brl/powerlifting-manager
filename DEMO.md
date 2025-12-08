@@ -202,10 +202,11 @@ Pour tester différents scénarios :
 
 ## 📝 Notes Techniques
 
-- **Stockage** : In-memory avec Mutex (les données sont perdues au redémarrage)
+- **Stockage** : SQLite persistant (les données sont conservées entre les sessions)
 - **Performance** : Génération instantanée de 20-50 athlètes
 - **Localisation** : Noms et villes français pour réalisme
 - **Règles IPF** : Respect strict des règlements IPF
+- **Base de données** : `powerlifting.db` dans le dossier de l'application
 
 ---
 
@@ -231,13 +232,21 @@ Pour tester différents scénarios :
 
 ---
 
-## 🚀 Prochaines Étapes
+### Phase 4 ✅
+- [x] Génération de PDF (scoresheets)
+- [x] Export CSV / Excel
+- [x] Export format OpenPowerlifting
+- [x] Export FFForce officiel
+- [x] Certificats de podium et participation
 
-**Phase 4 - Documents & Export** (À venir)
-- [ ] Génération de PDF (scoresheets)
-- [ ] Export Excel
-- [ ] Export format OpenPowerlifting
-- [ ] Rapport de compétition
+### Phase 5+ ✅
+- [x] Protestations IPF
+- [x] Validation équipement
+- [x] Affichage externe WebSocket
+- [x] Écrans Spotters et Salle de Chauffe
+- [x] Overlays OBS
+- [x] Dark mode
+- [x] Auto-updater
 
 ---
 

@@ -2,9 +2,30 @@
 
 Application desktop professionnelle pour gérer des compétitions de powerlifting de A à Z.
 
+[![CI](https://github.com/mateo-brl/powerlifting-manager/actions/workflows/ci.yml/badge.svg)](https://github.com/mateo-brl/powerlifting-manager/actions/workflows/ci.yml)
+[![Release](https://github.com/mateo-brl/powerlifting-manager/actions/workflows/release.yml/badge.svg)](https://github.com/mateo-brl/powerlifting-manager/actions/workflows/release.yml)
 [![Tauri](https://img.shields.io/badge/Tauri-2.x-blue.svg)](https://tauri.app/)
 [![React](https://img.shields.io/badge/React-18-blue.svg)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue.svg)](https://www.typescriptlang.org/)
+[![License](https://img.shields.io/badge/License-Proprietary-red.svg)](LICENSE)
+
+## 📥 Téléchargement
+
+### Dernière version stable
+
+Téléchargez la dernière version pour votre système d'exploitation :
+
+| Plateforme | Téléchargement | Format |
+|------------|----------------|--------|
+| **Windows** | [Télécharger](https://github.com/mateo-brl/powerlifting-manager/releases/latest) | `.exe` (NSIS Installer) |
+| **macOS** | [Télécharger](https://github.com/mateo-brl/powerlifting-manager/releases/latest) | `.dmg` |
+| **Linux** | [Télécharger](https://github.com/mateo-brl/powerlifting-manager/releases/latest) | `.deb` / `.AppImage` |
+
+> **Mises à jour automatiques** : L'application vérifie automatiquement les nouvelles versions au démarrage et propose une mise à jour en un clic.
+
+### Vérification d'intégrité
+
+Chaque release inclut un fichier `checksums.txt` avec les hash SHA256 pour vérifier l'intégrité des fichiers téléchargés.
 
 ## 📖 Description
 
@@ -865,6 +886,7 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
 - ✅ **Phase 13**: Support Multi-Plateformes
   - Build Linux (.deb, .appimage) ✅
   - Build Windows (NSIS installer) ✅
+  - Build macOS (.dmg) ✅
   - Scripts de build automatisés
   - Documentation complète pour chaque plateforme
 - ✅ **Phase 14**: Système de Protestations & Validation Équipement
@@ -877,9 +899,17 @@ Marie,Leroy,2001-04-30,F,57,raw,junior,Club Bordeaux,2
   - Interface optimisée pour écrans 1920x1080 (sans scroll)
   - Validation stricte des poids de déclaration
   - Layout responsive amélioré
+- ✅ **Phase 16**: CI/CD & Distribution
+  - Pipeline GitHub Actions (tests, build, release)
+  - Builds automatisés multi-plateforme (Windows, macOS, Linux)
+  - Auto-updater intégré avec notification in-app
+  - Génération automatique du changelog (git-cliff)
+  - Checksums SHA256 pour vérification d'intégrité
+  - Versioning sémantique avec tags Git
 - 🔄 **Évolutions futures**:
   - Interface d'administration des records
-  - Support macOS (.dmg, .app)
+  - Code signing Windows (certificat)
+  - Notarization Apple (macOS)
   - Module de planification de compétitions
   - API REST pour intégrations tierces
 

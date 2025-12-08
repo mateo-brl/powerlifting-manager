@@ -1,157 +1,190 @@
-# Guide de Configuration - Powerlifting Manager
+# Guide d'Installation - Powerlifting Manager
 
-## ✅ Ce qui a été fait
+## Installation Rapide (Utilisateurs)
 
-### Structure du projet
-- ✅ Configuration Tauri 2.x avec React 18 + TypeScript
-- ✅ Configuration Vite pour le développement
-- ✅ Structure de dossiers feature-based
-- ✅ Configuration Git avec commits initiaux
+### Téléchargement Direct
 
-### Frontend
-- ✅ Types TypeScript complets (Competition, Athlete, Attempt)
-- ✅ Stores Zustand pour Competition et Athlete
-- ✅ Hooks personnalisés pour Tauri commands
-- ✅ Utilitaires de calcul (IPF GL Points)
-- ✅ Utilitaires de validation (Zod schemas)
-- ✅ Utilitaires de formatage
-- ✅ Constantes (fédérations, catégories, etc.)
-- ✅ Configuration Ant Design avec locale FR
+La méthode la plus simple est de télécharger l'installateur pré-compilé :
 
-### Backend Rust
-- ✅ Commands CRUD pour Competition
-- ✅ Commands CRUD pour Athlete
-- ✅ Schéma SQLite avec migrations
-- ✅ Configuration tauri-plugin-sql
+| Plateforme | Fichier | Instructions |
+|------------|---------|--------------|
+| **Windows** | `.exe` | Double-cliquez et suivez l'assistant |
+| **macOS** | `.dmg` | Montez l'image et glissez dans Applications |
+| **Linux** | `.deb` | `sudo dpkg -i powerlifting-manager_*.deb` |
+| **Linux** | `.AppImage` | `chmod +x *.AppImage && ./*.AppImage` |
 
-## 🔧 Prochaines étapes requises
+**Télécharger** : [Dernière version](https://github.com/mateo-brl/powerlifting-manager/releases/latest)
 
-### 1. Installation de Rust (OBLIGATOIRE)
+### Mises à jour automatiques
 
-Le projet nécessite Rust pour compiler la partie Tauri.
+L'application vérifie automatiquement les nouvelles versions au démarrage. Quand une mise à jour est disponible, une notification apparaît avec :
+- Le numéro de la nouvelle version
+- Les notes de version (changelog)
+- Un bouton pour télécharger et installer
 
-**Linux/macOS** :
+---
+
+## Installation Développeur
+
+Pour contribuer ou modifier le code source :
+
+### Prérequis
+
+- **Node.js** 18+ et npm
+- **Rust** 1.70+
+- **Git**
+
+### 1. Cloner le repository
+
 ```bash
+git clone https://github.com/mateo-brl/powerlifting-manager.git
+cd powerlifting-manager
+```
+
+### 2. Installation par plateforme
+
+#### Linux (Ubuntu/Debian)
+
+```bash
+# Script automatique
+chmod +x scripts/setup-linux.sh
+./scripts/setup-linux.sh
+
+# Ou manuellement
+sudo apt update
+sudo apt install -y libwebkit2gtk-4.1-dev build-essential curl wget file \
+  libxdo-dev libssl-dev libayatana-appindicator3-dev librsvg2-dev
+
+# Installer Rust
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
+
+# Installer les dépendances
+npm install
 ```
 
-**Windows** :
-Téléchargez et installez depuis https://rustup.rs/
+#### Windows
 
-Vérifiez l'installation :
-```bash
-cargo --version
-rustc --version
+```powershell
+# Script automatique (PowerShell en Admin)
+.\scripts\setup-windows.ps1
+
+# Ou manuellement
+# 1. Installer Visual Studio Build Tools avec workload C++
+# 2. Installer Rust: winget install Rustlang.Rust.MSVC
+# 3. Installer Node.js: winget install OpenJS.NodeJS
+
+npm install
 ```
 
-### 2. Installation des dépendances système Tauri
+> ⚠️ **Important** : N'utilisez PAS Git Bash pour lancer l'application. Utilisez PowerShell ou CMD.
 
-**Ubuntu/Debian** :
+#### macOS
+
 ```bash
-sudo apt update
-sudo apt install libwebkit2gtk-4.1-dev \
-  build-essential \
-  curl \
-  wget \
-  file \
-  libxdo-dev \
-  libssl-dev \
-  libayatana-appindicator3-dev \
-  librsvg2-dev
-```
-
-**Fedora** :
-```bash
-sudo dnf install webkit2gtk4.1-devel \
-  openssl-devel \
-  curl \
-  wget \
-  file \
-  libappindicator-gtk3-devel \
-  librsvg2-devel
-```
-
-**Windows** :
-- Installer Microsoft Visual Studio C++ Build Tools
-- WebView2 est inclus dans Windows 11 et récent Windows 10
-
-**macOS** :
-```bash
+# Installer les outils Xcode
 xcode-select --install
+
+# Installer Rust
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+source $HOME/.cargo/env
+
+# Installer les dépendances
+npm install
 ```
 
-### 3. Compiler le projet Rust
+### 3. Lancer en développement
 
 ```bash
-cd src-tauri
-cargo build
-cd ..
+npm run tauri dev
 ```
 
-### 4. Créer le repository GitHub
-
-1. Aller sur https://github.com/new
-2. Nom du repository : `powerlifting-manager`
-3. Description : "Application professionnelle de gestion de compétitions de powerlifting"
-4. Visibilité : **Public**
-5. NE PAS initialiser avec README (déjà fait)
-6. Créer le repository
-
-Puis pousser le code :
-```bash
-git remote add origin https://github.com/mateobrl/powerlifting-manager.git
-git push -u origin main
-```
-
-### 5. Lancer le projet en développement
+### 4. Build de production
 
 ```bash
-npm run tauri:dev
+# Build pour la plateforme actuelle
+npm run tauri build
+
+# Les fichiers sont générés dans src-tauri/target/release/bundle/
 ```
 
-Cette commande va :
-- Démarrer le serveur Vite (frontend React)
-- Compiler et lancer l'application Tauri
-- Ouvrir une fenêtre desktop
+---
 
-## 📋 Phase 2 - Développement des fonctionnalités
+## CI/CD
 
-### À implémenter ensuite
+Le projet utilise GitHub Actions pour :
 
-1. **UI Gestion des Compétitions**
-   - Créer `src/features/competition/components/CompetitionList.tsx`
-   - Créer `src/features/competition/components/CompetitionForm.tsx`
-   - Intégrer avec les Tauri commands
+### Intégration Continue (`ci.yml`)
 
-2. **UI Gestion des Athlètes**
-   - Créer `src/features/athlete/components/AthleteList.tsx`
-   - Créer `src/features/athlete/components/AthleteForm.tsx`
-   - Implémenter l'import CSV
+Déclenché sur chaque push/PR :
+- Tests unitaires (Vitest)
+- Vérification TypeScript
+- Build frontend
+- Vérification Rust (cargo check, clippy)
 
-3. **Connexion SQLite**
-   - Implémenter les requêtes dans les commands Rust
-   - Utiliser tauri-plugin-sql pour les opérations DB
-   - Exécuter les migrations au démarrage
+### Release (`release.yml`)
 
-4. **Module de Pesée**
-   - Interface pour enregistrer les poids corporels
-   - Validation des catégories de poids
-   - Déclaration des tentatives d'ouverture
+Déclenché sur les tags `v*` :
+- Build multi-plateforme (Windows, macOS, Linux)
+- Génération du changelog avec git-cliff
+- Génération des checksums SHA256
+- Publication sur GitHub Releases
 
-## 🐛 Problèmes connus
+### Créer une release
 
-- ⚠️ Rust n'est pas encore installé sur le système
-- ⚠️ Le repository GitHub n'est pas encore créé
-- ℹ️ Les commandes Tauri ne sont pas encore connectées à SQLite (TODO marqués)
+```bash
+# 1. Mettre à jour la version dans tauri.conf.json et package.json
+# 2. Committer les changements
+git add .
+git commit -m "chore: bump version to v0.2.0"
 
-## 📚 Ressources
+# 3. Créer et pousser le tag
+git tag v0.2.0
+git push origin main --tags
+```
+
+Le workflow de release se déclenche automatiquement.
+
+---
+
+## Structure du Projet
+
+```
+powerlifting-manager/
+├── .github/workflows/     # CI/CD GitHub Actions
+│   ├── ci.yml            # Tests et vérifications
+│   └── release.yml       # Builds multi-plateforme
+├── src/                   # Frontend React/TypeScript
+│   ├── components/       # Composants globaux
+│   ├── features/         # Modules par fonctionnalité
+│   ├── hooks/            # Hooks personnalisés
+│   ├── i18n/             # Traductions FR/EN
+│   ├── shared/           # Utilitaires partagés
+│   └── theme/            # Configuration thème
+├── src-tauri/            # Backend Rust
+│   ├── src/
+│   │   ├── commands/     # Commandes Tauri
+│   │   ├── database/     # Schéma et migrations SQLite
+│   │   └── websocket/    # Serveur WebSocket
+│   ├── Cargo.toml        # Dépendances Rust
+│   └── tauri.conf.json   # Configuration Tauri
+├── cliff.toml            # Configuration changelog
+├── package.json          # Dépendances npm
+└── vite.config.ts        # Configuration Vite
+```
+
+---
+
+## Ressources
 
 - [Documentation Tauri](https://tauri.app)
 - [Documentation Ant Design](https://ant.design)
 - [IPF Technical Rules](https://www.powerlifting.sport/rules/codes/info/technical-rules)
 - [Zustand Documentation](https://zustand-demo.pmnd.rs/)
 
-## 🎯 Objectif
+---
 
-Application fonctionnelle pour gérer une vraie compétition dans **4 semaines** !
+## Support
+
+- **Issues** : [GitHub Issues](https://github.com/mateo-brl/powerlifting-manager/issues)
+- **Email** : mateobaril.pro@gmail.com
