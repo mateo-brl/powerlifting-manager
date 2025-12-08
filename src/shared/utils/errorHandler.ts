@@ -164,29 +164,90 @@ export function clearErrorHistory(): void {
  * User-friendly error messages
  */
 export const UserFriendlyMessages: Record<string, { en: string; fr: string }> = {
+  // Database errors
   [ErrorCodes.DB_CONNECTION_FAILED]: {
     en: 'Unable to connect to database. Please restart the application.',
     fr: 'Impossible de se connecter à la base de données. Veuillez redémarrer l\'application.',
   },
+  [ErrorCodes.DB_QUERY_FAILED]: {
+    en: 'Database operation failed. Please try again.',
+    fr: 'Opération de base de données échouée. Veuillez réessayer.',
+  },
+  [ErrorCodes.DB_MIGRATION_FAILED]: {
+    en: 'Database update failed. Please restart the application.',
+    fr: 'Mise à jour de la base de données échouée. Veuillez redémarrer.',
+  },
+
+  // Competition errors
   [ErrorCodes.COMPETITION_NOT_FOUND]: {
     en: 'Competition not found.',
     fr: 'Compétition introuvable.',
   },
+  [ErrorCodes.COMPETITION_ALREADY_ACTIVE]: {
+    en: 'A competition is already active. Please finish it first.',
+    fr: 'Une compétition est déjà active. Veuillez la terminer d\'abord.',
+  },
+  [ErrorCodes.COMPETITION_INVALID_STATE]: {
+    en: 'Invalid competition state. Please refresh the page.',
+    fr: 'État de compétition invalide. Veuillez actualiser la page.',
+  },
+
+  // Athlete errors
   [ErrorCodes.ATHLETE_NOT_FOUND]: {
     en: 'Athlete not found.',
     fr: 'Athlète introuvable.',
   },
+  [ErrorCodes.ATHLETE_DUPLICATE]: {
+    en: 'This athlete already exists in this competition.',
+    fr: 'Cet athlète existe déjà dans cette compétition.',
+  },
+  [ErrorCodes.ATHLETE_INVALID_DATA]: {
+    en: 'Invalid athlete data. Please check all fields.',
+    fr: 'Données d\'athlète invalides. Veuillez vérifier tous les champs.',
+  },
+
+  // Attempt errors
   [ErrorCodes.ATTEMPT_INVALID_WEIGHT]: {
-    en: 'Invalid weight. Please check the rules.',
-    fr: 'Poids invalide. Veuillez vérifier les règles.',
+    en: 'Invalid weight. Weight must be ≥ previous attempt.',
+    fr: 'Poids invalide. Le poids doit être ≥ à l\'essai précédent.',
+  },
+  [ErrorCodes.ATTEMPT_OUT_OF_ORDER]: {
+    en: 'Attempt out of order. Please follow the lifting order.',
+    fr: 'Essai hors ordre. Veuillez suivre l\'ordre de passage.',
+  },
+  [ErrorCodes.ATTEMPT_LIMIT_EXCEEDED]: {
+    en: 'Maximum 3 attempts per lift.',
+    fr: 'Maximum 3 essais par mouvement.',
+  },
+
+  // Weigh-in errors
+  [ErrorCodes.WEIGHIN_INVALID_WEIGHT]: {
+    en: 'Invalid bodyweight. Please enter a valid weight in kg.',
+    fr: 'Poids corporel invalide. Veuillez entrer un poids valide en kg.',
   },
   [ErrorCodes.WEIGHIN_OUTSIDE_CLASS]: {
-    en: 'Bodyweight is outside the registered weight class.',
-    fr: 'Le poids corporel est en dehors de la catégorie inscrite.',
+    en: 'Bodyweight exceeds the weight class limit. The athlete can participate as "out of competition".',
+    fr: 'Le poids corporel dépasse la limite de catégorie. L\'athlète peut participer "hors compétition".',
   },
+
+  // WebSocket errors
+  [ErrorCodes.WS_CONNECTION_FAILED]: {
+    en: 'Failed to connect to display. Please try again.',
+    fr: 'Échec de connexion à l\'affichage. Veuillez réessayer.',
+  },
+  [ErrorCodes.WS_BROADCAST_FAILED]: {
+    en: 'Failed to update display. Please refresh the external screen.',
+    fr: 'Échec de mise à jour de l\'affichage. Veuillez actualiser l\'écran externe.',
+  },
+
+  // General errors
   [ErrorCodes.NETWORK_ERROR]: {
     en: 'Network error. Please check your connection.',
     fr: 'Erreur réseau. Veuillez vérifier votre connexion.',
+  },
+  [ErrorCodes.VALIDATION_ERROR]: {
+    en: 'Please check the form for errors.',
+    fr: 'Veuillez vérifier les erreurs dans le formulaire.',
   },
   [ErrorCodes.UNKNOWN_ERROR]: {
     en: 'An unexpected error occurred. Please try again.',

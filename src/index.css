@@ -161,3 +161,242 @@ code {
     background: inherit;
   }
 }
+
+/* ========================================
+   ANIMATIONS & TRANSITIONS
+   ======================================== */
+
+/* Smooth transitions for all interactive elements */
+.ant-btn,
+.ant-card,
+.ant-input,
+.ant-select-selector,
+.ant-table-row,
+.ant-menu-item,
+.ant-tabs-tab {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Card hover effect */
+.ant-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Button press effect */
+.ant-btn:active {
+  transform: scale(0.98);
+}
+
+/* Fade in animation for page content */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ant-layout-content > div {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Success/Error flash animation for attempt results */
+@keyframes successFlash {
+  0%, 100% { background-color: inherit; }
+  50% { background-color: rgba(82, 196, 26, 0.3); }
+}
+
+@keyframes errorFlash {
+  0%, 100% { background-color: inherit; }
+  50% { background-color: rgba(255, 77, 79, 0.3); }
+}
+
+.flash-success {
+  animation: successFlash 0.5s ease-in-out;
+}
+
+.flash-error {
+  animation: errorFlash 0.5s ease-in-out;
+}
+
+/* Pulse animation for live indicator */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.live-indicator {
+  animation: pulse 1.5s infinite;
+}
+
+/* Timer warning animation */
+@keyframes timerWarning {
+  0%, 100% { color: inherit; }
+  50% { color: #ff4d4f; }
+}
+
+.timer-warning {
+  animation: timerWarning 0.5s infinite;
+}
+
+/* Slide in from right for modals */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Table row highlight animation */
+.ant-table-row.highlight-row {
+  animation: highlightRow 2s ease-out;
+}
+
+@keyframes highlightRow {
+  0% { background-color: rgba(24, 144, 255, 0.3); }
+  100% { background-color: transparent; }
+}
+
+/* ========================================
+   ACCESSIBILITY IMPROVEMENTS
+   ======================================== */
+
+/* Focus visible styles for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+}
+
+.ant-btn:focus-visible,
+.ant-input:focus-visible,
+.ant-select-selector:focus-visible {
+  outline: 2px solid #1890ff;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(24, 144, 255, 0.2);
+}
+
+/* Skip to content link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #1890ff;
+  color: white;
+  padding: 8px 16px;
+  z-index: 9999;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .ant-btn {
+    border-width: 2px;
+  }
+
+  .ant-card {
+    border: 2px solid currentColor;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    border-width: 2px;
+  }
+}
+
+/* ========================================
+   CUSTOM COMPONENT STYLES
+   ======================================== */
+
+/* Referee lights visual feedback */
+.referee-light {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.2s ease;
+}
+
+.referee-light.white {
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  border: 3px solid #1890ff;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+.referee-light.red {
+  background: linear-gradient(145deg, #ff4d4f, #cf1322);
+  border: 3px solid #a8071a;
+  box-shadow: 0 0 15px rgba(255, 77, 79, 0.8);
+}
+
+/* Timer display */
+.timer-display {
+  font-family: 'Courier New', monospace;
+  font-size: 4rem;
+  font-weight: bold;
+  text-align: center;
+  padding: 20px;
+  border-radius: 8px;
+  background: linear-gradient(145deg, #f0f0f0, #e6e6e6);
+}
+
+.timer-display.warning {
+  color: #faad14;
+  background: linear-gradient(145deg, #fffbe6, #fff1b8);
+}
+
+.timer-display.danger {
+  color: #ff4d4f;
+  background: linear-gradient(145deg, #fff1f0, #ffccc7);
+}
+
+/* Weight display */
+.weight-display {
+  font-family: 'Courier New', monospace;
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Status badge pulse */
+.status-active {
+  position: relative;
+}
+
+.status-active::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #52c41a;
+  border-radius: 50%;
+  left: -12px;
+  top: 50%;
+  transform: translateY(-50%);
+  animation: pulse 1.5s infinite;
+}
