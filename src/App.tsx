@@ -14,6 +14,7 @@ import { AthleteForm } from './features/athlete/components/AthleteForm';
 import { AthleteImport } from './features/athlete/components/AthleteImport';
 import { WeighInForm } from './features/weigh-in/components/WeighInForm';
 import { FlightManagement } from './features/competition-flow/components/FlightManagement';
+import { ThemeProvider, useThemeContext } from './theme/ThemeContext';
 import './i18n/config';
 
 // Lazy loaded components for better performance
@@ -80,12 +81,14 @@ const JuryPanelWrapper = () => {
   );
 };
 
-function App() {
+// Inner app component that uses theme context
+function AppContent() {
   const { i18n } = useTranslation();
+  const { theme } = useThemeContext();
   const antdLocale = i18n.language === 'fr' ? frFR : enUS;
 
   return (
-    <ConfigProvider locale={antdLocale}>
+    <ConfigProvider locale={antdLocale} theme={theme}>
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>
@@ -133,6 +136,15 @@ function App() {
         </Suspense>
       </BrowserRouter>
     </ConfigProvider>
+  );
+}
+
+// Main App component with theme provider
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

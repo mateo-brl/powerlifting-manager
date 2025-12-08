@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { Card, Button, InputNumber, message, Space, Typography, Tag, Badge } from 'antd';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useAttemptStore } from '../stores/attemptStore';
 import { useBroadcastStore } from '../stores/broadcastStore';
 import { ProtestModal } from './ProtestModal';
 import { PROTEST_DEADLINE_SECONDS } from '../types/protest';
+import { useKeyboardShortcuts } from '../../../shared/hooks/useKeyboardShortcuts';
 
 const { Title, Text } = Typography;
 
@@ -16,14 +17,21 @@ interface AttemptTrackerProps {
   liftType: LiftType;
   competitionId: string;
   onComplete: () => void;
+  keyboardEnabled?: boolean;
 }
 
-export const AttemptTracker = ({
+export interface AttemptTrackerRef {
+  setAllGoodLift: () => void;
+  setAllNoLift: () => void;
+}
+
+export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>(({
   currentAttempt,
   liftType,
   competitionId,
   onComplete,
-}: AttemptTrackerProps) => {
+  keyboardEnabled = true,
+}, ref) => {
   const { t } = useTranslation();
   const { attempts, createAttempt, updateAttempt } = useAttemptStore();
   const { broadcast } = useBroadcastStore();
@@ -87,6 +95,44 @@ export const AttemptTracker = ({
       return newVotes;
     });
   }, []);
+
+  // Functions for keyboard shortcuts
+  const setAllGoodLift = useCallback(() => {
+    if (isAttemptCompleted) return;
+    setRefereeVotes([true, true, true]);
+    message.info('G: ' + t('shortcuts.goodLift'));
+  }, [isAttemptCompleted, t]);
+
+  const setAllNoLift = useCallback(() => {
+    if (isAttemptCompleted) return;
+    setRefereeVotes([false, false, false]);
+    message.info('R: ' + t('shortcuts.noLift'));
+  }, [isAttemptCompleted, t]);
+
+  // Expose methods via ref
+  useImperativeHandle(ref, () => ({
+    setAllGoodLift,
+    setAllNoLift,
+  }), [setAllGoodLift, setAllNoLift]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    shortcuts: [
+      {
+        key: 'g',
+        action: setAllGoodLift,
+        description: t('shortcuts.goodLift'),
+        enabled: !isAttemptCompleted,
+      },
+      {
+        key: 'r',
+        action: setAllNoLift,
+        description: t('shortcuts.noLift'),
+        enabled: !isAttemptCompleted,
+      },
+    ],
+    enabled: keyboardEnabled,
+  });
 
   const canSubmit = refereeVotes.every(vote => vote !== null);
 
@@ -396,4 +442,7 @@ export const AttemptTracker = ({
       )}
     </Card>
   );
-};
+});
+
+// Display name for debugging
+AttemptTracker.displayName = 'AttemptTracker';

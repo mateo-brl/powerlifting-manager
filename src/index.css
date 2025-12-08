@@ -16,3 +16,148 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* Responsive styles */
+
+/* Tablet breakpoint (768px - 991px) */
+@media (max-width: 991px) {
+  /* Reduce padding on smaller screens */
+  .ant-layout-content {
+    padding: 16px !important;
+  }
+
+  .ant-card {
+    margin-bottom: 16px;
+  }
+
+  /* Stack columns on tablet */
+  .ant-row {
+    flex-wrap: wrap;
+  }
+
+  /* Adjust table for tablet */
+  .ant-table {
+    font-size: 13px;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td {
+    padding: 12px 8px;
+  }
+
+  /* Larger touch targets */
+  .ant-btn {
+    min-height: 40px;
+    padding: 8px 16px;
+  }
+
+  .ant-btn-icon-only {
+    min-width: 40px;
+  }
+
+  /* Modal adjustments */
+  .ant-modal {
+    max-width: calc(100vw - 32px);
+    margin: 16px;
+  }
+
+  /* Form adjustments */
+  .ant-form-item {
+    margin-bottom: 16px;
+  }
+}
+
+/* Mobile breakpoint (< 768px) */
+@media (max-width: 767px) {
+  .ant-layout-content {
+    padding: 12px !important;
+  }
+
+  /* Full width cards */
+  .ant-card {
+    margin-left: 0;
+    margin-right: 0;
+    border-radius: 0;
+  }
+
+  /* Stack header content */
+  .ant-layout-header {
+    padding: 0 12px !important;
+    flex-wrap: wrap;
+    height: auto !important;
+    min-height: 64px;
+  }
+
+  /* Menu adjustments */
+  .ant-menu-horizontal {
+    flex-wrap: wrap;
+    line-height: 40px;
+  }
+
+  /* Hide text on small screens, show only icons */
+  .ant-btn > span:not(.anticon) {
+    display: none;
+  }
+
+  .ant-btn-icon-only > span:not(.anticon) {
+    display: inline;
+  }
+
+  /* Table scroll */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  /* Adjust font sizes */
+  .ant-typography h1,
+  .ant-typography h2 {
+    font-size: 1.5rem;
+  }
+
+  .ant-typography h3 {
+    font-size: 1.25rem;
+  }
+}
+
+/* Print styles */
+@media print {
+  .ant-layout-header,
+  .ant-layout-footer,
+  .ant-btn,
+  .no-print {
+    display: none !important;
+  }
+
+  .ant-layout-content {
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  .ant-card {
+    box-shadow: none !important;
+    border: 1px solid #ddd;
+  }
+
+  body {
+    background: white !important;
+  }
+}
+
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+  /* Larger tap targets for touch devices */
+  .ant-btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    min-height: 44px;
+  }
+
+  /* Remove hover effects that don't work on touch */
+  .ant-table-row:hover {
+    background: inherit;
+  }
+}

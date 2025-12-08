@@ -28,7 +28,9 @@
     "menu": {
       "dashboard": "Tableau de bord",
       "competitions": "Compétitions"
-    }
+    },
+    "darkMode": "Mode sombre",
+    "lightMode": "Mode clair"
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -561,6 +563,35 @@
     "goodLift": "BON MOUVEMENT",
     "noLift": "MAUVAIS MOUVEMENT",
     "liveRankings": "Classement en Direct"
+  },
+  "confirm": {
+    "deleteTitle": "Supprimer {{item}} ?",
+    "deleteMessage": "Cette action est irréversible. Toutes les données associées seront perdues.",
+    "endCompetitionTitle": "Terminer la compétition ?",
+    "endCompetitionMessage": "Êtes-vous sûr de vouloir terminer la compétition ? Les classements finaux seront générés.",
+    "endCompetitionOk": "Terminer",
+    "resetTitle": "Réinitialiser {{item}} ?",
+    "resetMessage": "Cette action réinitialisera toutes les données. Êtes-vous sûr ?",
+    "resetOk": "Réinitialiser"
+  },
+  "shortcuts": {
+    "title": "Raccourcis Clavier",
+    "key": "Touche",
+    "action": "Action",
+    "goodLift": "Enregistrer Bon Mouvement",
+    "noLift": "Enregistrer Mauvais Mouvement",
+    "nextAthlete": "Athlète Suivant",
+    "startStopTimer": "Démarrer/Arrêter le Chronomètre",
+    "resetTimer": "Réinitialiser le Chronomètre",
+    "pauseResume": "Pause/Reprendre la Compétition",
+    "showHelp": "Afficher l'Aide",
+    "closeModal": "Fermer la Fenêtre",
+    "hint": "Les raccourcis sont désactivés lors de la saisie dans les champs de texte.",
+    "category": {
+      "competition": "Compétition",
+      "timer": "Chronomètre",
+      "general": "Général"
+    }
   },
   "errors": {
     "generic": "Une erreur s'est produite",

@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert, Modal } from 'antd';
-import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, UsergroupAddOutlined, CheckCircleOutlined } from '@ant-design/icons';
+import { Card, Select, Button, Row, Col, message, Tabs, Space, Typography, Alert, Modal, Tooltip } from 'antd';
+import { PlayCircleOutlined, PauseCircleOutlined, ReloadOutlined, ArrowLeftOutlined, DesktopOutlined, TeamOutlined, UsergroupAddOutlined, CheckCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
@@ -19,6 +19,9 @@ import { LiftType } from '../types';
 import { AttemptOrder } from '../../weigh-in/types';
 import { useCompetitionStore } from '../../competition/stores/competitionStore';
 import { openDisplayWindow } from '../../../shared/utils/tauriWrapper';
+import { useKeyboardShortcuts } from '../../../shared/hooks/useKeyboardShortcuts';
+import { KeyboardShortcutsHelp } from '../../../components/KeyboardShortcutsHelp';
+import { useConfirmAction } from '../../../shared/hooks/useConfirmAction';
 
 const { Title, Text } = Typography;
 
@@ -86,6 +89,11 @@ export const LiveCompetition = () => {
   const [attemptOrder, setAttemptOrder] = useState<AttemptOrder[]>([]);
   const [declarationsModalVisible, setDeclarationsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [shortcutsHelpVisible, setShortcutsHelpVisible] = useState(false);
+  const timerRef = useRef<{ start: () => void; stop: () => void; reset: () => void } | null>(null);
+
+  // Confirmation hook
+  const { confirmEndCompetition, confirmReset } = useConfirmAction();
 
   // Declaration store for weight declarations
   const { getDeclaration } = useDeclarationStore();
@@ -299,20 +307,22 @@ export const LiveCompetition = () => {
 
   // End competition completely
   const handleEndCompetition = () => {
-    setIsCompetitionActive(false);
+    confirmEndCompetition(() => {
+      setIsCompetitionActive(false);
 
-    // Broadcast competition ended
-    broadcast({
-      type: 'competition_ended',
-      data: {
-        competition_id: competitionId || '',
-      },
+      // Broadcast competition ended
+      broadcast({
+        type: 'competition_ended',
+        data: {
+          competition_id: competitionId || '',
+        },
+      });
+
+      message.success(t('live.messages.competitionEnded'));
+
+      // Navigate to results
+      navigate(`/competitions/${competitionId}/results`);
     });
-
-    message.success(t('live.messages.competitionEnded'));
-
-    // Navigate to results
-    navigate(`/competitions/${competitionId}/results`);
   };
 
   const handleChangeLift = (newLift: LiftType) => {
@@ -332,6 +342,54 @@ export const LiveCompetition = () => {
 
   const currentAttempt = attemptOrder[currentIndex];
   const hasAttempts = attemptOrder.length > 0;
+
+  // Toggle pause/resume shortcut handler
+  const handleTogglePause = useCallback(() => {
+    if (isCompetitionActive) {
+      handlePauseCompetition();
+    } else if (hasAttempts) {
+      handleStartCompetition();
+    }
+  }, [isCompetitionActive, hasAttempts]);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    shortcuts: [
+      {
+        key: ' ',
+        action: () => {
+          if (timerRef.current) {
+            // Toggle timer
+            message.info(t('shortcuts.startStopTimer'));
+          }
+        },
+        description: t('shortcuts.startStopTimer'),
+      },
+      {
+        key: 'n',
+        action: handleNextAttempt,
+        description: t('shortcuts.nextAthlete'),
+        enabled: isCompetitionActive,
+      },
+      {
+        key: 'p',
+        action: handleTogglePause,
+        description: t('shortcuts.pauseResume'),
+      },
+      {
+        key: '?',
+        shift: true,
+        action: () => setShortcutsHelpVisible(true),
+        description: t('shortcuts.showHelp'),
+      },
+      {
+        key: 'Escape',
+        action: () => setShortcutsHelpVisible(false),
+        description: t('shortcuts.closeModal'),
+      },
+    ],
+    enabled: true,
+  });
 
   const broadcastCurrentState = () => {
     const comp = competitions.find(c => c.id === competitionId);
@@ -505,12 +563,20 @@ export const LiveCompetition = () => {
           </div>
         }
         extra={
-          <Button
-            icon={<ArrowLeftOutlined />}
-            onClick={() => navigate(`/competitions/${competitionId}`)}
-          >
-            {t('common.back')}
-          </Button>
+          <Space>
+            <Tooltip title={t('shortcuts.title') + ' (?)'}>
+              <Button
+                icon={<QuestionCircleOutlined />}
+                onClick={() => setShortcutsHelpVisible(true)}
+              />
+            </Tooltip>
+            <Button
+              icon={<ArrowLeftOutlined />}
+              onClick={() => navigate(`/competitions/${competitionId}`)}
+            >
+              {t('common.back')}
+            </Button>
+          </Space>
         }
       >
         {competitionWeighIns.length === 0 && (
@@ -637,8 +703,10 @@ export const LiveCompetition = () => {
                     <Button
                       icon={<ReloadOutlined />}
                       onClick={() => {
-                        setCurrentIndex(0);
-                        message.success(t('live.messages.reset'));
+                        confirmReset(t('live.attemptOrder'), () => {
+                          setCurrentIndex(0);
+                          message.success(t('live.messages.reset'));
+                        });
                       }}
                       block
                     >
@@ -692,6 +760,12 @@ export const LiveCompetition = () => {
           currentLift={currentLift}
         />
       </Modal>
+
+      {/* Keyboard Shortcuts Help Modal */}
+      <KeyboardShortcutsHelp
+        open={shortcutsHelpVisible}
+        onClose={() => setShortcutsHelpVisible(false)}
+      />
     </div>
   );
 };

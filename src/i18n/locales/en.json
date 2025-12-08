@@ -28,7 +28,9 @@
     "menu": {
       "dashboard": "Dashboard",
       "competitions": "Competitions"
-    }
+    },
+    "darkMode": "Dark mode",
+    "lightMode": "Light mode"
   },
   "dashboard": {
     "title": "Dashboard",
@@ -561,6 +563,35 @@
     "goodLift": "GOOD LIFT",
     "noLift": "NO LIFT",
     "liveRankings": "Live Rankings"
+  },
+  "confirm": {
+    "deleteTitle": "Delete {{item}}?",
+    "deleteMessage": "This action cannot be undone. All associated data will be lost.",
+    "endCompetitionTitle": "End Competition?",
+    "endCompetitionMessage": "Are you sure you want to end the competition? Final rankings will be generated.",
+    "endCompetitionOk": "End Competition",
+    "resetTitle": "Reset {{item}}?",
+    "resetMessage": "This will reset all data. Are you sure?",
+    "resetOk": "Reset"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "key": "Key",
+    "action": "Action",
+    "goodLift": "Record Good Lift",
+    "noLift": "Record No Lift",
+    "nextAthlete": "Next Athlete",
+    "startStopTimer": "Start/Stop Timer",
+    "resetTimer": "Reset Timer",
+    "pauseResume": "Pause/Resume Competition",
+    "showHelp": "Show Help",
+    "closeModal": "Close Modal",
+    "hint": "Shortcuts are disabled when typing in text fields.",
+    "category": {
+      "competition": "Competition",
+      "timer": "Timer",
+      "general": "General"
+    }
   },
   "errors": {
     "generic": "An error occurred",
