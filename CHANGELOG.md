@@ -11,17 +11,17 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 
 ## [Unreleased]
 
+---
+
+## [0.1.0] - 2025-12-08
+
 ### Added
+
+#### CI/CD & Distribution
 - Pipeline CI/CD avec GitHub Actions
 - Auto-updater intégré avec interface utilisateur
 - Génération automatique du changelog (git-cliff)
 - Checksums SHA256 pour les releases
-
----
-
-## [0.1.0] - 2024-12-08
-
-### Added
 
 #### Core Features
 - Gestion complète des compétitions (CRUD)
@@ -70,6 +70,15 @@ et ce projet adhère au [Semantic Versioning](https://semver.org/lang/fr/).
 - Build Windows (NSIS installer)
 - Build macOS (DMG)
 - Build Linux (DEB, AppImage)
+
+### Changed
+- Amélioration du thème UI et de l'ordre des flux de compétition
+
+### Fixed
+- Correction du passage automatique à l'athlète suivant après validation
+- Amélioration du support des thèmes et de la persistance des déclarations de poids
+- Correction de l'import redondant de chrono (avertissement clippy)
+- Correction du nom de l'action rust-toolchain dans les workflows CI
 
 ---
 
