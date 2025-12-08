@@ -62,12 +62,12 @@ export const JuryPanel = ({ competitionId }: JuryPanelProps) => {
   useEffect(() => {
     loadData();
 
-    // Auto-refresh every 5 seconds if there are pending protests
+    // Auto-refresh every 15 seconds if there are pending protests (reduced from 5s for performance)
     const interval = setInterval(() => {
       if (pendingProtests.length > 0 || activeTab === 'pending') {
         loadPendingProtests();
       }
-    }, 5000);
+    }, 15000);
 
     return () => clearInterval(interval);
   }, [loadData, loadPendingProtests, pendingProtests.length, activeTab]);

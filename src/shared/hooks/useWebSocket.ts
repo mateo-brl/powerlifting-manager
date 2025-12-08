@@ -54,7 +54,7 @@ export const useWebSocket = (url: string | null, options: UseWebSocketOptions = 
       const ws = new WebSocket(url);
 
       ws.onopen = () => {
-        console.log('[WebSocket] Connected');
+        
         setStatus(WebSocketStatus.CONNECTED);
         reconnectAttemptsRef.current = 0;
         clearReconnectTimeout();
@@ -78,7 +78,7 @@ export const useWebSocket = (url: string | null, options: UseWebSocketOptions = 
       };
 
       ws.onclose = () => {
-        console.log('[WebSocket] Disconnected');
+        
         setStatus(WebSocketStatus.DISCONNECTED);
         onDisconnect?.();
 

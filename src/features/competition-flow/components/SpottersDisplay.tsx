@@ -30,7 +30,7 @@ export const SpottersDisplay = () => {
 
   // Handler for processing events (useCallback to avoid closure issues)
   const handleEvent = useCallback((event: WebSocketEvent) => {
-    console.log('[SpottersDisplay] Received event:', event.type);
+    
 
     if (event.type === 'competition_started') {
       setCompetitionName(event.data.competition_name);
@@ -55,10 +55,10 @@ export const SpottersDisplay = () => {
     {
       onMessage: handleEvent,
       onConnect: () => {
-        console.log('[SpottersDisplay] Connected to WebSocket server');
+        
       },
       onDisconnect: () => {
-        console.log('[SpottersDisplay] Disconnected from WebSocket server');
+        
       },
     }
   );
@@ -68,10 +68,10 @@ export const SpottersDisplay = () => {
     if (!isBrowserMode()) return;
 
     const channel = new BroadcastChannel('powerlifting-broadcast');
-    console.log('[SpottersDisplay] Using BroadcastChannel for browser mode');
+    
 
     channel.onmessage = (event) => {
-      console.log('[SpottersDisplay] BroadcastChannel received:', event.data);
+      
       handleEvent(event.data as WebSocketEvent);
     };
 

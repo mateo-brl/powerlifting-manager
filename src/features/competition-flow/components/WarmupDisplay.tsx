@@ -53,7 +53,7 @@ export const WarmupDisplay = () => {
 
   // Handler for processing events (useCallback to avoid closure issues)
   const handleEvent = useCallback((event: WebSocketEvent) => {
-    console.log('[WarmupDisplay] Received event:', event.type);
+    
 
     if (event.type === 'competition_started') {
       setWarmupState({
@@ -90,10 +90,10 @@ export const WarmupDisplay = () => {
     {
       onMessage: handleEvent,
       onConnect: () => {
-        console.log('[WarmupDisplay] Connected to WebSocket server');
+        
       },
       onDisconnect: () => {
-        console.log('[WarmupDisplay] Disconnected from WebSocket server');
+        
       },
     }
   );
@@ -103,10 +103,10 @@ export const WarmupDisplay = () => {
     if (!isBrowserMode()) return;
 
     const channel = new BroadcastChannel('powerlifting-broadcast');
-    console.log('[WarmupDisplay] Using BroadcastChannel for browser mode');
+    
 
     channel.onmessage = (event) => {
-      console.log('[WarmupDisplay] BroadcastChannel received:', event.data);
+      
       handleEvent(event.data as WebSocketEvent);
     };
 

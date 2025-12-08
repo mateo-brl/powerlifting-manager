@@ -28,19 +28,14 @@ export const Timer = ({ onComplete }: TimerProps) => {
   }, [onComplete, broadcast]);
 
   useEffect(() => {
-    console.log('[Timer] useEffect triggered - isRunning:', isRunning);
     if (isRunning) {
-      console.log('[Timer] Starting interval');
       intervalRef.current = setInterval(() => {
-        console.log('[Timer] Interval tick');
         setTimeLeft(prev => {
           if (prev <= 0) {
-            console.log('[Timer] Already at 0, stopping');
             return prev;
           }
 
           const newTime = prev - 1;
-          console.log('[Timer] Decrementing from', prev, 'to', newTime);
 
           // Broadcast timer update
           broadcastRef.current({

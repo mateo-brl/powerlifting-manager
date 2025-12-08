@@ -22,8 +22,10 @@ const LOG_LEVELS: Record<LogLevel, number> = {
 };
 
 // Current minimum log level (can be configured)
-// Default to 'info' in production, can be changed at runtime
-let currentLogLevel: LogLevel = 'info';
+// Set to 'error' in production to disable verbose logging
+const IS_PRODUCTION = typeof window !== 'undefined' &&
+  (window.location.hostname !== 'localhost' && !window.location.hostname.includes('127.0.0.1'));
+let currentLogLevel: LogLevel = IS_PRODUCTION ? 'error' : 'info';
 
 // Log history for debugging
 const logHistory: LogEntry[] = [];

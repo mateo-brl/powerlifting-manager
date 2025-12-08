@@ -87,11 +87,9 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
   }, [attemptCompletedTimestamp]);
 
   const handleRefereeVote = useCallback((refereeIndex: 0 | 1 | 2, decision: boolean) => {
-    console.log('[AttemptTracker] Referee', refereeIndex + 1, 'voted:', decision ? 'Good Lift' : 'No Lift');
     setRefereeVotes(prevVotes => {
       const newVotes = [...prevVotes] as [boolean | null, boolean | null, boolean | null];
       newVotes[refereeIndex] = decision;
-      console.log('[AttemptTracker] New votes:', newVotes);
       return newVotes;
     });
   }, []);
@@ -137,14 +135,12 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
   const canSubmit = refereeVotes.every(vote => vote !== null);
 
   const handleSubmit = async () => {
-    console.log('[AttemptTracker] handleSubmit called - canSubmit:', canSubmit);
     if (!canSubmit) {
       message.warning(t('live.referee.vote'));
       return;
     }
 
     setIsSubmitting(true);
-    console.log('[AttemptTracker] Submitting attempt with votes:', refereeVotes);
     try {
       // Create or update attempt
       if (!attemptId) {

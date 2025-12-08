@@ -14,7 +14,6 @@ const isBrowserMode = () => {
 // Initialize BroadcastChannel in browser mode
 if (isBrowserMode() && typeof BroadcastChannel !== 'undefined') {
   broadcastChannel = new BroadcastChannel(CHANNEL_NAME);
-  console.log('[BroadcastChannel] Initialized for browser mode');
 }
 
 interface BroadcastState {
@@ -36,8 +35,6 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
   listeners: new Set(),
 
   broadcast: (event: WebSocketEvent) => {
-    console.log('[Broadcast] Event:', event.type, event.data);
-
     set((state) => ({
       currentEvent: event,
       eventHistory: [...state.eventHistory.slice(-99), event], // Keep last 100 events
@@ -48,8 +45,8 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
     listeners.forEach((callback) => {
       try {
         callback(event);
-      } catch (error) {
-        console.error('[Broadcast] Listener error:', error);
+      } catch (_error) {
+        // Silently ignore listener errors in production
       }
     });
 
@@ -58,14 +55,12 @@ export const useBroadcastStore = create<BroadcastState>((set, get) => ({
       // Use BroadcastChannel in browser mode
       if (broadcastChannel) {
         broadcastChannel.postMessage(event);
-        console.log('[BroadcastChannel] Posted message:', event.type);
       }
     } else {
       // Use Tauri WebSocket in app mode
-      invoke('broadcast_websocket_event', { event })
-        .catch((error) => {
-          console.error('[Broadcast] WebSocket error:', error);
-        });
+      invoke('broadcast_websocket_event', { event }).catch(() => {
+        // Silently ignore WebSocket errors
+      });
     }
   },
 

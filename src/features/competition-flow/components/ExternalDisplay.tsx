@@ -33,7 +33,7 @@ export const ExternalDisplay = () => {
 
   // Handler for processing events (useCallback to avoid closure issues)
   const handleEvent = useCallback((event: WebSocketEvent) => {
-    console.log('[ExternalDisplay] Received event:', event.type);
+    
 
     switch (event.type) {
       case 'competition_started':
@@ -69,15 +69,8 @@ export const ExternalDisplay = () => {
         break;
 
       case 'timer_update':
-        console.log('[ExternalDisplay] Timer update:', event.data.seconds_remaining, 'running:', event.data.is_running);
-        setTimerSeconds(prevSeconds => {
-          console.log('[ExternalDisplay] Setting timer from', prevSeconds, 'to', event.data.seconds_remaining);
-          return event.data.seconds_remaining;
-        });
-        setTimerRunning(prevRunning => {
-          console.log('[ExternalDisplay] Setting timerRunning from', prevRunning, 'to', event.data.is_running);
-          return event.data.is_running;
-        });
+        setTimerSeconds(event.data.seconds_remaining);
+        setTimerRunning(event.data.is_running);
         break;
     }
   }, []);
@@ -88,11 +81,11 @@ export const ExternalDisplay = () => {
     {
       onMessage: handleEvent,
       onConnect: () => {
-        console.log('[ExternalDisplay] Connected to WebSocket server');
+        
         setConnectionMode('websocket');
       },
       onDisconnect: () => {
-        console.log('[ExternalDisplay] Disconnected from WebSocket server');
+        
         if (!isBrowserMode()) {
           setConnectionMode('disconnected');
         }
@@ -106,10 +99,10 @@ export const ExternalDisplay = () => {
 
     const channel = new BroadcastChannel('powerlifting-broadcast');
     setConnectionMode('broadcast');
-    console.log('[ExternalDisplay] Using BroadcastChannel for browser mode');
+    
 
     channel.onmessage = (event) => {
-      console.log('[ExternalDisplay] BroadcastChannel received:', event.data);
+      
       handleEvent(event.data as WebSocketEvent);
     };
 
