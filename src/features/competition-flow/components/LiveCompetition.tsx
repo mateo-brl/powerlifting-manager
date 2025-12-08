@@ -89,6 +89,7 @@ export const LiveCompetition = () => {
   const [attemptOrder, setAttemptOrder] = useState<AttemptOrder[]>([]);
   const [declarationsModalVisible, setDeclarationsModalVisible] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [orderVersion, setOrderVersion] = useState(0); // Used to manually trigger order recalculation
   const [shortcutsHelpVisible, setShortcutsHelpVisible] = useState(false);
   const timerRef = useRef<{ start: () => void; stop: () => void; reset: () => void } | null>(null);
 
@@ -188,7 +189,7 @@ export const LiveCompetition = () => {
     if (currentIndex >= ordered.length) {
       setCurrentIndex(0);
     }
-  }, [currentLift, attempts, competitionAthletes, competitionWeighIns, currentIndex, getDeclaration, refreshKey]);
+  }, [currentLift, competitionAthletes, competitionWeighIns, getDeclaration, refreshKey, orderVersion]);
 
   const handleStartCompetition = () => {
     if (attemptOrder.length === 0) {
@@ -259,6 +260,9 @@ export const LiveCompetition = () => {
   };
 
   const handleNextAttempt = () => {
+    // Trigger order recalculation first (to account for the completed attempt)
+    setOrderVersion(v => v + 1);
+
     if (currentIndex < attemptOrder.length - 1) {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
