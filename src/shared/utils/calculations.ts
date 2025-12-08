@@ -1,32 +1,27 @@
 /**
  * Calculs de scores de powerlifting
- * Formules IPF GL Points, Wilks, et DOTS
+ * Formules IPF GL Points (Goodlift), Wilks, et DOTS
  */
 
-interface IPFCoefficients {
-  A: number;
-  B: number;
-  C: number;
-  D: number;
-}
-
-const IPF_GL_COEFFICIENTS: Record<'M' | 'F', IPFCoefficients> = {
+/**
+ * Coefficients officiels IPF GL (Goodlift) 2020
+ * Formule: GL = Total × 100 / (A - B × e^(-C × Bodyweight))
+ */
+const IPF_GL_COEFFICIENTS = {
   M: {
-    A: -1055.41,
-    B: 0.633145,
-    C: -0.0001,
-    D: 0.0000001,
+    A: 1199.72839,
+    B: 1025.18162,
+    C: 0.00921,
   },
   F: {
-    A: -125.44,
-    B: 0.0796,
-    C: -0.0000115,
-    D: 0.000000015,
+    A: 610.32796,
+    B: 1045.59282,
+    C: 0.03048,
   },
 };
 
 /**
- * Calcule les points IPF GL (formule 2020)
+ * Calcule les points IPF GL / Goodlift (formule officielle 2020)
  * @param total - Total soulevé en kg
  * @param bodyweight - Poids corporel en kg
  * @param gender - Sexe ('M' ou 'F')
@@ -40,14 +35,12 @@ export function calculateIPFGLPoints(
   if (total <= 0 || bodyweight <= 0) return 0;
 
   const c = IPF_GL_COEFFICIENTS[gender];
-  const glPoints =
-    100 /
-    (c.A +
-      c.B * bodyweight +
-      c.C * Math.pow(bodyweight, 2) +
-      c.D * Math.pow(bodyweight, 3));
+  const denominator = c.A - c.B * Math.exp(-c.C * bodyweight);
 
-  return Number((total * glPoints).toFixed(2));
+  if (denominator <= 0) return 0;
+
+  const glPoints = (100 / denominator) * total;
+  return Number(glPoints.toFixed(2));
 }
 
 /**
@@ -88,6 +81,8 @@ export function calculateDOTS(
     coefficients.C * Math.pow(bodyweight, 2) +
     coefficients.B * Math.pow(bodyweight, 3) +
     coefficients.A * Math.pow(bodyweight, 4);
+
+  if (denominator === 0 || !isFinite(denominator)) return 0;
 
   const dots = (500 / denominator) * total;
   return Number(dots.toFixed(2));
@@ -135,6 +130,8 @@ export function calculateWilks(
     coefficients.d * Math.pow(bodyweight, 3) +
     coefficients.e * Math.pow(bodyweight, 4) +
     coefficients.f * Math.pow(bodyweight, 5);
+
+  if (denominator === 0 || !isFinite(denominator)) return 0;
 
   const coefficient = 500 / denominator;
   const wilks = total * coefficient;
@@ -187,6 +184,11 @@ export function isWeightClassValid(
 ): boolean {
   const maxWeight = parseFloat(weightClass.replace('+', ''));
 
+  // Validate parsed weight class
+  if (isNaN(maxWeight) || maxWeight <= 0) {
+    return false;
+  }
+
   if (weightClass.includes('+')) {
     return bodyweight > maxWeight;
   }
@@ -198,6 +200,12 @@ export function isWeightClassValid(
       : [47, 52, 57, 63, 69, 76, 84];
 
   const index = weightClasses.indexOf(maxWeight);
+
+  // Weight class not in standard list - allow but validate as 0-max range
+  if (index === -1) {
+    return bodyweight > 0 && bodyweight <= maxWeight;
+  }
+
   const minWeight = index > 0 ? weightClasses[index - 1] : 0;
 
   return bodyweight > minWeight && bodyweight <= maxWeight;

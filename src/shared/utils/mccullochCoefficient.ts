@@ -2,64 +2,86 @@
  * Coefficient McCulloch pour ajustement d'âge Masters
  * Utilisé pour normaliser les performances des athlètes Masters selon leur âge
  *
- * Formule : A + B×age + C×age² + D×age³ + E×age⁴
- * où les coefficients varient selon le genre
+ * Table de coefficients officiels McCulloch par tranche d'âge
  */
 
-interface McCullochCoefficients {
-  A: number;
-  B: number;
-  C: number;
-  D: number;
-  E: number;
-}
-
-// Coefficients officiels McCulloch pour hommes
-const MALE_COEFFICIENTS: McCullochCoefficients = {
-  A: 0.0000000140,
-  B: 0.0000084716,
-  C: -0.0019419963,
-  D: 0.2144950357,
-  E: -9.9881273704,
-};
-
-// Coefficients officiels McCulloch pour femmes
-const FEMALE_COEFFICIENTS: McCullochCoefficients = {
-  A: 0.0000001072,
-  B: -0.0000090614,
-  C: 0.0002697700,
-  D: -0.0341371000,
-  E: 1.6662735000,
+// Table officielle des coefficients McCulloch par âge
+// Source: IPF/USAPL Age Coefficients
+const MCCULLOCH_TABLE: Record<number, number> = {
+  40: 1.000,
+  41: 1.010,
+  42: 1.020,
+  43: 1.031,
+  44: 1.043,
+  45: 1.055,
+  46: 1.068,
+  47: 1.082,
+  48: 1.097,
+  49: 1.113,
+  50: 1.130,
+  51: 1.147,
+  52: 1.165,
+  53: 1.184,
+  54: 1.204,
+  55: 1.225,
+  56: 1.246,
+  57: 1.268,
+  58: 1.291,
+  59: 1.315,
+  60: 1.340,
+  61: 1.366,
+  62: 1.393,
+  63: 1.421,
+  64: 1.450,
+  65: 1.480,
+  66: 1.511,
+  67: 1.543,
+  68: 1.576,
+  69: 1.610,
+  70: 1.645,
+  71: 1.681,
+  72: 1.718,
+  73: 1.756,
+  74: 1.795,
+  75: 1.835,
+  76: 1.876,
+  77: 1.918,
+  78: 1.961,
+  79: 2.005,
+  80: 2.050,
+  81: 2.096,
+  82: 2.143,
+  83: 2.191,
+  84: 2.240,
+  85: 2.290,
+  86: 2.341,
+  87: 2.393,
+  88: 2.446,
+  89: 2.500,
+  90: 2.555,
 };
 
 /**
- * Calcule le coefficient McCulloch pour un âge et un genre donnés
+ * Calcule le coefficient McCulloch pour un âge donné
+ * Les coefficients sont identiques pour hommes et femmes
  *
  * @param age - Âge de l'athlète (doit être >= 40 ans)
- * @param gender - Genre ('M' ou 'F')
+ * @param _gender - Genre (non utilisé, gardé pour compatibilité)
  * @returns Coefficient McCulloch (multiplicateur)
  */
 export function calculateMcCullochCoefficient(
   age: number,
-  gender: 'M' | 'F'
+  _gender: 'M' | 'F'
 ): number {
   // Pas d'ajustement pour les athlètes de moins de 40 ans
   if (age < 40) {
     return 1.0;
   }
 
-  const coef = gender === 'M' ? MALE_COEFFICIENTS : FEMALE_COEFFICIENTS;
+  // Pour les âges > 90, utiliser le coefficient de 90 ans
+  const lookupAge = Math.min(Math.floor(age), 90);
 
-  // Formule polynomiale de degré 4
-  const coefficient =
-    coef.A * Math.pow(age, 4) +
-    coef.B * Math.pow(age, 3) +
-    coef.C * Math.pow(age, 2) +
-    coef.D * age +
-    coef.E;
-
-  // Le coefficient doit être >= 1.0
-  return Math.max(1.0, coefficient);
+  return MCCULLOCH_TABLE[lookupAge] || 1.0;
 }
 
 /**

@@ -1,9 +1,10 @@
-import { ConfigProvider, Card, Button } from 'antd';
+import { ConfigProvider, Card, Button, Spin } from 'antd';
 import frFR from 'antd/locale/fr_FR';
 import enUS from 'antd/locale/en_US';
 import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftOutlined } from '@ant-design/icons';
+import { Suspense, lazy } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
 import { CompetitionList } from './features/competition/components/CompetitionList';
@@ -13,15 +14,24 @@ import { AthleteForm } from './features/athlete/components/AthleteForm';
 import { AthleteImport } from './features/athlete/components/AthleteImport';
 import { WeighInForm } from './features/weigh-in/components/WeighInForm';
 import { FlightManagement } from './features/competition-flow/components/FlightManagement';
-import { LiveCompetition } from './features/competition-flow/components/LiveCompetition';
-import { Rankings } from './features/competition-flow/components/Rankings';
-import { WeightDeclarations } from './features/competition-flow/components/WeightDeclarations';
-import { ExternalDisplay } from './features/competition-flow/components/ExternalDisplay';
-import { SpottersDisplay } from './features/competition-flow/components/SpottersDisplay';
-import { WarmupDisplay } from './features/competition-flow/components/WarmupDisplay';
-import { JuryPanel } from './features/competition-flow/components/JuryPanel';
-import { EquipmentValidationList } from './features/weigh-in/components/EquipmentValidationList';
 import './i18n/config';
+
+// Lazy loaded components for better performance
+const LiveCompetition = lazy(() => import('./features/competition-flow/components/LiveCompetition').then(m => ({ default: m.LiveCompetition })));
+const Rankings = lazy(() => import('./features/competition-flow/components/Rankings').then(m => ({ default: m.Rankings })));
+const WeightDeclarations = lazy(() => import('./features/competition-flow/components/WeightDeclarations').then(m => ({ default: m.WeightDeclarations })));
+const ExternalDisplay = lazy(() => import('./features/competition-flow/components/ExternalDisplay').then(m => ({ default: m.ExternalDisplay })));
+const SpottersDisplay = lazy(() => import('./features/competition-flow/components/SpottersDisplay').then(m => ({ default: m.SpottersDisplay })));
+const WarmupDisplay = lazy(() => import('./features/competition-flow/components/WarmupDisplay').then(m => ({ default: m.WarmupDisplay })));
+const JuryPanel = lazy(() => import('./features/competition-flow/components/JuryPanel').then(m => ({ default: m.JuryPanel })));
+const EquipmentValidationList = lazy(() => import('./features/weigh-in/components/EquipmentValidationList').then(m => ({ default: m.EquipmentValidationList })));
+
+// Loading spinner for lazy components
+const PageLoader = () => (
+  <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '200px' }}>
+    <Spin size="large" />
+  </div>
+);
 
 // Wrapper components for routes that need competitionId from params
 const EquipmentValidationWrapper = () => {
@@ -77,48 +87,50 @@ function App() {
   return (
     <ConfigProvider locale={antdLocale}>
       <BrowserRouter>
-        <Routes>
-          {/* External Display Routes (fullscreen, no layout) */}
-          <Route path="/display" element={<ExternalDisplay />} />
-          <Route path="/spotters" element={<SpottersDisplay />} />
-          <Route path="/warmup" element={<WarmupDisplay />} />
+        <Suspense fallback={<PageLoader />}>
+          <Routes>
+            {/* External Display Routes (fullscreen, no layout) */}
+            <Route path="/display" element={<ExternalDisplay />} />
+            <Route path="/spotters" element={<SpottersDisplay />} />
+            <Route path="/warmup" element={<WarmupDisplay />} />
 
-          {/* Main App Routes */}
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Dashboard />} />
+            {/* Main App Routes */}
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Dashboard />} />
 
-            {/* Competition Routes */}
-            <Route path="competitions">
-              <Route index element={<CompetitionList />} />
-              <Route path="new" element={<CompetitionForm />} />
-              <Route path=":id" element={<CompetitionDetail />} />
-              <Route path=":id/edit" element={<CompetitionForm />} />
+              {/* Competition Routes */}
+              <Route path="competitions">
+                <Route index element={<CompetitionList />} />
+                <Route path="new" element={<CompetitionForm />} />
+                <Route path=":id" element={<CompetitionDetail />} />
+                <Route path=":id/edit" element={<CompetitionForm />} />
 
-              {/* Athlete Routes (nested under competition) */}
-              <Route path=":competitionId/athletes">
-                <Route path="new" element={<AthleteForm />} />
-                <Route path="import" element={<AthleteImport />} />
-                <Route path=":athleteId/edit" element={<AthleteForm />} />
+                {/* Athlete Routes (nested under competition) */}
+                <Route path=":competitionId/athletes">
+                  <Route path="new" element={<AthleteForm />} />
+                  <Route path="import" element={<AthleteImport />} />
+                  <Route path=":athleteId/edit" element={<AthleteForm />} />
+                </Route>
+
+                {/* Phase 2: Competition Flow Routes */}
+                <Route path=":competitionId/weigh-in" element={<WeighInForm />} />
+                <Route path=":competitionId/flights" element={<FlightManagement />} />
+
+                {/* Phase 3: Live Competition Routes */}
+                <Route path=":competitionId/live" element={<LiveCompetition />} />
+                <Route path=":competitionId/declarations" element={<WeightDeclarations />} />
+                <Route path=":competitionId/rankings" element={<Rankings />} />
+
+                {/* Phase 4: Equipment & Protests Routes */}
+                <Route path=":competitionId/equipment" element={<EquipmentValidationWrapper />} />
+                <Route path=":competitionId/jury" element={<JuryPanelWrapper />} />
               </Route>
 
-              {/* Phase 2: Competition Flow Routes */}
-              <Route path=":competitionId/weigh-in" element={<WeighInForm />} />
-              <Route path=":competitionId/flights" element={<FlightManagement />} />
-
-              {/* Phase 3: Live Competition Routes */}
-              <Route path=":competitionId/live" element={<LiveCompetition />} />
-              <Route path=":competitionId/declarations" element={<WeightDeclarations />} />
-              <Route path=":competitionId/rankings" element={<Rankings />} />
-
-              {/* Phase 4: Equipment & Protests Routes */}
-              <Route path=":competitionId/equipment" element={<EquipmentValidationWrapper />} />
-              <Route path=":competitionId/jury" element={<JuryPanelWrapper />} />
+              {/* Catch-all redirect */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
-
-            {/* Catch-all redirect */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Route>
-        </Routes>
+          </Routes>
+        </Suspense>
       </BrowserRouter>
     </ConfigProvider>
   );
