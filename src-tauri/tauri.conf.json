@@ -10,7 +10,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": ["deb", "appimage", "nsis"],
+    "targets": ["deb", "appimage", "nsis", "dmg"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
@@ -20,20 +20,36 @@
     ],
     "resources": [],
     "externalBin": [],
-    "copyright": "",
+    "copyright": "© 2024-2025 Powerlifting Manager",
     "category": "Utility",
     "shortDescription": "Gestion de compétitions de powerlifting",
-    "longDescription": "Application professionnelle pour gérer des compétitions de powerlifting",
+    "longDescription": "Application professionnelle pour gérer des compétitions de powerlifting conformes IPF. Inclut la gestion des athlètes, pesées, compétitions en direct, calculs de scores (IPF GL, DOTS, Wilks) et exports officiels.",
+    "publisher": "Powerlifting Manager",
     "linux": {
       "deb": {
-        "depends": []
+        "depends": [],
+        "section": "misc"
+      },
+      "appimage": {
+        "bundleMediaFramework": true
       }
+    },
+    "macOS": {
+      "minimumSystemVersion": "10.15",
+      "signingIdentity": null,
+      "entitlements": null
     },
     "windows": {
       "certificateThumbprint": null,
       "digestAlgorithm": "sha256",
-      "timestampUrl": ""
-    }
+      "timestampUrl": "",
+      "nsis": {
+        "installMode": "currentUser",
+        "languages": ["English", "French"],
+        "displayLanguageSelector": true
+      }
+    },
+    "createUpdaterArtifacts": true
   },
   "app": {
     "windows": [
@@ -56,6 +72,12 @@
   "plugins": {
     "sql": {
       "preload": ["sqlite:powerlifting.db"]
+    },
+    "updater": {
+      "endpoints": [
+        "https://github.com/mateo-brl/powerlifting-manager/releases/latest/download/latest.json"
+      ],
+      "pubkey": ""
     }
   }
 }

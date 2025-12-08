@@ -593,6 +593,18 @@
       "general": "General"
     }
   },
+  "update": {
+    "title": "Update Available",
+    "newVersion": "New version",
+    "releaseNotes": "Release notes",
+    "downloading": "Downloading",
+    "downloadInstall": "Download and Install",
+    "restartNow": "Restart Now",
+    "later": "Later",
+    "remindLater": "You will be reminded on the next startup",
+    "downloadError": "Failed to download update",
+    "relaunchError": "Failed to restart application"
+  },
   "errors": {
     "generic": "An error occurred",
     "networkError": "Network error. Please check your connection",

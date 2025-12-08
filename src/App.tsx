@@ -7,6 +7,7 @@ import { ArrowLeftOutlined } from '@ant-design/icons';
 import { Suspense, lazy } from 'react';
 import { Layout } from './components/Layout';
 import { Dashboard } from './components/Dashboard';
+import { UpdateChecker } from './components/UpdateChecker';
 import { CompetitionList } from './features/competition/components/CompetitionList';
 import { CompetitionForm } from './features/competition/components/CompetitionForm';
 import { CompetitionDetail } from './features/competition/components/CompetitionDetail';
@@ -89,6 +90,7 @@ function AppContent() {
 
   return (
     <ConfigProvider locale={antdLocale} theme={theme}>
+      <UpdateChecker />
       <BrowserRouter>
         <Suspense fallback={<PageLoader />}>
           <Routes>

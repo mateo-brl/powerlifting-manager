@@ -593,6 +593,18 @@
       "general": "Général"
     }
   },
+  "update": {
+    "title": "Mise à jour disponible",
+    "newVersion": "Nouvelle version",
+    "releaseNotes": "Notes de version",
+    "downloading": "Téléchargement en cours",
+    "downloadInstall": "Télécharger et installer",
+    "restartNow": "Redémarrer maintenant",
+    "later": "Plus tard",
+    "remindLater": "Vous serez rappelé lors du prochain démarrage",
+    "downloadError": "Échec du téléchargement de la mise à jour",
+    "relaunchError": "Échec du redémarrage de l'application"
+  },
   "errors": {
     "generic": "Une erreur s'est produite",
     "networkError": "Erreur réseau. Veuillez vérifier votre connexion",
