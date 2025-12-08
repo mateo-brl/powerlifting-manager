@@ -1,4 +1,4 @@
-import { Table, Card, Tag, Badge } from 'antd';
+import { Table, Card, Tag, Badge, theme } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { useTranslation } from 'react-i18next';
 import { AttemptOrder } from '../../weigh-in/types';
@@ -12,6 +12,7 @@ interface AttemptOrderListProps {
 
 export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOrderListProps) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const columns: ColumnsType<AttemptOrder & { index: number }> = [
     {
       title: t('rankings.rank'),
@@ -94,22 +95,22 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
     <div>
       {currentAttempt && (
         <Card
-          style={{ marginBottom: 16, background: '#fffbe6', borderColor: '#faad14' }}
+          style={{ marginBottom: 16, background: token.colorWarningBg, borderColor: token.colorWarning }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
-              <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
+              <div style={{ fontSize: 12, color: token.colorTextSecondary, marginBottom: 4 }}>
                 {t('live.currentAthlete').toUpperCase()}
               </div>
-              <div style={{ fontSize: 24, fontWeight: 'bold' }}>
+              <div style={{ fontSize: 24, fontWeight: 'bold', color: token.colorText }}>
                 {currentAttempt.athlete_name}
               </div>
             </div>
             <div style={{ textAlign: 'right' }}>
-              <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
+              <div style={{ fontSize: 12, color: token.colorTextSecondary, marginBottom: 4 }}>
                 {liftType.toUpperCase()} - {t('live.attempt.number', { number: currentAttempt.attempt_number })}
               </div>
-              <div style={{ fontSize: 32, fontWeight: 'bold', color: '#faad14' }}>
+              <div style={{ fontSize: 32, fontWeight: 'bold', color: token.colorWarning }}>
                 {currentAttempt.weight_kg} kg
               </div>
             </div>
@@ -129,15 +130,15 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
                 key={attempt.athlete_id + attempt.attempt_number}
                 style={{
                   padding: 8,
-                  background: '#f5f5f5',
-                  borderRadius: 4,
+                  background: token.colorBgLayout,
+                  borderRadius: token.borderRadius,
                   minWidth: 150,
                 }}
               >
-                <div style={{ fontSize: 12, color: '#8c8c8c' }}>
+                <div style={{ fontSize: 12, color: token.colorTextSecondary }}>
                   {idx + 1}. {attempt.athlete_name}
                 </div>
-                <div style={{ fontSize: 16, fontWeight: 'bold' }}>
+                <div style={{ fontSize: 16, fontWeight: 'bold', color: token.colorText }}>
                   {attempt.weight_kg} kg
                 </div>
               </div>
@@ -163,7 +164,7 @@ export const AttemptOrderList = ({ attempts, currentIndex, liftType }: AttemptOr
 
       <style>{`
         .current-attempt-row {
-          background-color: #fffbe6 !important;
+          background-color: ${token.colorWarningBg} !important;
           font-weight: bold;
         }
         .completed-attempt-row {

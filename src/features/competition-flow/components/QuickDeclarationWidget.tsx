@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Card, InputNumber, Button, List, Tag, Space, Typography, message, Input } from 'antd';
+import { Card, InputNumber, Button, List, Tag, Space, Typography, message, Input, theme } from 'antd';
 import { EditOutlined, CheckOutlined, ExpandOutlined, SearchOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
@@ -8,6 +8,7 @@ import { useDeclarationStore } from '../stores/declarationStore';
 import type { LiftType } from '../types';
 
 const { Text } = Typography;
+const { useToken } = theme;
 
 interface QuickDeclarationWidgetProps {
   competitionId: string;
@@ -34,6 +35,7 @@ export const QuickDeclarationWidget = ({
   onDeclarationChange,
 }: QuickDeclarationWidgetProps) => {
   const { t } = useTranslation();
+  const { token } = useToken();
   const { athletes } = useAthleteStore();
   const { attempts } = useAttemptStore();
   const { setDeclaration, getDeclaration } = useDeclarationStore();
@@ -211,7 +213,7 @@ export const QuickDeclarationWidget = ({
 
                 {/* Last weight info */}
                 {item.last_weight && (
-                  <div style={{ fontSize: 12, color: '#8c8c8c', marginBottom: 4 }}>
+                  <div style={{ fontSize: 12, color: token.colorTextSecondary, marginBottom: 4 }}>
                     {t('live.declarations.lastBar')}: {item.last_weight} kg
                   </div>
                 )}
@@ -222,10 +224,10 @@ export const QuickDeclarationWidget = ({
                     display: 'flex',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    background: item.declared_weight ? '#f6ffed' : '#fff7e6',
+                    background: item.declared_weight ? token.colorSuccessBg : token.colorWarningBg,
                     padding: '6px 10px',
-                    borderRadius: 4,
-                    border: item.declared_weight ? '1px solid #b7eb8f' : '1px solid #ffd591'
+                    borderRadius: token.borderRadius,
+                    border: item.declared_weight ? `1px solid ${token.colorSuccessBorder}` : `1px solid ${token.colorWarningBorder}`
                   }}>
                     <Text strong style={{ fontSize: 13 }}>
                       {t('live.declarations.declareAttempt')} #{item.next_attempt_to_declare}:

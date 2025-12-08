@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
+import { useDeclarationStore } from '../stores/declarationStore';
 import type { LiftType } from '../types';
 
 const { Text } = Typography;
@@ -29,15 +30,16 @@ interface WeightDeclarationsInlineProps {
 export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLift }: WeightDeclarationsInlineProps) => {
   const { t } = useTranslation();
   const { athletes } = useAthleteStore();
-  const { attempts, updateAttempt } = useAttemptStore();
+  const { attempts } = useAttemptStore();
   const { weighIns } = useWeighInStore();
+  const { setDeclaration, getDeclaration } = useDeclarationStore();
   const [declarations, setDeclarations] = useState<DeclarationRow[]>([]);
   const [liftType, setLiftType] = useState<LiftType>(initialLift);
 
   useEffect(() => {
     if (!competitionId) return;
     calculateDeclarations();
-  }, [competitionId, attempts, liftType]);
+  }, [competitionId, attempts, liftType, getDeclaration]);
 
   const calculateDeclarations = () => {
     const competitionAthletes = athletes.filter(a => a.competition_id === competitionId);
@@ -61,6 +63,9 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
           suggestedWeight += 2.5; // Minimum increment for success
         }
 
+        // Check if there's already a declaration in the store
+        const existingDeclaration = getDeclaration(athlete.id, liftType, nextAttemptNumber);
+
         rows.push({
           athlete_id: athlete.id,
           athlete_name: `${athlete.first_name} ${athlete.last_name}`,
@@ -69,8 +74,8 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
           last_result: lastAttempt.result as 'success' | 'failure',
           last_weight: lastAttempt.weight_kg,
           suggested_weight: suggestedWeight,
-          declared_weight: undefined,
-          status: 'pending',
+          declared_weight: existingDeclaration,
+          status: existingDeclaration ? 'declared' : 'pending',
         });
       }
 
@@ -79,6 +84,8 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
         const weighIn = competitionWeighIns.find(w => w.athlete_id === athlete.id);
         if (weighIn) {
           const openingWeight = weighIn[`opening_${liftType}` as keyof typeof weighIn] as number;
+          // Check if there's already a declaration in the store for attempt 1
+          const existingDeclaration = getDeclaration(athlete.id, liftType, 1);
           rows.push({
             athlete_id: athlete.id,
             athlete_name: `${athlete.first_name} ${athlete.last_name}`,
@@ -87,7 +94,7 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
             last_result: 'none',
             last_weight: null,
             suggested_weight: openingWeight,
-            declared_weight: openingWeight,
+            declared_weight: existingDeclaration || openingWeight,
             status: 'declared',
           });
         }
@@ -97,7 +104,7 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
     setDeclarations(rows);
   };
 
-  const handleWeightChange = async (athleteId: string, weight: number | null) => {
+  const handleWeightChange = (athleteId: string, weight: number | null) => {
     if (weight === null) return;
 
     // Validate that weight is >= last attempt weight
@@ -107,28 +114,18 @@ export const WeightDeclarationsInline = ({ competitionId, currentLift: initialLi
       return;
     }
 
-    // Find the pending attempt for this athlete
-    const pendingAttempt = attempts.find(
-      a => a.athlete_id === athleteId && a.lift_type === liftType && a.result === 'pending'
-    );
+    if (!row) return;
 
-    if (pendingAttempt) {
-      try {
-        await updateAttempt({
-          ...pendingAttempt,
-          weight_kg: weight,
-        });
-        message.success(t('declarations.messages.weightUpdated'));
-      } catch {
-        message.error(t('common.error'));
-      }
-    }
+    // Save to declaration store (persists data)
+    setDeclaration(athleteId, liftType, row.next_attempt_number, weight);
+    message.success(t('declarations.messages.weightUpdated'));
 
+    // Update local state for immediate UI feedback
     setDeclarations(prev =>
-      prev.map(row =>
-        row.athlete_id === athleteId
-          ? { ...row, declared_weight: weight, status: 'declared' as const }
-          : row
+      prev.map(d =>
+        d.athlete_id === athleteId
+          ? { ...d, declared_weight: weight, status: 'declared' as const }
+          : d
       )
     );
   };
