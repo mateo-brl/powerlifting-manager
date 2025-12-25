@@ -210,11 +210,17 @@ export const ExternalDisplay = () => {
             borderRadius: 12,
             textAlign: 'center',
           }}
+          role="timer"
+          aria-live="polite"
+          aria-atomic="true"
         >
           <div style={{ fontSize: 18, color: 'white', marginBottom: 8, opacity: 0.9 }}>
             {t('externalDisplay.timer').toUpperCase()}
           </div>
-          <div style={{ fontSize: 72, fontWeight: 'bold', color: 'white', fontFamily: 'monospace' }}>
+          <div
+            style={{ fontSize: 72, fontWeight: 'bold', color: 'white', fontFamily: 'monospace' }}
+            aria-label={t('externalDisplay.ariaTimerSeconds', { seconds: timerSeconds })}
+          >
             {timerSeconds}s
           </div>
         </div>

@@ -278,14 +278,23 @@
       "right": "Right Referee",
       "goodLift": "Good Lift",
       "noLift": "No Lift",
-      "vote": "Vote"
+      "vote": "Vote",
+      "ariaGoodLift": "Referee {{referee}}: Good Lift",
+      "ariaNoLift": "Referee {{referee}}: No Lift",
+      "ariaVoteSummary": "Vote result: {{good}} good lift, {{bad}} no lift - {{result}}"
     },
     "timer": {
       "title": "Timer",
       "start": "Start",
       "stop": "Stop",
       "reset": "Reset",
-      "timeUp": "Time is up!"
+      "timeUp": "Time is up!",
+      "ariaLabel": "Competition timer: {{seconds}} seconds remaining",
+      "progressLabel": "Timer progress: {{percent}} percent elapsed",
+      "ariaStart": "Start competition timer",
+      "ariaResume": "Resume competition timer",
+      "ariaPause": "Pause competition timer",
+      "ariaReset": "Reset competition timer to 60 seconds"
     },
     "display": {
       "external": "Open External Display",
@@ -345,7 +354,8 @@
     "goodLift": "GOOD LIFT",
     "noLift": "NO LIFT",
     "referee": "REFEREE",
-    "timeRemaining": "{{seconds}}s"
+    "timeRemaining": "{{seconds}}s",
+    "ariaTimerSeconds": "{{seconds}} seconds remaining on competition timer"
   },
   "spottersDisplay": {
     "title": "SPOTTERS DISPLAY",

@@ -309,8 +309,10 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                     height: 32,
                     fontWeight: refereeVotes[index] === true ? 'bold' : undefined,
                   }}
+                  aria-label={t('live.referee.ariaGoodLift', { referee: index + 1 })}
+                  aria-pressed={refereeVotes[index] === true}
                 >
-                  ⚪ {t('live.attempt.success')}
+                  <span aria-hidden="true">⚪</span> {t('live.attempt.success')}
                 </Button>
                 <Button
                   type={refereeVotes[index] === false ? 'primary' : 'default'}
@@ -324,8 +326,10 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                     background: refereeVotes[index] === false ? '#ff4d4f' : undefined,
                     borderColor: refereeVotes[index] === false ? '#ff4d4f' : undefined,
                   }}
+                  aria-label={t('live.referee.ariaNoLift', { referee: index + 1 })}
+                  aria-pressed={refereeVotes[index] === false}
                 >
-                  🔴 {t('live.attempt.failure')}
+                  <span aria-hidden="true">🔴</span> {t('live.attempt.failure')}
                 </Button>
               </Space>
             </Card>
@@ -334,10 +338,16 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
 
         {/* Vote Summary - Compact */}
         {canSubmit && (
-          <div style={{ marginTop: 8, textAlign: 'center', padding: '8px', background: '#fafafa', borderRadius: 4 }}>
+          <div
+            style={{ marginTop: 8, textAlign: 'center', padding: '8px', background: '#fafafa', borderRadius: 4 }}
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            aria-label={t('live.referee.ariaVoteSummary', { good: greenCount, bad: redCount, result: greenCount >= 2 ? t('live.attempt.success') : t('live.attempt.failure') })}
+          >
             <Space size="middle">
-              <Text strong style={{ fontSize: 13 }}>⚪ {greenCount}</Text>
-              <Text strong style={{ fontSize: 13 }}>🔴 {redCount}</Text>
+              <Text strong style={{ fontSize: 13 }}><span aria-hidden="true">⚪</span> {greenCount}</Text>
+              <Text strong style={{ fontSize: 13 }}><span aria-hidden="true">🔴</span> {redCount}</Text>
               <Tag
                 color={greenCount >= 2 ? undefined : 'error'}
                 style={{

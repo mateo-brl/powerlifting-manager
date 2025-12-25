@@ -278,14 +278,23 @@
       "right": "Arbitre Droit",
       "goodLift": "Bon Mouvement",
       "noLift": "Mauvais Mouvement",
-      "vote": "Voter"
+      "vote": "Voter",
+      "ariaGoodLift": "Arbitre {{referee}} : Bon Mouvement",
+      "ariaNoLift": "Arbitre {{referee}} : Mauvais Mouvement",
+      "ariaVoteSummary": "Résultat du vote : {{good}} bon mouvement, {{bad}} mauvais mouvement - {{result}}"
     },
     "timer": {
       "title": "Chronomètre",
       "start": "Démarrer",
       "stop": "Arrêter",
       "reset": "Réinitialiser",
-      "timeUp": "Temps écoulé !"
+      "timeUp": "Temps écoulé !",
+      "ariaLabel": "Chronomètre de compétition : {{seconds}} secondes restantes",
+      "progressLabel": "Progression du chronomètre : {{percent}} pour cent écoulé",
+      "ariaStart": "Démarrer le chronomètre de compétition",
+      "ariaResume": "Reprendre le chronomètre de compétition",
+      "ariaPause": "Mettre en pause le chronomètre de compétition",
+      "ariaReset": "Réinitialiser le chronomètre de compétition à 60 secondes"
     },
     "display": {
       "external": "Ouvrir Affichage Externe",
@@ -345,7 +354,8 @@
     "goodLift": "BON MOUVEMENT",
     "noLift": "MAUVAIS MOUVEMENT",
     "referee": "ARBITRE",
-    "timeRemaining": "{{seconds}}s"
+    "timeRemaining": "{{seconds}}s",
+    "ariaTimerSeconds": "{{seconds}} secondes restantes sur le chronomètre de compétition"
   },
   "spottersDisplay": {
     "title": "AFFICHAGE SPOTTERS",

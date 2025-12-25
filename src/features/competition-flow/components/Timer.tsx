@@ -153,13 +153,19 @@ export const Timer = ({ onComplete }: TimerProps) => {
   return (
     <Card style={{ maxWidth: 400, margin: '0 auto', textAlign: 'center' }}>
       <div style={{ marginBottom: 24 }}>
-        <div style={{
-          fontSize: 72,
-          fontWeight: 'bold',
-          color: getColor(),
-          fontFamily: 'monospace',
-          marginBottom: 16,
-        }}>
+        <div
+          style={{
+            fontSize: 72,
+            fontWeight: 'bold',
+            color: getColor(),
+            fontFamily: 'monospace',
+            marginBottom: 16,
+          }}
+          role="timer"
+          aria-live="polite"
+          aria-atomic="true"
+          aria-label={t('live.timer.ariaLabel', { seconds: timeLeft })}
+        >
           {timeLeft}s
         </div>
 
@@ -168,6 +174,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
           strokeColor={getColor()}
           showInfo={false}
           strokeWidth={12}
+          aria-label={t('live.timer.progressLabel', { percent: Math.round(percentage) })}
         />
       </div>
 
@@ -179,6 +186,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
             icon={<PlayCircleOutlined />}
             onClick={handleStart}
             disabled={timeLeft === 0}
+            aria-label={hasStarted ? t('live.timer.ariaResume') : t('live.timer.ariaStart')}
           >
             {hasStarted ? t('live.resume') : t('live.timer.start')}
           </Button>
@@ -187,6 +195,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
             size="large"
             icon={<PauseCircleOutlined />}
             onClick={handlePause}
+            aria-label={t('live.timer.ariaPause')}
           >
             {t('live.pause')}
           </Button>
@@ -196,6 +205,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
           size="large"
           icon={<ReloadOutlined />}
           onClick={handleReset}
+          aria-label={t('live.timer.ariaReset')}
         >
           {t('live.timer.reset')}
         </Button>
