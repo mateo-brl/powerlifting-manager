@@ -114,7 +114,7 @@ export const ProtestModal = ({
   return (
     <Modal
       title={
-        <Space>
+        <Space id="protest-modal-title">
           <ExclamationCircleOutlined style={{ color: '#faad14' }} />
           {t('protest.title')}
         </Space>
@@ -124,6 +124,9 @@ export const ProtestModal = ({
       footer={null}
       width={500}
       destroyOnClose
+      aria-labelledby="protest-modal-title"
+      aria-describedby="protest-modal-description"
+      aria-modal="true"
     >
       {/* Timer Display */}
       <div style={{ marginBottom: 16 }}>
@@ -138,6 +141,10 @@ export const ProtestModal = ({
               fontSize: 20,
               color: getProgressColor(),
             }}
+            role="timer"
+            aria-live="assertive"
+            aria-atomic="true"
+            aria-label={t('protest.aria.timeRemaining', { seconds: remainingTime })}
           >
             {remainingTime}s
           </Text>
@@ -147,6 +154,7 @@ export const ProtestModal = ({
           status={getProgressStatus()}
           showInfo={false}
           strokeColor={getProgressColor()}
+          aria-label={t('protest.aria.timeProgress', { percent: Math.round((remainingTime / PROTEST_DEADLINE_SECONDS) * 100) })}
         />
       </div>
 
@@ -157,6 +165,8 @@ export const ProtestModal = ({
           type="error"
           showIcon
           style={{ marginBottom: 16 }}
+          role="alert"
+          aria-live="assertive"
         />
       ) : (
         <>
@@ -166,6 +176,7 @@ export const ProtestModal = ({
             type="info"
             showIcon
             style={{ marginBottom: 16 }}
+            id="protest-modal-description"
           />
 
           <Form
@@ -178,7 +189,10 @@ export const ProtestModal = ({
               label={t('protest.type')}
               rules={[{ required: true, message: t('protest.typeRequired') }]}
             >
-              <Select placeholder={t('protest.selectType')}>
+              <Select
+                placeholder={t('protest.selectType')}
+                aria-label={t('protest.aria.protestType', { athlete: athleteName })}
+              >
                 <Select.Option value="referee_decision">
                   {PROTEST_TYPE_LABELS.referee_decision[currentLang]}
                 </Select.Option>
@@ -207,6 +221,8 @@ export const ProtestModal = ({
                 placeholder={t('protest.reasonPlaceholder')}
                 showCount
                 maxLength={500}
+                aria-label={t('protest.aria.protestReason', { athlete: athleteName })}
+                aria-describedby="protest-reason-help"
               />
             </Form.Item>
 

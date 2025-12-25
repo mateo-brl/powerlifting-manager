@@ -212,7 +212,18 @@
     "outOfCompetition": "Athlete out of competition",
     "outOfCompetitionWarning": "Weight above class limit",
     "outOfCompetitionDescription": "The athlete's weight exceeds their weight class. You can still accept the weigh-in and mark them as 'out of competition' so they can participate without being officially ranked.",
-    "markAsOutOfCompetition": "Mark as out of competition (will not be officially ranked)"
+    "markAsOutOfCompetition": "Mark as out of competition (will not be officially ranked)",
+    "aria": {
+      "selectAthlete": "Select athlete to weigh in",
+      "bodyweight": "Bodyweight for {{athlete}}",
+      "openingSquat": "Opening squat attempt for {{athlete}}",
+      "openingBench": "Opening bench press attempt for {{athlete}}",
+      "openingDeadlift": "Opening deadlift attempt for {{athlete}}",
+      "squatRackHeight": "Squat rack height for {{athlete}}",
+      "benchRackHeight": "Bench rack height for {{athlete}}",
+      "benchSafetyHeight": "Bench safety height for {{athlete}}",
+      "outOfCompetition": "Mark athlete as out of competition (not officially ranked)"
+    }
   },
   "flight": {
     "title": "Flight Management",
@@ -659,7 +670,13 @@
     "resolveError": "Error resolving protest",
     "fileProtest": "File a protest",
     "protestAvailable": "Protest available",
-    "protestDeadline": "Deadline: {{seconds}}s"
+    "protestDeadline": "Deadline: {{seconds}}s",
+    "aria": {
+      "timeRemaining": "{{seconds}} seconds remaining to file protest",
+      "timeProgress": "Time progress: {{percent}} percent elapsed",
+      "protestType": "Protest type for {{athlete}}",
+      "protestReason": "Protest reason for {{athlete}}"
+    }
   },
   "export": {
     "protestsReport": "Protests Report",

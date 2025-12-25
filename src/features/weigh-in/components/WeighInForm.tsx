@@ -214,6 +214,7 @@ export const WeighInForm = () => {
               label: `${athlete.last_name}, ${athlete.first_name} (${athlete.weight_class})`,
               value: athlete.id,
             }))}
+            aria-label={t('weighIn.aria.selectAthlete')}
           />
         </Form.Item>
 
@@ -224,15 +225,21 @@ export const WeighInForm = () => {
               label={t('weighIn.fields.bodyweight')}
               rules={[{ required: true, message: t('weighIn.form.bodyweightRequired') }]}
               extra={
-                weightClassValid === true ? (
-                  <span style={{ color: 'green' }}>
-                    <CheckCircleOutlined /> {t('weighIn.validation.bodyweightValid')}
-                  </span>
-                ) : weightClassValid === false ? (
-                  <span style={{ color: 'red' }}>
-                    <WarningOutlined /> {t('weighIn.validation.bodyweightAboveClass')} {selectedAthlete.weight_class}
-                  </span>
-                ) : null
+                <div
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
+                >
+                  {weightClassValid === true ? (
+                    <span style={{ color: 'green' }}>
+                      <CheckCircleOutlined /> {t('weighIn.validation.bodyweightValid')}
+                    </span>
+                  ) : weightClassValid === false ? (
+                    <span style={{ color: 'red' }}>
+                      <WarningOutlined /> {t('weighIn.validation.bodyweightAboveClass')} {selectedAthlete.weight_class}
+                    </span>
+                  ) : null}
+                </div>
               }
             >
               <InputNumber
@@ -243,6 +250,8 @@ export const WeighInForm = () => {
                 style={{ width: '100%' }}
                 onChange={handleBodyweightChange}
                 placeholder={t('weighIn.fields.bodyweight')}
+                aria-label={t('weighIn.aria.bodyweight', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
+                aria-describedby={weightClassValid !== null ? 'bodyweight-validation' : undefined}
               />
             </Form.Item>
 
@@ -253,6 +262,8 @@ export const WeighInForm = () => {
                 type="warning"
                 showIcon
                 style={{ marginBottom: 16 }}
+                role="alert"
+                aria-live="assertive"
               />
             )}
 
@@ -262,7 +273,10 @@ export const WeighInForm = () => {
                 valuePropName="checked"
                 style={{ marginBottom: 16 }}
               >
-                <Checkbox>
+                <Checkbox
+                  aria-label={t('weighIn.aria.outOfCompetition')}
+                  aria-describedby="out-of-competition-warning"
+                >
                   {t('weighIn.markAsOutOfCompetition')}
                 </Checkbox>
               </Form.Item>
@@ -285,6 +299,7 @@ export const WeighInForm = () => {
                         step={2.5}
                         style={{ width: '100%' }}
                         placeholder={t('weighIn.fields.openingSquat')}
+                        aria-label={t('weighIn.aria.openingSquat', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                       />
                     </Form.Item>
                   </Col>
@@ -303,6 +318,7 @@ export const WeighInForm = () => {
                       step={2.5}
                       style={{ width: '100%' }}
                       placeholder={t('weighIn.fields.openingBench')}
+                      aria-label={t('weighIn.aria.openingBench', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                     />
                   </Form.Item>
                 </Col>
@@ -321,6 +337,7 @@ export const WeighInForm = () => {
                         step={2.5}
                         style={{ width: '100%' }}
                         placeholder={t('weighIn.fields.openingDeadlift')}
+                        aria-label={t('weighIn.aria.openingDeadlift', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                       />
                     </Form.Item>
                   </Col>
@@ -341,6 +358,7 @@ export const WeighInForm = () => {
                         max={20}
                         style={{ width: '100%' }}
                         placeholder="1-20"
+                        aria-label={t('weighIn.aria.squatRackHeight', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                       />
                     </Form.Item>
                   </Col>
@@ -355,6 +373,7 @@ export const WeighInForm = () => {
                       max={20}
                       style={{ width: '100%' }}
                       placeholder="1-20"
+                      aria-label={t('weighIn.aria.benchRackHeight', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                     />
                   </Form.Item>
                 </Col>
@@ -368,6 +387,7 @@ export const WeighInForm = () => {
                       max={20}
                       style={{ width: '100%' }}
                       placeholder="1-20"
+                      aria-label={t('weighIn.aria.benchSafetyHeight', { athlete: `${selectedAthlete.last_name} ${selectedAthlete.first_name}` })}
                     />
                   </Form.Item>
                 </Col>
