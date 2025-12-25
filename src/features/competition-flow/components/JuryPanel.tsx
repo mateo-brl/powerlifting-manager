@@ -263,6 +263,7 @@ export const JuryPanel = ({ competitionId }: JuryPanelProps) => {
                 rowKey="id"
                 pagination={false}
                 size="small"
+                aria-label={t('protest.aria.pendingTable')}
               />
             ) : (
               <Empty description={t('protest.noPendingProtests')} />
@@ -278,6 +279,7 @@ export const JuryPanel = ({ competitionId }: JuryPanelProps) => {
                 rowKey="id"
                 pagination={{ pageSize: 10 }}
                 size="small"
+                aria-label={t('protest.aria.historyTable')}
               />
             ) : (
               <Empty description={t('protest.noProtestHistory')} />
@@ -315,6 +317,7 @@ export const JuryPanel = ({ competitionId }: JuryPanelProps) => {
                 value={juryNotes}
                 onChange={(e) => setJuryNotes(e.target.value)}
                 placeholder={t('protest.juryNotesPlaceholder')}
+                aria-label={t('protest.aria.juryNotes')}
               />
             </div>
             <Space style={{ width: '100%', justifyContent: 'flex-end' }}>

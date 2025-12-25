@@ -184,6 +184,7 @@ export const QuickDeclarationWidget = ({
         size="small"
         style={{ marginBottom: 8 }}
         allowClear
+        aria-label={t('live.declarations.aria.searchAthlete')}
       />
 
       {filteredAthletes.length === 0 ? (
@@ -245,6 +246,7 @@ export const QuickDeclarationWidget = ({
                           style={{ width: 90 }}
                           autoFocus
                           addonAfter="kg"
+                          aria-label={t('live.declarations.aria.declareWeight', { athlete: item.athlete_name, attempt: item.next_attempt_to_declare })}
                         />
                         <Button
                           type="primary"

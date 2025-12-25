@@ -174,6 +174,16 @@
       "deleteConfirm": "Are you sure you want to delete this athlete?",
       "imported": "{{count}} athletes imported successfully",
       "exportSuccess": "Athletes exported successfully"
+    },
+    "aria": {
+      "firstName": "Athlete first name",
+      "lastName": "Athlete last name",
+      "dateOfBirth": "Athlete date of birth",
+      "gender": "Athlete gender",
+      "weightClass": "Athlete weight class",
+      "division": "Athlete division (raw or equipped)",
+      "ageCategory": "Athlete age category",
+      "lotNumber": "Athlete lot number for draw"
     }
   },
   "weighIn": {
@@ -324,7 +334,11 @@
       "lastBar": "Last bar",
       "declareAttempt": "Declare attempt",
       "declare": "Declare",
-      "moreAthletes": "more athletes"
+      "moreAthletes": "more athletes",
+      "aria": {
+        "searchAthlete": "Search athletes by name or lot number",
+        "declareWeight": "Declare weight for {{athlete}}, attempt {{attempt}}"
+      }
     },
     "quickActions": {
       "title": "Quick Actions",
@@ -456,6 +470,10 @@
       "weightUpdated": "Declared weight updated",
       "invalidWeight": "Please enter a valid weight",
       "weightBelowPrevious": "Weight must be greater than or equal to {{minWeight}} kg"
+    },
+    "aria": {
+      "weightForAthlete": "Declared weight for {{athlete}}",
+      "declarationsTable": "Weight declarations table for all athletes"
     }
   },
   "records": {
@@ -675,7 +693,10 @@
       "timeRemaining": "{{seconds}} seconds remaining to file protest",
       "timeProgress": "Time progress: {{percent}} percent elapsed",
       "protestType": "Protest type for {{athlete}}",
-      "protestReason": "Protest reason for {{athlete}}"
+      "protestReason": "Protest reason for {{athlete}}",
+      "juryNotes": "Jury notes for protest resolution",
+      "pendingTable": "Pending protests table",
+      "historyTable": "Protest history table"
     }
   },
   "export": {

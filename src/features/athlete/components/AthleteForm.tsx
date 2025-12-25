@@ -170,7 +170,10 @@ export const AthleteForm = () => {
                 { min: 2, message: t('athlete.form.firstNameRequired') },
               ]}
             >
-              <Input placeholder={t('athlete.form.firstNamePlaceholder')} />
+              <Input
+                placeholder={t('athlete.form.firstNamePlaceholder')}
+                aria-label={t('athlete.aria.firstName')}
+              />
             </Form.Item>
           </Col>
 
@@ -183,7 +186,10 @@ export const AthleteForm = () => {
                 { min: 2, message: t('athlete.form.lastNameRequired') },
               ]}
             >
-              <Input placeholder={t('athlete.form.lastNamePlaceholder')} />
+              <Input
+                placeholder={t('athlete.form.lastNamePlaceholder')}
+                aria-label={t('athlete.aria.lastName')}
+              />
             </Form.Item>
           </Col>
         </Row>
@@ -236,6 +242,7 @@ export const AthleteForm = () => {
                 disabledDate={(current) => {
                   return current && current > dayjs().endOf('day');
                 }}
+                aria-label={t('athlete.aria.dateOfBirth')}
               />
             </Form.Item>
           </Col>
@@ -252,6 +259,7 @@ export const AthleteForm = () => {
                   { label: t('athlete.gender.M'), value: 'M' },
                   { label: t('athlete.gender.F'), value: 'F' },
                 ]}
+                aria-label={t('athlete.aria.gender')}
               />
             </Form.Item>
           </Col>
@@ -274,6 +282,7 @@ export const AthleteForm = () => {
                 filterOption={(inputValue, option) =>
                   option?.value.toString().includes(inputValue) || false
                 }
+                aria-label={t('athlete.aria.weightClass')}
               />
             </Form.Item>
           </Col>
@@ -289,6 +298,7 @@ export const AthleteForm = () => {
                   { label: t('athlete.division.raw'), value: 'raw' },
                   { label: t('athlete.division.equipped'), value: 'equipped' },
                 ]}
+                aria-label={t('athlete.aria.division')}
               />
             </Form.Item>
           </Col>
@@ -301,7 +311,7 @@ export const AthleteForm = () => {
               label={t('athlete.fields.ageCategory')}
               rules={[{ required: true, message: t('athlete.form.weightClassRequired') }]}
             >
-              <Select>
+              <Select aria-label={t('athlete.aria.ageCategory')}>
                 {AGE_CATEGORIES.map((cat) => (
                   <Select.Option key={cat} value={cat}>{cat}</Select.Option>
                 ))}
@@ -318,6 +328,7 @@ export const AthleteForm = () => {
                 min={1}
                 style={{ width: '100%' }}
                 placeholder={t('athlete.fields.lotNumber')}
+                aria-label={t('athlete.aria.lotNumber')}
               />
             </Form.Item>
           </Col>

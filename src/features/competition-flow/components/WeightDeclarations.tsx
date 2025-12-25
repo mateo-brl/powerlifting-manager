@@ -177,6 +177,7 @@ export const WeightDeclarations = () => {
           addonAfter="kg"
           style={{ width: '100%' }}
           placeholder={record.suggested_weight.toString()}
+          aria-label={t('declarations.aria.weightForAthlete', { athlete: record.athlete_name })}
         />
       ),
     },
@@ -236,6 +237,7 @@ export const WeightDeclarations = () => {
           locale={{
             emptyText: t('declarations.noDeclarations'),
           }}
+          aria-label={t('declarations.aria.declarationsTable')}
         />
       </Card>
     </div>
