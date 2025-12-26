@@ -9,6 +9,7 @@ import { useBroadcastStore } from '../stores/broadcastStore';
 import { ProtestModal } from './ProtestModal';
 import { PROTEST_DEADLINE_SECONDS } from '../types/protest';
 import { useKeyboardShortcuts } from '../../../shared/hooks/useKeyboardShortcuts';
+import { useThemeColors } from '../../../theme/useThemeColors';
 
 const { Title, Text } = Typography;
 
@@ -35,6 +36,7 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
   const { t } = useTranslation();
   const { attempts, createAttempt, updateAttempt } = useAttemptStore();
   const { broadcast } = useBroadcastStore();
+  const colors = useThemeColors();
   const [weight, setWeight] = useState<number>(currentAttempt.weight_kg);
   const [refereeVotes, setRefereeVotes] = useState<[boolean | null, boolean | null, boolean | null]>([
     null,
@@ -216,9 +218,9 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                 style={{
                   fontSize: 12,
                   padding: '2px 8px',
-                  background: attempt.result === 'success' ? '#ffffff' : '#ff4d4f',
-                  color: attempt.result === 'success' ? '#000000' : '#ffffff',
-                  border: attempt.result === 'success' ? '1px solid #1890ff' : 'none'
+                  background: attempt.result === 'success' ? colors.successBg : colors.errorBg,
+                  color: attempt.result === 'success' ? colors.successText : colors.errorText,
+                  border: attempt.result === 'success' ? `1px solid ${colors.successBorder}` : 'none'
                 }}
               >
                 {t('live.attempt.number', { number: attempt.attempt_number })}: {attempt.weight_kg}kg {attempt.result === 'success' ? '✓' : '✗'}
@@ -229,7 +231,7 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
       )}
 
       {/* Current Athlete Display - Compact */}
-      <div style={{ background: '#1890ff', color: 'white', padding: 12, borderRadius: 8, marginBottom: 12 }}>
+      <div style={{ background: colors.athleteBannerBg, color: colors.athleteBannerText, padding: 12, borderRadius: 8, marginBottom: 12 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div>
             <Title level={4} style={{ color: 'white', margin: 0, marginBottom: 4 }}>
@@ -281,8 +283,8 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
               style={{
                 flex: 1,
                 textAlign: 'center',
-                background: '#f5f5f5',
-                border: '1px solid #d9d9d9',
+                background: colors.neutralBg,
+                border: `1px solid ${colors.neutralBorder}`,
               }}
               bodyStyle={{ padding: '8px' }}
             >
@@ -302,9 +304,9 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                   size="small"
                   block
                   style={{
-                    background: refereeVotes[index] === true ? '#ffffff' : undefined,
-                    borderColor: refereeVotes[index] === true ? '#1890ff' : undefined,
-                    color: refereeVotes[index] === true ? '#000000' : undefined,
+                    background: refereeVotes[index] === true ? colors.successBg : undefined,
+                    borderColor: refereeVotes[index] === true ? colors.successBorder : undefined,
+                    color: refereeVotes[index] === true ? colors.successText : undefined,
                     fontSize: 11,
                     height: 32,
                     fontWeight: refereeVotes[index] === true ? 'bold' : undefined,
@@ -323,8 +325,9 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                   style={{
                     fontSize: 11,
                     height: 32,
-                    background: refereeVotes[index] === false ? '#ff4d4f' : undefined,
-                    borderColor: refereeVotes[index] === false ? '#ff4d4f' : undefined,
+                    background: refereeVotes[index] === false ? colors.errorBg : undefined,
+                    borderColor: refereeVotes[index] === false ? colors.errorBorder : undefined,
+                    color: refereeVotes[index] === false ? colors.errorText : undefined,
                   }}
                   aria-label={t('live.referee.ariaNoLift', { referee: index + 1 })}
                   aria-pressed={refereeVotes[index] === false}
@@ -339,7 +342,7 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
         {/* Vote Summary - Compact */}
         {canSubmit && (
           <div
-            style={{ marginTop: 8, textAlign: 'center', padding: '8px', background: '#fafafa', borderRadius: 4 }}
+            style={{ marginTop: 8, textAlign: 'center', padding: '8px', background: colors.neutralBg, borderRadius: 4 }}
             role="status"
             aria-live="polite"
             aria-atomic="true"
@@ -353,9 +356,9 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
                 style={{
                   fontSize: 12,
                   padding: '4px 12px',
-                  background: greenCount >= 2 ? '#ffffff' : undefined,
-                  color: greenCount >= 2 ? '#000000' : undefined,
-                  border: greenCount >= 2 ? '1px solid #1890ff' : undefined,
+                  background: greenCount >= 2 ? colors.successBg : undefined,
+                  color: greenCount >= 2 ? colors.successText : undefined,
+                  border: greenCount >= 2 ? `1px solid ${colors.successBorder}` : undefined,
                   fontWeight: 'bold'
                 }}
               >
@@ -386,11 +389,11 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
             marginBottom: '8px',
             borderRadius: '6px',
             textAlign: 'center',
-            background: attemptResult === 'success' ? '#ffffff' : '#ff4d4f',
-            border: attemptResult === 'success' ? '2px solid #1890ff' : 'none',
-            color: attemptResult === 'success' ? '#000000' : '#ffffff'
+            background: attemptResult === 'success' ? colors.successBg : colors.errorBg,
+            border: attemptResult === 'success' ? `2px solid ${colors.successBorder}` : 'none',
+            color: attemptResult === 'success' ? colors.successText : colors.errorText
           }}>
-            <Title level={5} style={{ margin: 0, color: attemptResult === 'success' ? '#000000' : '#ffffff' }}>
+            <Title level={5} style={{ margin: 0, color: attemptResult === 'success' ? colors.successText : colors.errorText }}>
               {attemptResult === 'success' ? '✓ ' + t('externalDisplay.goodLift') : '✗ ' + t('externalDisplay.noLift')}
             </Title>
           </div>
@@ -426,7 +429,7 @@ export const AttemptTracker = forwardRef<AttemptTrackerRef, AttemptTrackerProps>
             size="middle"
             block
             onClick={handleNextAthlete}
-            style={{ height: 44, fontSize: 14, fontWeight: 'bold', background: '#52c41a', borderColor: '#52c41a' }}
+            style={{ height: 44, fontSize: 14, fontWeight: 'bold' }}
           >
             {t('live.nextAthlete')} →
           </Button>

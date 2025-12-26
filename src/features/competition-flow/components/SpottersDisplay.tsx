@@ -5,6 +5,7 @@ import { WebSocketEvent } from '../../../shared/types/websocket';
 import { useWebSocket } from '../../../shared/hooks/useWebSocket';
 import { calculateBarLoading, getLoadingOrder, BAR_WEIGHTS, TOTAL_COLLAR_WEIGHT } from '../utils/barLoading';
 import type { LiftType } from '../types';
+import { useThemeColors } from '../../../theme/useThemeColors';
 
 const { Title, Text } = Typography;
 
@@ -25,6 +26,7 @@ interface CurrentAthleteData {
 
 export const SpottersDisplay = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [currentAthlete, setCurrentAthlete] = useState<CurrentAthleteData | null>(null);
   const [competitionName, setCompetitionName] = useState<string>('');
 
@@ -161,7 +163,7 @@ export const SpottersDisplay = () => {
                 fontSize: 18,
                 fontWeight: 'bold',
                 width: '25%',
-                background: '#f0f0f0'
+                background: colors.neutralBg
               }}>
                 {t('spottersDisplay.athlete')}
               </td>
@@ -178,7 +180,7 @@ export const SpottersDisplay = () => {
                 padding: '12px 20px',
                 fontSize: 18,
                 fontWeight: 'bold',
-                background: '#f0f0f0'
+                background: colors.neutralBg
               }}>
                 {t('spottersDisplay.lift')}
               </td>
@@ -196,7 +198,7 @@ export const SpottersDisplay = () => {
                 padding: '12px 20px',
                 fontSize: 18,
                 fontWeight: 'bold',
-                background: '#f0f0f0'
+                background: colors.neutralBg
               }}>
                 {t('spottersDisplay.weight')}
               </td>
@@ -263,7 +265,7 @@ export const SpottersDisplay = () => {
             border: '2px solid black'
           }}>
             <thead>
-              <tr style={{ background: '#f0f0f0', borderBottom: '2px solid black' }}>
+              <tr style={{ background: colors.neutralBg, borderBottom: `2px solid ${colors.border}` }}>
                 <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.quantity')}</th>
                 <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.plateWeight')}</th>
                 <th style={{ padding: '8px 12px', fontSize: 14, textAlign: 'left' }}>{t('spottersDisplay.barLoading.color')}</th>
@@ -328,8 +330,8 @@ export const SpottersDisplay = () => {
                   style={{
                     width: 18,
                     height: 50,
-                    background: '#666',
-                    border: '2px solid black',
+                    background: colors.neutralBg,
+                    border: `2px solid ${colors.border}`,
                     borderRadius: 3,
                   }}
                 />
@@ -343,8 +345,8 @@ export const SpottersDisplay = () => {
                 style={{
                   width: 80,
                   height: 20,
-                  background: '#333',
-                  border: '2px solid black',
+                  background: colors.neutralBg,
+                  border: `2px solid ${colors.border}`,
                   borderRadius: 4,
                   display: 'flex',
                   alignItems: 'center',
@@ -363,8 +365,8 @@ export const SpottersDisplay = () => {
                   style={{
                     width: 18,
                     height: 50,
-                    background: '#666',
-                    border: '2px solid black',
+                    background: colors.neutralBg,
+                    border: `2px solid ${colors.border}`,
                     borderRadius: 3,
                   }}
                 />
@@ -395,7 +397,7 @@ export const SpottersDisplay = () => {
           </div>
 
           {/* Summary */}
-          <div style={{ marginTop: 12, padding: '10px', background: '#f0f0f0', border: '2px solid black', borderRadius: 6 }}>
+          <div style={{ marginTop: 12, padding: '10px', background: colors.neutralBg, border: `2px solid ${colors.border}`, borderRadius: 6 }}>
             <Text style={{ fontSize: 16, fontWeight: 'bold' }}>
               {t('spottersDisplay.barLoading.summary', {
                 plates: barLoading.totalPlates,

@@ -189,7 +189,7 @@ export const LiveCompetition = () => {
     if (currentIndex >= ordered.length) {
       setCurrentIndex(0);
     }
-  }, [currentLift, competitionAthletes, competitionWeighIns, getDeclaration, refreshKey, orderVersion]);
+  }, [currentLift, competitionAthletes, competitionWeighIns, attempts, getDeclaration, refreshKey, orderVersion]);
 
   const handleStartCompetition = () => {
     if (attemptOrder.length === 0) {
@@ -259,10 +259,33 @@ export const LiveCompetition = () => {
     });
   };
 
-  const handleNextAttempt = () => {
-    // Trigger order recalculation first (to account for the completed attempt)
-    setOrderVersion(v => v + 1);
+  // Handle moving to next athlete after confirming result
+  // The order is already recalculated automatically when attempts change
+  // We just need to broadcast the current athlete
+  const handleAttemptCompleted = () => {
+    // Give a tiny delay to ensure attempt store is updated
+    setTimeout(() => {
+      const currentAthleteData = attemptOrder[currentIndex];
+      if (currentAthleteData) {
+        broadcast({
+          type: 'athlete_up',
+          data: {
+            athlete_id: currentAthleteData.athlete_id,
+            athlete_name: currentAthleteData.athlete_name,
+            weight_kg: currentAthleteData.weight_kg,
+            attempt_number: currentAthleteData.attempt_number,
+            lift_type: currentLift,
+            lot_number: currentAthleteData.lot_number,
+            rack_height: currentAthleteData.rack_height,
+            safety_height: currentAthleteData.safety_height,
+          },
+        });
+      }
+    }, 200);
+  };
 
+  // Handle skipping to next attempt manually (without completing current)
+  const handleNextAttempt = () => {
     if (currentIndex < attemptOrder.length - 1) {
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
@@ -607,7 +630,7 @@ export const LiveCompetition = () => {
                         currentAttempt={currentAttempt}
                         liftType={currentLift}
                         competitionId={competitionId}
-                        onComplete={handleNextAttempt}
+                        onComplete={handleAttemptCompleted}
                       />
                     ) : (
                       <Alert

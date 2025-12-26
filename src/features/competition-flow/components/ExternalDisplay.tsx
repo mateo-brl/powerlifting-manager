@@ -9,6 +9,7 @@ import {
   CloseCircleFilled,
   ClockCircleOutlined,
 } from '@ant-design/icons';
+import { useThemeColors } from '../../../theme/useThemeColors';
 
 const { Title, Text } = Typography;
 
@@ -19,6 +20,7 @@ const isBrowserMode = () => {
 
 export const ExternalDisplay = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [currentAthlete, setCurrentAthlete] = useState<string>('');
   const [currentWeight, setCurrentWeight] = useState<number>(0);
   const [currentAttempt, setCurrentAttempt] = useState<1 | 2 | 3>(1);
@@ -161,12 +163,12 @@ export const ExternalDisplay = () => {
         <Card
           style={{
             marginBottom: 20,
-            background: '#52c41a',
-            border: 'none',
+            background: colors.successBg,
+            border: `2px solid ${colors.successBorder}`,
             textAlign: 'center',
           }}
         >
-          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+          <Text style={{ color: colors.successText, fontWeight: 'bold' }}>
             ✓ {t('common.loading')} (Browser Mode - BroadcastChannel)
           </Text>
         </Card>
@@ -175,12 +177,12 @@ export const ExternalDisplay = () => {
         <Card
           style={{
             marginBottom: 20,
-            background: '#52c41a',
-            border: 'none',
+            background: colors.successBg,
+            border: `2px solid ${colors.successBorder}`,
             textAlign: 'center',
           }}
         >
-          <Text style={{ color: 'white', fontWeight: 'bold' }}>
+          <Text style={{ color: colors.successText, fontWeight: 'bold' }}>
             ✓ {t('common.loading')} (Tauri Mode - WebSocket)
           </Text>
         </Card>
@@ -189,12 +191,12 @@ export const ExternalDisplay = () => {
         <Card
           style={{
             marginBottom: 20,
-            background: '#ff4d4f',
+            background: colors.errorBg,
             border: 'none',
             textAlign: 'center',
           }}
         >
-          <Text style={{ color: 'white' }}>
+          <Text style={{ color: colors.errorText }}>
             <ClockCircleOutlined /> {t('common.loading')}... ({status})
           </Text>
         </Card>
@@ -206,7 +208,8 @@ export const ExternalDisplay = () => {
           style={{
             marginBottom: 30,
             padding: '20px 40px',
-            background: timerSeconds <= 10 ? '#ff4d4f' : timerSeconds <= 30 ? '#faad14' : '#52c41a',
+            background: timerSeconds <= 10 ? colors.errorBg : timerSeconds <= 30 ? colors.warningBg : colors.successBg,
+            border: timerSeconds <= 10 ? `2px solid ${colors.errorBorder}` : timerSeconds <= 30 ? `2px solid ${colors.warningBorder}` : `2px solid ${colors.successBorder}`,
             borderRadius: 12,
             textAlign: 'center',
           }}
@@ -214,11 +217,11 @@ export const ExternalDisplay = () => {
           aria-live="polite"
           aria-atomic="true"
         >
-          <div style={{ fontSize: 18, color: 'white', marginBottom: 8, opacity: 0.9 }}>
+          <div style={{ fontSize: 18, color: timerSeconds <= 10 ? colors.errorText : timerSeconds <= 30 ? colors.warningText : colors.successText, marginBottom: 8, opacity: 0.9 }}>
             {t('externalDisplay.timer').toUpperCase()}
           </div>
           <div
-            style={{ fontSize: 72, fontWeight: 'bold', color: 'white', fontFamily: 'monospace' }}
+            style={{ fontSize: 72, fontWeight: 'bold', color: timerSeconds <= 10 ? colors.errorText : timerSeconds <= 30 ? colors.warningText : colors.successText, fontFamily: 'monospace' }}
             aria-label={t('externalDisplay.ariaTimerSeconds', { seconds: timerSeconds })}
           >
             {timerSeconds}s
@@ -231,12 +234,12 @@ export const ExternalDisplay = () => {
         <Card
           style={{
             marginBottom: 40,
-            background: '#faad14',
-            border: 'none',
+            background: colors.warningBg,
+            border: `2px solid ${colors.warningBorder}`,
             textAlign: 'center',
           }}
         >
-          <Title level={3} style={{ margin: 0, color: 'white' }}>
+          <Title level={3} style={{ margin: 0, color: colors.warningText }}>
             <ClockCircleOutlined /> {t('live.status.paused')}
           </Title>
         </Card>
@@ -306,16 +309,16 @@ export const ExternalDisplay = () => {
                   <div>
                     <div style={{
                       display: 'inline-block',
-                      background: '#ffffff',
+                      background: colors.successBg,
                       borderRadius: '50%',
                       padding: '20px',
-                      border: '4px solid #1890ff'
+                      border: `4px solid ${colors.successBorder}`
                     }}>
                       <CheckCircleFilled
-                        style={{ fontSize: 80, color: '#1890ff' }}
+                        style={{ fontSize: 80, color: colors.successBorder }}
                       />
                     </div>
-                    <Title level={2} style={{ color: '#ffffff', marginTop: 16 }}>
+                    <Title level={2} style={{ color: colors.textPrimary, marginTop: 16 }}>
                       {t('externalDisplay.goodLift').toUpperCase()} ✓
                     </Title>
                   </div>
@@ -323,15 +326,15 @@ export const ExternalDisplay = () => {
                   <div>
                     <div style={{
                       display: 'inline-block',
-                      background: '#ff4d4f',
+                      background: colors.errorBg,
                       borderRadius: '50%',
                       padding: '20px'
                     }}>
                       <CloseCircleFilled
-                        style={{ fontSize: 80, color: '#ffffff' }}
+                        style={{ fontSize: 80, color: colors.errorText }}
                       />
                     </div>
-                    <Title level={2} style={{ color: '#ff4d4f', marginTop: 16 }}>
+                    <Title level={2} style={{ color: colors.errorBorder, marginTop: 16 }}>
                       {t('externalDisplay.noLift').toUpperCase()} ✗
                     </Title>
                   </div>

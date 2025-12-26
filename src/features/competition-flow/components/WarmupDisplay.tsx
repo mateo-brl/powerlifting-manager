@@ -8,6 +8,7 @@ import { useAthleteStore } from '../../athlete/stores/athleteStore';
 import { useAttemptStore } from '../stores/attemptStore';
 import { useWeighInStore } from '../../weigh-in/stores/weighInStore';
 import type { LiftType, AttemptResult } from '../types';
+import { useThemeColors } from '../../../theme/useThemeColors';
 
 const { Title, Text } = Typography;
 
@@ -41,6 +42,7 @@ interface WarmupState {
 
 export const WarmupDisplay = () => {
   const { t } = useTranslation();
+  const colors = useThemeColors();
   const [warmupState, setWarmupState] = useState<WarmupState | null>(null);
   const [athleteRows, setAthleteRows] = useState<AthleteRow[]>([]);
   const [currentAthleteId, setCurrentAthleteId] = useState<string | null>(null);
@@ -225,7 +227,7 @@ export const WarmupDisplay = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: '#f0f2f5',
+          background: colors.layoutBg,
         }}
       >
         <div style={{ textAlign: 'center' }}>
@@ -256,7 +258,7 @@ export const WarmupDisplay = () => {
     if (!attemptInfo.weight_kg) {
       return (
         <div style={{ textAlign: 'center' }}>
-          <MinusOutlined style={{ color: '#999', fontSize: 18 }} />
+          <MinusOutlined style={{ opacity: 0.4, fontSize: 18 }} />
         </div>
       );
     }
@@ -266,14 +268,14 @@ export const WarmupDisplay = () => {
 
     if (row.current_attempt === attemptNum && row.status === 'current') {
       // Currently lifting
-      icon = <ClockCircleOutlined style={{ color: '#1890ff', fontSize: 16, marginRight: 4 }} />;
-      color = '#1890ff';
+      icon = <ClockCircleOutlined style={{ color: colors.primaryBg, fontSize: 16, marginRight: 4 }} />;
+      color = colors.primaryBg;
     } else if (attemptInfo.result === 'success') {
-      icon = <CheckCircleOutlined style={{ color: '#52c41a', fontSize: 16, marginRight: 4 }} />;
-      color = '#52c41a';
+      icon = <CheckCircleOutlined style={{ color: colors.successBorder, fontSize: 16, marginRight: 4 }} />;
+      color = colors.successBorder;
     } else if (attemptInfo.result === 'failure') {
-      icon = <CloseCircleOutlined style={{ color: '#ff4d4f', fontSize: 16, marginRight: 4 }} />;
-      color = '#ff4d4f';
+      icon = <CloseCircleOutlined style={{ color: colors.errorBorder, fontSize: 16, marginRight: 4 }} />;
+      color = colors.errorBorder;
     }
 
     return (
@@ -363,10 +365,10 @@ export const WarmupDisplay = () => {
           {t('warmupDisplay.title')}
         </Title>
         <div style={{ textAlign: 'center', marginTop: 8 }}>
-          <Text style={{ fontSize: 20, color: '#666' }}>
+          <Text style={{ fontSize: 20, opacity: 0.65 }}>
             {warmupState.competition_name}
           </Text>
-          <Text strong style={{ fontSize: 24, marginLeft: 20, color: '#1890ff' }}>
+          <Text strong style={{ fontSize: 24, marginLeft: 20, color: colors.primaryBg }}>
             {getLiftName()}
           </Text>
         </div>

@@ -211,7 +211,7 @@ export const Timer = ({ onComplete }: TimerProps) => {
         </Button>
       </div>
 
-      <div style={{ marginTop: 16, fontSize: 12, color: '#8c8c8c' }}>
+      <div style={{ marginTop: 16, fontSize: 12, opacity: 0.65 }}>
         {t('live.timer.timeUp')}: 30s, 15s, 10s
       </div>
     </Card>
